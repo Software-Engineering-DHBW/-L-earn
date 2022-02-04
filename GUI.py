@@ -31,8 +31,9 @@ class MainWindow(QDialog):
             self.tableWidget.setItem(row, 2, QtWidgets.QTableWidgetItem(str(p["productive"])))
             row += 1
 
-app = QApplication(sys.argv)
-window = MainWindow()
-#window.showMaximized()
-window.show()
-sys.exit(app.exec_())
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    #window.showMaximized()
+    window.show()
+    sys.exit(app.exec_())
