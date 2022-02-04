@@ -71,9 +71,7 @@ def get_processes_info():
 
             processes.append({
                 'pid': pid, 'name': name, 'create_time': create_time,
-                'cores': cores, 'cpu_usage': cpu_usage, 'status': status, 'nice': nice,
-                'memory_usage': memory_usage, 'read_bytes': read_bytes, 'write_bytes': write_bytes,
-                'n_threads': n_threads, 'username': username,
+                'username': username,
             })
 
     return processes
@@ -86,9 +84,9 @@ def construct_dataframe(processes):
     # sort rows by the column passed as argument
     df.sort_values(by='pid', inplace=True)
     # pretty printing bytes
-    df['memory_usage'] = df['memory_usage'].apply(get_size)
-    df['write_bytes'] = df['write_bytes'].apply(get_size)
-    df['read_bytes'] = df['read_bytes'].apply(get_size)
+    #df['memory_usage'] = df['memory_usage'].apply(get_size)
+    #df['write_bytes'] = df['write_bytes'].apply(get_size)
+    #df['read_bytes'] = df['read_bytes'].apply(get_size)
     # convert to proper date format
     df['create_time'] = df['create_time'].apply(datetime.strftime, args=("%Y-%m-%d %H:%M:%S",))
     # reorder and define used columns
