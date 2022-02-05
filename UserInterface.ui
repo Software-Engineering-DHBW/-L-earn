@@ -22,7 +22,7 @@
   <widget class="QCalendarWidget" name="calendarWidget">
    <property name="geometry">
     <rect>
-     <x>630</x>
+     <x>620</x>
      <y>260</y>
      <width>312</width>
      <height>183</height>
@@ -112,7 +112,7 @@
    </column>
    <column>
     <property name="text">
-     <string>Runtime [min]</string>
+     <string>Creation time</string>
     </property>
    </column>
    <column>
