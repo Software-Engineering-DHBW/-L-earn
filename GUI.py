@@ -71,9 +71,9 @@ class MainWindow(QDialog):
         self.thread.started.connect(self.worker.loadProcesses)
         self.thread.start()
 
-
-if __name__ == "__main__":
+def startWindow():
     app = QApplication(sys.argv)
+    global window
     window = MainWindow()
     window.show()
     sys.exit(app.exec_())
