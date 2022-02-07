@@ -1,3 +1,6 @@
+"""
+Includes the functionality to run the graphical user interface
+"""
 import sys
 import platform
 import pandas as pd
@@ -7,24 +10,17 @@ from PyQt5.QtCore import QObject, QThread, pyqtSignal
 from PyQt5.uic import loadUi
 import time
 
-import ProcessModule as win
-from functions import mac_functions as mac
-
+import ProcessModule as pm
 
 class Worker(QObject):
 
     def loadProcesses(self):
         previousDf = None
         while True:
-            # checking what operating system the software is running on
-            os = platform.system()
-            if os == "Windows" or os == "Linux":
-                df = win.getAllProcesses()
-            elif os == "Darwin":
-                df = mac.getProcesses()
+            df = pm.getAllProcesses()
 
             if df.equals(previousDf):
-                time.sleep(5)
+                time.sleep(1)
                 continue
             else:
                 previousDf = df
@@ -38,18 +34,35 @@ class Worker(QObject):
                 time.sleep(5)
 
 
-
 class MainWindow(QDialog):
 
     def __init__(self):
         super(MainWindow, self).__init__()
         self.worker = None
         self.thread = None
+
+        # load UI from file
         loadUi("UserInterface.ui", self)
+
+        # init table
         self.tableWidget.setColumnWidth(0, 200)
         self.tableWidget.setColumnWidth(1, 150)
         self.tableWidget.setColumnWidth(2, 150)
         self.loadProcesses()
+
+        # init start button
+        self.pushButton.setToolTip("This button starts the [L]earn session.")
+        self.pushButton.clicked.connect(self.startSession)
+
+        # init stop button
+        self.pushButton_2.setToolTip("This button stops the [L]earn session.")
+        self.pushButton_2.clicked.connect(self.stopSession)
+
+    def startSession(self):
+        print("Session startet")
+
+    def stopSession(self):
+        print("Session stopped")
 
     def loadProcesses(self):
         self.thread = QThread()
