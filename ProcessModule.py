@@ -21,7 +21,7 @@ def get_processes_info():
             #get the process id
             try:
                 pid = process.pid
-            except psutil.AccessDenied:
+            except (psutil.AccessDenied, psutil.NoSuchProcess):
                 continue
             
             #Skipping System Idle Process for Windows NT
