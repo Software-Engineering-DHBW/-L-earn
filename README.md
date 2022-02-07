@@ -27,5 +27,5 @@ Weitere Doku ist in Form von Kommentaren im Code zu finden.
   1. Codesprache: Englisch
   2. CamelCase: Variablen und Funktionen lowerCamelCase; Klassen und Files: UpperCamelCase
   3. Files, Klassen, Funktionen und Variablen aussagekräftig benennen, Ausnahme: Zählvariablen (in Schleifen u.ä.)
-- Clean Code
+- Clean Code: <br>
     Darauf achten, wiederkehrenden bzw. öfter genutzen Code in Funktionen umzuwandeln
