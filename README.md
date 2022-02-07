@@ -14,7 +14,7 @@ Zum starten des Prototypen:
 ### Doku
 Main.py: Zum Starten des Programms <br>
 GUI.py: Beinhaltet die Implementierung der Grafischen Oberfläche <br>
-UserInterface.ui: Vom Designer kreierte Daten füt die GUI <br>
+UserInterface.ui: Vom Designer kreierte Daten für die GUI <br>
 ProcessModule.py: Beinhaltet die Implementierung aller Funktionen zu Prozessen und dem Prozess-Handling
 
 Weitere Doku ist in Form von Kommentaren im Code zu finden.
