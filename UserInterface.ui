@@ -32,7 +32,7 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>370</x>
+     <x>380</x>
      <y>140</y>
      <width>75</width>
      <height>23</height>
@@ -58,7 +58,7 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>340</x>
+     <x>360</x>
      <y>40</y>
      <width>291</width>
      <height>41</height>
@@ -89,7 +89,7 @@
   <widget class="QLCDNumber" name="lcdNumber">
    <property name="geometry">
     <rect>
-     <x>440</x>
+     <x>450</x>
      <y>90</y>
      <width>64</width>
      <height>23</height>
