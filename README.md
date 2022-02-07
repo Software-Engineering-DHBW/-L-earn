@@ -6,4 +6,5 @@ Zum starten:
   2. Die folgenden Bibliotheken installieren
       - Pandas
       - psutil
+      - PyQT5
   3. GUI.py ausführen
