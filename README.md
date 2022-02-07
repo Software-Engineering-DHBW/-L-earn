@@ -28,4 +28,4 @@ Weitere Doku ist in Form von Kommentaren im Code zu finden.
   2. CamelCase: Variablen und Funktionen lowerCamelCase; Klassen und Files: UpperCamelCase
   3. Files, Klassen, Funktionen und Variablen aussagekräftig benennen, Ausnahme: Zählvariablen (in Schleifen u.ä.)
 - Clean Code: <br>
-    Darauf achten, wiederkehrenden bzw. öfter genutzen Code in Funktionen umzuwandeln
+  Darauf achten, wiederkehrenden bzw. öfter genutzen Code in granulare Funktionen umzuwandeln
