@@ -7,7 +7,7 @@ from PyQt5.QtCore import QObject, QThread, pyqtSignal
 from PyQt5.uic import loadUi
 import time
 
-import Windows as win
+import ProcessModule as win
 from functions import mac_functions as mac
 
 
