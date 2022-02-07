@@ -17,6 +17,8 @@ GUI.py: Beinhaltet die Implementierung der Grafischen Oberfläche <br>
 UserInterface.ui: Vom Designer kreierte Daten füt die GUI <br>
 ProcessModule.py: Beinhaltet die Implementierung aller Funktionen zu Prozessen und dem Prozess-Handling
 
+Weitere Doku ist in Form von Kommentaren im Code zu finden.
+
 ## Coding Richtlinien
 - Nie auf dem main Branch arbeiten, immer einen separaten Branch nutzen
 - Branches sinnvolle Namen geben
