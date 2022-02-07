@@ -1,3 +1,8 @@
+"""
+This file includes all functions, that are needed to get processes and their information for all operating systems and
+handle operations on processes such as kill() in the future.
+"""
+
 #import all necessary libraries and packages
 import psutil
 from datetime import datetime
@@ -44,8 +49,7 @@ def get_processes_info():
     
             #append process with information to process list
             processes.append({
-                'pid': pid, 'name': name, 'create_time': create_time,
-                'username': username
+                'pid': pid, 'name': name, 'create_time': create_time
             })
             
     #return process list
@@ -79,7 +83,7 @@ def processTest():
         p = psutil.Process(i)
         p.kill()
 
-#Gives back the dataframes with processes and information
+#Gives back the dataframe with all processes and information
 def getAllProcesses():
     processes = get_processes_info()
     df = construct_dataframe(processes)
