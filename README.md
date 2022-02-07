@@ -4,7 +4,7 @@
 ## Prototyp
 ### Ausführung
 Zum starten des Prototypen:
-  1. Pycharm installieren
+  1. PyCharm (oder andere Python-IDE) installieren
   2. Die folgenden Bibliotheken installieren
       - Pandas
       - psutil
