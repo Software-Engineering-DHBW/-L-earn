@@ -1,10 +1,11 @@
 # [L]earn
-[L]earn ist eine innovative Anwendung um den eigenen Lernfortschritt zu beschleunigen
+[L]earn ist eine innovative Anwendung um den eigenen Lernfortschritt zu beschleunigen und die Zeitplanung zu verbessern.
 
-Zum starten:
+## Prototyp
+Zum starten des Prototypen:
   1. Pycharm installieren
   2. Die folgenden Bibliotheken installieren
       - Pandas
       - psutil
       - PyQT5
-  3. GUI.py ausführen
+  3. Main.py ausführen
