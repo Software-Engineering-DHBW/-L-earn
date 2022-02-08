@@ -9,7 +9,6 @@ Zum starten des Prototypen:
       - Pandas
       - psutil
       - PyQT5
-      - Numpy
   3. Main.py ausführen
 
 ### Doku
