@@ -7,9 +7,7 @@ handle operations on processes such as kill() in the future.
 import psutil
 from datetime import datetime
 import pandas as pd
-import time
-import os
-import numpy as np
+
 
 #Returns an array with all processes and their information        
 def get_processes_info():
