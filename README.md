@@ -1,7 +1,7 @@
 # [L]earn
 [L]earn ist eine innovative Anwendung um den eigenen Lernfortschritt zu beschleunigen und die Zeitplanung zu verbessern.
 
-<img src="Logo.png" alt="centered image" style="width: 35%; height: 35%"/>
+<img src="Logo.png" style="width: 35%; height: 35%; text-align: center"/>
 
 ## Prototyp
 ### Ausführung
