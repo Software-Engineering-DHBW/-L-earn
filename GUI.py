@@ -10,6 +10,7 @@ import time
 
 import ProcessModule as pm
 
+
 # class to run update functions in a thread
 class Worker(QObject):
 
@@ -55,7 +56,7 @@ class MainWindow(QDialog):
         self.tableWidget.setColumnWidth(0, 200)
         self.tableWidget.setColumnWidth(1, 150)
         self.tableWidget.setColumnWidth(2, 150)
-        self.loadProcesses()
+        self.createProcessThread()
 
         # init start button
         self.pushButton.setToolTip("This button starts the [L]earn session.")
@@ -64,12 +65,13 @@ class MainWindow(QDialog):
         self.pushButton_2.setToolTip("This button stops the [L]earn session.")
 
     # function to create a thread, which updates the process table
-    def loadProcesses(self):
+    def createProcessThread(self):
         self.thread = QThread()
         self.worker = Worker()
         self.worker.moveToThread(self.thread)
         self.thread.started.connect(self.worker.loadProcesses)
         self.thread.start()
+
 
 def startWindow():
     app = QApplication(sys.argv)
