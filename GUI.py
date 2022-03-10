@@ -39,6 +39,30 @@ class Worker(QObject):
                     i += 1
                 time.sleep(5)
 
+    def updateProcessData(self):
+        """
+        while True:
+            Main.ProcessData.update()
+            time.sleep(5)
+        """
+        return
+
+    def updateCurrentDayData(self):
+        """
+        while True:
+            Main.CurrentDayData.update()
+            time.sleep(3000)
+        """
+        return
+
+    def updateReviewData(self):
+        """
+        while True:
+            Main.ReviewData.update()
+            time.sleep(3000)
+        """
+        return
+
 
 # class that represents the main GUI window
 class MainWindow(QDialog):
