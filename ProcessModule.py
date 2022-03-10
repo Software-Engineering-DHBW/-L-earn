@@ -87,4 +87,7 @@ def getAllProcesses():
     df = construct_dataframe(processes)
     return df
 
-
+class ProcessData():
+    def __init__(self, bannedProcesses):
+        self.data = getAllProcesses()
+        self.bannedProcesses = bannedProcesses
