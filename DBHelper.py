@@ -6,7 +6,8 @@ table_data = "data"
 table_bp = "bannedProcesses"
 
 # column names
-column_name = "name"
+column_pName = "processName"
+column_date = "date"
 column_time = "time"
 column_user = "user"
 
@@ -26,16 +27,17 @@ class DBHelper(object):
 
         def __setup(self):
             # Create table for data
-            stmt = "CREATE TABLE IF NOT EXISTS " + table_data + " (" \
-                   + column_name + " Text, " \
-                   + column_time + " Integer)"
+            stmt = f"CREATE TABLE IF NOT EXISTS {table_data} (" \
+                   f"{column_pName} Text, " \
+                   f"{column_date} Text, " \
+                   f"{column_time} Integer)"
             self.conn.execute(stmt)
 
             # Create table for banned Processes
-            stmt = "CREATE TABLE IF NOT EXISTS " + table_bp + " (" \
-                   + column_name + " Text, " \
-                   + column_user + " Text, CONSTRAINT unq UNIQUE (" \
-                   + column_name + ", " + column_user + "))"
+            stmt = f"CREATE TABLE IF NOT EXISTS {table_bp} (" \
+                   f"{column_pName} Text, " \
+                   f"{column_user} Text, CONSTRAINT unq UNIQUE (" \
+                   f"{column_pName} , {column_user}))"
             self.conn.execute(stmt)
 
             self.conn.commit()
@@ -44,10 +46,10 @@ class DBHelper(object):
             # create a logger
             self.logger = logging.getLogger('dblogger')
             # set logger level
-            self.logger.setLevel(logging.WARNING)
+            self.logger.setLevel(logging.ERROR)
             # or set one of the following level
-            # logger.setLevel(logging.ERROR)
             # logger.setLevel(logging.CRITICAL)
+            # logger.setLevel(logging.WARNING)
             # logger.setLevel(logging.INFO)
             # logger.setLevel(logging.DEBUG)
 
@@ -57,44 +59,86 @@ class DBHelper(object):
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
 
-        def readData(self, time):
-            return self.__read(table_data, column_name, column_time, time)
+        # Methods for data table
+        def readData(self, date):
+            stmt = f"SELECT {column_pName}, {column_time} FROM {table_data} WHERE {column_date} = (?)"
+            args = (date,)
+            return list(self.conn.execute(stmt, args))
 
-        def writeData(self, time, processName):
-            self.__write(table_data, column_name, column_time, processName, time)
+        def readAllData(self):
+            stmt = "SELECT * FROM " + table_data
+            return list(self.conn.execute(stmt))
 
-        def deleteData(self, time):
-            stmt = "DELETE FROM " + table_data + " WHERE " + column_time + " = (?)"
-            args = (time,)
-            self.conn.execute(stmt, args)
-            self.conn.commit()
+        def updateData(self, date, time, processName):
+            stmt = f"SELECT {column_time} FROM {table_data} WHERE {column_pName} = (?) AND {column_date} = (?)"
+            args = (processName, date,)
+            result = self.conn.execute(stmt, args).fetchall()
+            if len(result) != 0:
+                time = result[0][0] + time
+                stmt = f"UPDATE {table_data} SET {column_time} = (?) WHERE {column_pName} = (?) AND {column_date} = (?)"
+                args = (time, processName, date,)
+                try:
+                    self.conn.execute(stmt, args)
+                    self.conn.commit()
+                    self.logger.info(f'Updated {processName} in table ' + table_data)
+                except sqlite3.Error as e:
+                    self.logger.error('An Error occurred while updating ' + processName
+                                      + f' in table {table_data}: ' + ''.join(e.args))
+            else:
+                self.logger.warning(f'Entry for {processName} does not exist in table ' + table_data
+                                    + ' and could not be updated')
 
+        def writeData(self, date, time, processName):
+            stmt = f"SELECT rowid FROM {table_data} WHERE {column_pName} = (?) AND {column_date} = (?)"
+            args = (processName, date,)
+            data = self.conn.execute(stmt, args).fetchall()
+
+            # if there is no entry insert
+            # else update time
+            if len(data) == 0:
+                stmt = f"INSERT INTO {table_data} ({column_pName}, {column_time}, {column_date}) VALUES (?, ?, ?)"
+                args = (processName, time, date,)
+                self.__write(stmt, args, processName, table_data)
+            else:
+                self.updateData(date, time, processName)
+
+        def deleteData(self, processName, date):
+            self.__delete(table_data, column_pName, column_date, processName, date)
+
+        # Methods for bannedProcesses table
         def readBP(self, userName):
-            return self.__read(table_bp, column_name, column_user, userName)
-
-        def writeBP(self, processName, userName):
-            self.__write(table_bp, column_name, column_user, processName, userName)
-
-        def deleteBP(self, processName, userName):
-            stmt = "DELETE FROM " + table_bp + " WHERE " + column_name + " = (?) AND " + column_user + " = (?)"
-            args = (processName, userName,)
-            self.conn.execute(stmt, args)
-            self.conn.commit()
-
-        def __read(self, table, col1, col2, val):
-            stmt = "SELECT " + col1 + " FROM " + table + " WHERE " + col2 + " = (?)"
-            args = (val,)
+            stmt = f"SELECT {column_pName} FROM {table_bp} WHERE {column_user} = (?)"
+            args = (userName,)
             return [x[0] for x in self.conn.execute(stmt, args)]
 
-        def __write(self, table, col1, col2, val1, val2):
-            stmt = "INSERT INTO " + table + " (" + col1 + ", " + col2 + ") VALUES (?, ?)"
+        def writeBP(self, processName, userName):
+            stmt = f"INSERT INTO {table_bp} ({column_pName}, {column_user}) VALUES (?, ?)"
+            args = (processName, userName,)
+            self.__write(stmt, args, processName, table_bp)
+
+        def deleteBP(self, processName, userName):
+            self.__delete(table_bp, column_pName, column_user, processName, userName)
+
+        # Methods for both tables
+        def __write(self, stmt, args, processName, table):
+            try:
+                self.conn.execute(stmt, args)
+                self.conn.commit()
+                self.logger.info(f'Added {processName} into table ' + table)
+            except sqlite3.Error as e:
+                self.logger.error('An Error occurred while adding ' + processName
+                                  + f' into table {table}: ' + ''.join(e.args))
+
+        def __delete(self, table, col1, col2, val1, val2):
+            stmt = f"DELETE FROM {table} WHERE {col1} = (?) AND {col2} = (?)"
             args = (val1, val2,)
             try:
                 self.conn.execute(stmt, args)
                 self.conn.commit()
+                self.logger.info(f'Deleted {val1} from table ' + table)
             except sqlite3.Error as e:
-                self.logger.error('An Error occurred while adding ' + str(val1)
-                                  + ' into database: ' + ''.join(e.args))
+                self.logger.error('An Error occurred while deleting ' + val1
+                                  + f' from table {table}: ' + ''.join(e.args))
 
     instance = None
 
