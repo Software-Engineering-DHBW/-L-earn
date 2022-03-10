@@ -26,7 +26,7 @@ class CurrentDayData:
             writeData()
             self.data = currData
 
-        writeData()
+        self.writeData()
         """
         return
 
@@ -38,14 +38,13 @@ class CurrentDayData:
 class ReviewData:
     data = "read data from DB"
 
-    def updateData(self):
-        return
-
-    def writeData(self):
-        # write data to DB
-        return
-
     def createReview(self):
+        """
+        currDate = datetime.datetime().today()
+        lastSevenDays = [currDate - datetime.timedelta(days = x+1) for x in range(7)
+
+        self.data = "Hier mit lastSevenDays aus DB auslesen"
+        """
         return
 
 
