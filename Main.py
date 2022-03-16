@@ -52,7 +52,8 @@ class ReviewData:
 
 if __name__ == "__main__":
     # GUI.startWindow()
-    Notifications().enableNtfMac()
+    Notifications().enableNtf()
     time.sleep(2)
-    Notifications().disableNtfMac()
+    Notifications().disableNtf()
     time.sleep(2)
+    Notifications().enableNtf()

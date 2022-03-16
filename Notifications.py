@@ -1,6 +1,9 @@
 from sys import platform
 import subprocess
 import logging
+import pyautogui
+import time
+
 
 class Notifications(object):
 
@@ -84,20 +87,20 @@ class Notifications(object):
         if dndState == 1:
             # Set short key ^⌥⇧⌘D for doNotDisturb
             subprocess.Popen([
-                                 "defaults write ~/Library/Preferences/com.apple.symbolichotkeys.plist "
-                                 "AppleSymbolicHotKeys -dict-add 175 "
-                                 "'<dict><key>enabled</key><true/><key>value</key><dict><key>parameters</key>"
-                                 "<array><integer>100</integer><integer>2</integer><integer>1966080</integer></array>"
-                                 "<key>type</key><string>standard</string></dict></dict>'"],
-                             shell=True)
+                "defaults write ~/Library/Preferences/com.apple.symbolichotkeys.plist "
+                "AppleSymbolicHotKeys -dict-add 175 "
+                "'<dict><key>enabled</key><true/><key>value</key><dict><key>parameters</key>"
+                "<array><integer>100</integer><integer>2</integer><integer>1966080</integer></array>"
+                "<key>type</key><string>standard</string></dict></dict>'"],
+                shell=True)
             subprocess.Popen(
                 ["/System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u"],
                 shell=True)
             # Press short key to deactivate doNotDisturb
             subprocess.Popen([
-                                 "osascript -e 'tell application \"System Events\" to keystroke \"D\" using {command "
-                                 "down, shift down, option down, control down}'"],
-                             shell=True)
+                "osascript -e 'tell application \"System Events\" to keystroke \"D\" using {command "
+                "down, shift down, option down, control down}'"],
+                shell=True)
             # Save state in defaults
             subprocess.Popen(["defaults write com.apple.controlcenter 'NSStatusItem Visible DoNotDisturb' 0"],
                              shell=True)
@@ -114,20 +117,20 @@ class Notifications(object):
         if dndState == 0:
             # Set short key ^⌥⇧⌘D for doNotDisturb
             subprocess.Popen([
-                                 "defaults write ~/Library/Preferences/com.apple.symbolichotkeys.plist "
-                                 "AppleSymbolicHotKeys -dict-add 175 "
-                                 "'<dict><key>enabled</key><true/><key>value</key><dict><key>parameters</key>"
-                                 "<array><integer>100</integer><integer>2</integer><integer>1966080</integer></array>"
-                                 "<key>type</key><string>standard</string></dict></dict>'"],
-                             shell=True)
+                "defaults write ~/Library/Preferences/com.apple.symbolichotkeys.plist "
+                "AppleSymbolicHotKeys -dict-add 175 "
+                "'<dict><key>enabled</key><true/><key>value</key><dict><key>parameters</key>"
+                "<array><integer>100</integer><integer>2</integer><integer>1966080</integer></array>"
+                "<key>type</key><string>standard</string></dict></dict>'"],
+                shell=True)
             subprocess.Popen(
                 ["/System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u"],
                 shell=True)
             # Press short key to activate doNotDisturb
             subprocess.Popen([
-                                 "osascript -e 'tell application \"System Events\" to keystroke \"D\" using {command "
-                                 "down, shift down, option down, control down}'"],
-                             shell=True)
+                "osascript -e 'tell application \"System Events\" to keystroke \"D\" using {command "
+                "down, shift down, option down, control down}'"],
+                shell=True)
             # Save state in defaults
             subprocess.Popen(["defaults write com.apple.controlcenter 'NSStatusItem Visible DoNotDisturb' 1"],
                              shell=True)
@@ -137,11 +140,35 @@ class Notifications(object):
             self.logger.info("Notifications are already disabled")
 
     def __enableNtfWindows(self):
-        print("ToDo")
-        subprocess.Popen(["python WnfDump.py -w WNF_SHEL_QUIET_MOMENT_SHELL_MODE_CHANGED 1"],
-                         shell=True)
+        # ToDo
+        pyautogui.press("win")
+        time.sleep(2)
+        pyautogui.write("Focus Assist")
+        time.sleep(1)
+        pyautogui.press("enter")
+        time.sleep(2)
+        pyautogui.press("tab", presses=2)
+        pyautogui.press(" ")
+        time.sleep(1)
+        pyautogui.keyDown("alt")
+        pyautogui.press("f4")
+        pyautogui.keyUp("alt")
+
+        self.logger.info("enabled Notifications")
 
     def __disableNtfWindows(self):
-        print("ToDo")
-        subprocess.Popen(["python WnfDump.py -w WNF_SHEL_QUIET_MOMENT_SHELL_MODE_CHANGED 0"],
-                         shell=True)
+        # ToDo
+        pyautogui.press("win")
+        time.sleep(2)
+        pyautogui.write("Focus Assist")
+        time.sleep(1)
+        pyautogui.press("enter")
+        time.sleep(2)
+        pyautogui.press("tab", presses=3)
+        pyautogui.press(" ")
+        time.sleep(1)
+        pyautogui.keyDown("alt")
+        pyautogui.press("f4")
+        pyautogui.keyUp("alt")
+
+        self.logger.info("disabled Notifications")
