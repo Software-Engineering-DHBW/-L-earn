@@ -1,6 +1,8 @@
 import GUI
 import datetime
 import pandas as pd
+from Notifications import Notifications
+import time
 
 
 class UserData:
@@ -49,5 +51,8 @@ class ReviewData:
 
 
 if __name__ == "__main__":
-    GUI.startWindow()
-
+    # GUI.startWindow()
+    Notifications().enableNtfMac()
+    time.sleep(2)
+    Notifications().disableNtfMac()
+    time.sleep(2)
