@@ -12,6 +12,8 @@ Zum starten des Prototypen:
       - Pandas
       - psutil
       - PyQT5
+      - pyautogui
+      - win32gui
   3. Main.py ausführen
 
 ### Doku

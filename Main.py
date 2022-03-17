@@ -1,6 +1,4 @@
 import GUI
-import datetime
-import pandas as pd
 
 
 class UserData:
@@ -50,4 +48,3 @@ class ReviewData:
 
 if __name__ == "__main__":
     GUI.startWindow()
-
