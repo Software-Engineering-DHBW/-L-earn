@@ -3,6 +3,7 @@ import subprocess
 import logging
 import pyautogui
 import time
+from win32gui import GetWindowText, GetForegroundWindow
 
 
 class Notifications(object):
@@ -140,16 +141,20 @@ class Notifications(object):
             self.logger.info("Notifications are already disabled")
 
     def __enableNtfWindows(self):
-        # ToDo
-        pyautogui.press("win")
-        time.sleep(2)
-        pyautogui.write("Focus Assist")
-        time.sleep(1)
-        pyautogui.press("enter")
-        time.sleep(2)
+        # Open settings Focus Assist
+        subprocess.call("C:\Windows\System32\WindowsPowerShell\\v1.0\powershell.exe Start ms-settings:quiethours",
+                        shell=True)
+        time.sleep(0.5)
+        # Check if Settings Window is open
+        while "Settings" not in str(GetWindowText(GetForegroundWindow())) \
+                and "Einstellungen" not in str(GetWindowText(GetForegroundWindow())):
+            # Open settings window again
+            subprocess.call("C:\Windows\System32\WindowsPowerShell\\v1.0\powershell.exe Start ms-settings:quiethours",
+                            shell=True)
+        # Turn off Focus Assist
         pyautogui.press("tab", presses=2)
         pyautogui.press(" ")
-        time.sleep(1)
+        # Close settings
         pyautogui.keyDown("alt")
         pyautogui.press("f4")
         pyautogui.keyUp("alt")
@@ -157,16 +162,21 @@ class Notifications(object):
         self.logger.info("enabled Notifications")
 
     def __disableNtfWindows(self):
-        # ToDo
-        pyautogui.press("win")
-        time.sleep(2)
-        pyautogui.write("Focus Assist")
-        time.sleep(1)
-        pyautogui.press("enter")
-        time.sleep(2)
+        # Open settings Focus Assist
+        subprocess.call("C:\Windows\System32\WindowsPowerShell\\v1.0\powershell.exe Start ms-settings:quiethours",
+                        shell=True)
+        time.sleep(0.5)
+        # Check if Settings Window is open
+        while "Settings" not in str(GetWindowText(GetForegroundWindow())) \
+                and "Einstellungen" not in str(GetWindowText(GetForegroundWindow())):
+            # Open settings window again
+            subprocess.call("C:\Windows\System32\WindowsPowerShell\\v1.0\powershell.exe Start ms-settings:quiethours",
+                            shell=True)
+
+        # Turn on Focus Assist priority only
         pyautogui.press("tab", presses=3)
         pyautogui.press(" ")
-        time.sleep(1)
+        # Close settings
         pyautogui.keyDown("alt")
         pyautogui.press("f4")
         pyautogui.keyUp("alt")
