@@ -2,6 +2,9 @@ import GUI
 import datetime
 import pandas as pd
 
+import DBHelper
+import ProcessModule
+
 
 class UserData:
     name = "user1"
@@ -9,45 +12,50 @@ class UserData:
 
 
 class CurrentDayData:
-    data = "hier aus db auslesen"
+    global db
+    data = db.readData(datetime.datetime.date())
 
     def updateData(self):
-        """
-        currData = ProcessData().data
+
+        currData = pData.data
 
         if currData["date"][0] == self.data["date"][0]:
 
-            df = pd.merge(cD["name"], df, how="outer", on="name")
+            df = pd.merge(currData["name"], self.data, how="outer", on="name")
             df.set_index("name", inplace=True)
-            df.update(cD.set_index("name"))
+            df.update(currData.set_index("name"))
             df.reset_index(inplace=True)
 
         else:
-            writeData()
+            self.writeData()
             self.data = currData
 
         self.writeData()
-        """
+
         return
 
     def writeData(self):
-        # write data to DB
+        for p in self.data:
+            db.writeData(p.date, p.time, p.name)
         return
 
 
 class ReviewData:
-    data = "read data from DB"
+    data = []
 
     def createReview(self):
-        """
         currDate = datetime.datetime().today()
-        lastSevenDays = [currDate - datetime.timedelta(days = x+1) for x in range(7)
+        lastSevenDays = [currDate - datetime.timedelta(days = x+1) for x in range(7)]
 
-        self.data = "Hier mit lastSevenDays aus DB auslesen"
-        """
+        for d in lastSevenDays:
+            self.data.append(db.readData(d))
+
         return
 
 
 if __name__ == "__main__":
+
+    db = DBHelper.DBHelper()
+    pData = ProcessModule.ProcessData
     GUI.startWindow()
 
