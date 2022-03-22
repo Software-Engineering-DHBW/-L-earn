@@ -8,6 +8,7 @@ from PyQt5.QtCore import QObject, QThread
 from PyQt5.uic import loadUi
 import time
 
+import Main
 import ProcessModule as pm
 
 
@@ -41,20 +42,21 @@ class Worker(QObject):
                 time.sleep(5)
 
     def updateProcessData(self):
-        """
+
         while True:
-            Main.ProcessData.update()
+            pm.ProcessData().updateData()
             time.sleep(5)
-        """
-        return
 
     def updateCurrentDayData(self):
-        """
+
         while True:
-            Main.CurrentDayData.update()
-            time.sleep(3000)
-        """
-        return
+            try:
+                Main.CurrentDayData().updateData()
+            except Exception as e:
+                print(e)
+
+            time.sleep(5)
+
 
     def updateReviewData(self):
         """
@@ -62,7 +64,6 @@ class Worker(QObject):
             Main.ReviewData.update()
             time.sleep(3000)
         """
-        return
 
 
 # class that represents the main GUI window
@@ -72,6 +73,10 @@ class MainWindow(QDialog):
         super(MainWindow, self).__init__()
         self.worker = None
         self.thread = None
+        self.worker2 = None
+        self.thread2 = None
+        self.worker3 = None
+        self.thread3 = None
 
         # load UI from file
         loadUi("UserInterface.ui", self)
@@ -81,6 +86,8 @@ class MainWindow(QDialog):
         self.tableWidget.setColumnWidth(1, 150)
         self.tableWidget.setColumnWidth(2, 150)
         self.createProcessThread()
+        self.createProcessThread2()
+        self.createProcessThread3()
 
         # init start button
         self.pushButton.setToolTip("This button starts the [L]earn session.")
@@ -95,6 +102,20 @@ class MainWindow(QDialog):
         self.worker.moveToThread(self.thread)
         self.thread.started.connect(self.worker.loadProcesses)
         self.thread.start()
+
+    def createProcessThread2(self):
+        self.thread2 = QThread()
+        self.worker2 = Worker()
+        self.worker2.moveToThread(self.thread2)
+        self.thread2.started.connect(self.worker2.updateProcessData)
+        self.thread2.start()
+
+    def createProcessThread3(self):
+        self.thread3 = QThread()
+        self.worker3 = Worker()
+        self.worker3.moveToThread(self.thread3)
+        self.thread3.started.connect(self.worker3.updateCurrentDayData)
+        self.thread3.start()
 
 
 def startWindow():
