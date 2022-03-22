@@ -1,14 +1,13 @@
-import pyautogui
 import time
 import platform
 import notify2
 from win10toast import ToastNotifier
 import win32api
 import os
-
+import subprocess
+import pync
 
 def check_idle_linux():
-    import subprocess
     idle_time = int(subprocess.getoutput('xprintidle')) / 1000 # Requires xprintidle (sudo apt install xprintidle)
     if idle_time > 3:
         print("You have been logged out due to inactivity.")
@@ -30,6 +29,7 @@ def check_idle_Mac(temp_idle_value_sec):
         temp_idle = int(str.split(".")[0])
         # print(str)
         if temp_idle > temp_idle_value_sec:
+            sendmessageMac('Test','This is a Text Message')
             print("You have been logged out due to inactivity.")
 
 
@@ -48,6 +48,9 @@ def sendmessageWindows(title, message):
         #icon_path="icon.ico",
         threaded=True,
     )
+
+def sendmessageMac(title, message):
+    pync.notify(message, title=title)
 
 if platform.system() == 'Linux':
     print('linux')
