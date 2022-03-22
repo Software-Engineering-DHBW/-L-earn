@@ -1,21 +1,53 @@
 import pyautogui
 import time
 import platform
+import notify2
+from win10toast import ToastNotifier
+import win32api
+import os
+
 
 def check_idle_linux():
     import subprocess
     idle_time = int(subprocess.getoutput('xprintidle')) / 1000 # Requires xprintidle (sudo apt install xprintidle)
     if idle_time > 3:
         print("You have been logged out due to inactivity.")
+        sendmessageLinux('test','This is a Testmessage')
+        time.sleep(2)
 
-def check_idle_windows():
-    import win32api
+def check_idle_windows(temp_idle_value_sec):
     idle_time = (win32api.GetTickCount() - win32api.GetLastInputInfo()) / 1000.0
-    if idle_time > 3:
-
+    if idle_time > temp_idle_value_sec:
+        sendmessageWindows('test','This is a Testmessage')
+        time.sleep(2)
         print("You have been logged out due to inactivity.")
 
+def check_idle_Mac(temp_idle_value_sec):
+        time.sleep(2)
+        cmd = "ioreg -c IOHIDSystem | perl -ane 'if (/Idle/) {$idle=(pop @F)/1000000000; print $idle}'"
+        result = os.popen(cmd)  # use popen instead of os.system to open a perl script
+        str = result.read()
+        temp_idle = int(str.split(".")[0])
+        # print(str)
+        if temp_idle > temp_idle_value_sec:
+            print("You have been logged out due to inactivity.")
 
+
+def sendmessageLinux(title, message):
+    notify2.init("Test")
+    notice = notify2.Notification(title, message)
+    notice.show()
+    return
+
+def sendmessageWindows(title, message):
+    toast = ToastNotifier()
+    toast.show_toast(
+        title,
+        message,
+        duration=20,
+        #icon_path="icon.ico",
+        threaded=True,
+    )
 
 if platform.system() == 'Linux':
     print('linux')
@@ -24,9 +56,11 @@ if platform.system() == 'Linux':
 elif platform.system() == 'Darwin':
     print('Macn not yet')
     while 1:
-        check_idle_windows()
+        check_idle_Mac(3)
 elif platform.system() == 'Windows':
     print('windows')
+    while 1:
+        check_idle_windows(3)
 
 
 
