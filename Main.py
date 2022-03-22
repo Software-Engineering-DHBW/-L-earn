@@ -21,10 +21,9 @@ class CurrentDayData(object):
         def updateData(self):
 
             currData = pData.getData()
-            print(self.data)
+
             if len(self.data) != 0:
-                print(currData["date"], self.data["date"])
-                if currData["date"][0] == self.data["date"][0]:
+                if currData["date"].get(0) == self.data["date"].get(0):
                     print(1)
                     df = pd.merge(currData["name"], self.data, how="outer", on="name")
                     df.set_index("name", inplace=True)

@@ -1,14 +1,15 @@
 import sqlite3
 import logging
+import pandas as pd
 
 # table names
 table_data = "data"
 table_bp = "bannedProcesses"
 
 # column names
-column_pName = "processName"
+column_pName = "name"
 column_date = "date"
-column_time = "time"
+column_time = "runtime"
 column_user = "user"
 
 
@@ -46,7 +47,7 @@ class DBHelper(object):
             # create a logger
             self.logger = logging.getLogger('dblogger')
             # set logger level
-            self.logger.setLevel(logging.WARNING)
+            self.logger.setLevel(logging.ERROR)
             # or set one of the following level
             # logger.setLevel(logging.CRITICAL)
             # logger.setLevel(logging.WARNING)
@@ -67,9 +68,12 @@ class DBHelper(object):
             except sqlite3.Error as e:
                 self.logger.critical('local database initialisation error: "%s"', e)
 
-            stmt = f"SELECT {column_pName}, {column_time} FROM {table_data} WHERE {column_date} = (?)"
+            stmt = f"SELECT * FROM {table_data} WHERE {column_date} = (?)"
             args = (date,)
-            return list(self.conn.execute(stmt, args))
+            query = self.conn.execute(stmt, args)
+            cols = [column[0] for column in query.description]
+            results = pd.DataFrame.from_records(data=query.fetchall(), columns=cols)
+            return results
 
         def readAllData(self):
 
@@ -79,7 +83,10 @@ class DBHelper(object):
                 self.logger.critical('local database initialisation error: "%s"', e)
 
             stmt = "SELECT * FROM " + table_data
-            return list(self.conn.execute(stmt))
+            query = self.conn.execute(stmt)
+            cols = [column[0] for column in query.description]
+            results = pd.DataFrame.from_records(data=query.fetchall(), columns=cols)
+            return results
 
         def updateData(self, date, time, processName):
 
@@ -92,7 +99,7 @@ class DBHelper(object):
             args = (processName, date,)
             result = self.conn.execute(stmt, args).fetchall()
             if len(result) != 0:
-                #time = result[0][0] + time
+                # time = result[0][0] + time
                 stmt = f"UPDATE {table_data} SET {column_time} = (?) WHERE {column_pName} = (?) AND {column_date} = (?)"
                 args = (time, processName, date,)
                 try:
@@ -139,7 +146,10 @@ class DBHelper(object):
 
             stmt = f"SELECT {column_pName} FROM {table_bp} WHERE {column_user} = (?)"
             args = (userName,)
-            return [x[0] for x in self.conn.execute(stmt, args)]
+            query = self.conn.execute(stmt, args)
+            cols = [column[0] for column in query.description]
+            results = pd.DataFrame.from_records(data=query.fetchall(), columns=cols)
+            return results
 
         def writeBP(self, processName, userName):
 
