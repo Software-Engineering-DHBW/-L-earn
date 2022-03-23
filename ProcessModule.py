@@ -103,8 +103,7 @@ def processTest():
     #    p = psutil.Process(i)
     #    p.kill()
 
-if __name__ == "__main__":
-    processTest()
+
 
 # Gives back the dataframe with all processes and information
 def getAllProcesses():
@@ -164,3 +163,28 @@ class ProcessData():
                 self.bannedProcesses.remove(name)
             except ValueError:
                 raise Exceptions.NotFoundError
+
+    def killProcess(self, name):
+        if isinstance(name, (list, tuple, np.ndarray)):
+            names = set(name)
+            for n in names:
+                df = set(self.data['name'])
+                for d in df:
+                    if n in d:
+                        p = psutil.Process(d['pid'])
+                        p.kill()
+        else:
+            df = set(self.data.loc[:, ['pid', 'name']])
+            print(df)
+            for d in df:
+                if name in d['name']:
+                    print(d.index)
+                    #p = psutil.Process(d['pid'])
+                    #p.kill()
+
+
+if __name__ == "__main__":
+    # processTest()
+    pD = ProcessData(["msedge"])
+    print(pD.getData())
+    pD.killProcess("msedge")
