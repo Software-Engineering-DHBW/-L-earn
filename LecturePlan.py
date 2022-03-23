@@ -3,6 +3,7 @@ Automatically reads out a DHBW lecture plan and stores it in a LecturePlan objec
 """
 from urllib.request import urlopen
 
+
 def lecturePlanData(url):
     page = urlopen(url)
     html_bytes = page.read()
@@ -26,7 +27,7 @@ def lecturePlanData(url):
             p.append(dayDate)
             continue
         dayDate = dayDate.split(',')
-        lects = lects.split("</li>")    # split single lectures
+        lects = lects.split("</li>")  # split single lectures
         for lect in lects:
             temp = dayDate.copy()
             split = lect.split('</div>')
@@ -47,6 +48,7 @@ def lecturePlanData(url):
             p.append(temp)
     return p
 
+
 class LecturePlan():
 
     def __init__(self, url):
@@ -63,4 +65,3 @@ if __name__ == "__main__":
     lp = LecturePlan("https://vorlesungsplan.dhbw-mannheim.de/index.php?action=view&gid=3067001&uid=7761001")
     lp.printLP()
     print(lp.getLP())
-
