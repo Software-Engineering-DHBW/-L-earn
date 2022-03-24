@@ -1,6 +1,7 @@
 import sqlite3
 import logging
 import pandas as pd
+from datetime import datetime
 
 # table names
 table_data = "data"
@@ -73,6 +74,7 @@ class DBHelper(object):
             query = self.conn.execute(stmt, args)
             cols = [column[0] for column in query.description]
             results = pd.DataFrame.from_records(data=query.fetchall(), columns=cols)
+            results['date'] = results['date'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d').date())
             return results
 
         def readAllData(self):
@@ -86,6 +88,7 @@ class DBHelper(object):
             query = self.conn.execute(stmt)
             cols = [column[0] for column in query.description]
             results = pd.DataFrame.from_records(data=query.fetchall(), columns=cols)
+            results['date'] = results['date'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d').date())
             return results
 
         def updateData(self, date, time, processName):

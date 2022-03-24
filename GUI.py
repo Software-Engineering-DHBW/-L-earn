@@ -8,8 +8,8 @@ from PyQt5.QtCore import QObject, QThread
 from PyQt5.uic import loadUi
 import time
 
-import Main
 import ProcessModule as pm
+import DataClasses as dc
 
 
 # class to run update functions in a thread
@@ -42,28 +42,21 @@ class Worker(QObject):
                 time.sleep(5)
 
     def updateProcessData(self):
-
+        pD = pm.ProcessData()
         while True:
-            pm.ProcessData().updateData()
+            pD.updateData()
             time.sleep(5)
 
     def updateCurrentDayData(self):
-
+        cDD = dc.CurrentDayData()
         while True:
+
             try:
-                Main.CurrentDayData().updateData()
+                cDD.updateData()
             except Exception as e:
                 print(e)
 
-            time.sleep(5)
-
-
-    def updateReviewData(self):
-        """
-        while True:
-            Main.ReviewData.update()
-            time.sleep(3000)
-        """
+            time.sleep(300)
 
 
 # class that represents the main GUI window
