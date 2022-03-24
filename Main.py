@@ -1,4 +1,4 @@
-import GUI
+from gui import GUI
 
 
 class UserData:

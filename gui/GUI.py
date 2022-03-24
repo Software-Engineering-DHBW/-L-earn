@@ -5,7 +5,7 @@ import sys
 
 from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QHBoxLayout, QWidget, QVBoxLayout, QLabel, QTabWidget, \
-    QMainWindow
+    QMainWindow, QLineEdit
 from PyQt5.QtCore import QObject, QThread, QSize
 from PyQt5.uic import loadUi
 
@@ -13,10 +13,12 @@ from Worker import Worker
 
 
 # class that represents the main GUI window
+from gui.LecturePlanGUI import LecturePlanGUI
+
+
 class MainWindow(QMainWindow):
 
     def __init__(self):
-        # super(MainWindow, self).__init__()
         super().__init__()
         self.worker = None
         self.thread = None
@@ -46,7 +48,7 @@ class MainWindow(QMainWindow):
         self.resize(self.Width, self.height)
 
         # add all widgets
-        self.btn_1 = self.getButton(image='hourglass.png', text='Wochenrückblick')
+        self.btn_1 = self.getButton(image='diagram.png', text='Wochenrückblick')
         self.btn_2 = self.getButton(image='dhbw.png', text='Vorlesungsplan')
         self.btn_3 = self.getButton(image='stopwatch.png', text='Limits')
         self.btn_4 = self.getButton(image='notification.png', text='Mitteilungen')
@@ -55,6 +57,8 @@ class MainWindow(QMainWindow):
         self.btn_2.clicked.connect(self.button2)
         self.btn_3.clicked.connect(self.button3)
         self.btn_4.clicked.connect(self.button4)
+
+        self.right_widget = None
 
         # add tabs
         self.tab1 = self.ui1()
@@ -140,12 +144,7 @@ class MainWindow(QMainWindow):
         return main
 
     def ui2(self):
-        main_layout = QVBoxLayout()
-        main_layout.addWidget(QLabel('page 2'))
-        main_layout.addStretch(5)
-        main = QWidget()
-        main.setLayout(main_layout)
-        return main
+        return LecturePlanGUI()
 
     def ui3(self):
         main_layout = QVBoxLayout()
@@ -166,7 +165,6 @@ class MainWindow(QMainWindow):
 
 def startWindow():
     app = QApplication(sys.argv)
-    # global window
     window = MainWindow()
     window.show()
     sys.exit(app.exec_())
