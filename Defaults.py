@@ -7,6 +7,10 @@ class Defaults(object):
         def __init__(self, filename="defaults.pkl"):
             self.filename = filename
             self.__defaults = {}
+            try:
+                self.getDefaults()
+            except FileNotFoundError:
+                self.__saveDefaults()
 
         def __saveDefaults(self):
             with open(self.filename, "wb") as pkl_handle:
@@ -23,7 +27,8 @@ class Defaults(object):
             try:
                 return self.__defaults[key]
             except KeyError as e:
-                return ex.NotFoundError()
+                # return ex.NotFoundError()
+                return ""
 
         def set(self, key, val):
             self.__defaults[key] = val

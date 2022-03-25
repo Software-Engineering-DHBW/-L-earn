@@ -1,11 +1,14 @@
 """
 Automatically reads out a DHBW lecture plan and stores it in a LecturePlan object
 """
+import ssl
 from urllib.request import urlopen
+
+import certifi
 
 
 def lecturePlanData(url):
-    page = urlopen(url)
+    page = urlopen(url, context=ssl.create_default_context(cafile=certifi.where()))
     html_bytes = page.read()
     html = html_bytes.decode("utf-8")
     index = html.find(
@@ -49,7 +52,7 @@ def lecturePlanData(url):
     return p
 
 
-class LecturePlan():
+class LecturePlan:
 
     def __init__(self, url):
         self.lecturePlanArray = lecturePlanData(url)

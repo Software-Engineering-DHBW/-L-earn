@@ -115,7 +115,7 @@ class MainWindow(QMainWindow):
         button.setIcon(QIcon(QPixmap("images/" + image)))
         button.setStyleSheet("QPushButton { text-align: left; }")
         font = button.font()
-        font.setPointSize(16)
+        font.setPointSize(13)
         button.setFont(font)
         button.setIconSize(QSize(20, 20))
         return button

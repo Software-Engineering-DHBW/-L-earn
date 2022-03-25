@@ -13,6 +13,7 @@ Zum starten des Prototypen:
       - psutil
       - PyQT5
       - PyQtWebEngine
+      - qroundprogressbar
       - pyautogui
       - win32gui
   3. Main.py ausführen
