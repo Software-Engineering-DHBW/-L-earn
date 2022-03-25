@@ -1,10 +1,14 @@
 """
 Automatically reads out a DHBW lecture plan and stores it in a LecturePlan object
 """
+import ssl
 from urllib.request import urlopen
 
+import certifi
+
+
 def lecturePlanData(url):
-    page = urlopen(url)
+    page = urlopen(url, context=ssl.create_default_context(cafile=certifi.where()))
     html_bytes = page.read()
     html = html_bytes.decode("utf-8")
     index = html.find(
@@ -26,7 +30,7 @@ def lecturePlanData(url):
             p.append(dayDate)
             continue
         dayDate = dayDate.split(',')
-        lects = lects.split("</li>")    # split single lectures
+        lects = lects.split("</li>")  # split single lectures
         for lect in lects:
             temp = dayDate.copy()
             split = lect.split('</div>')
@@ -47,7 +51,8 @@ def lecturePlanData(url):
             p.append(temp)
     return p
 
-class LecturePlan():
+
+class LecturePlan:
 
     def __init__(self, url):
         self.lecturePlanArray = lecturePlanData(url)
@@ -63,4 +68,3 @@ if __name__ == "__main__":
     lp = LecturePlan("https://vorlesungsplan.dhbw-mannheim.de/index.php?action=view&gid=3067001&uid=7761001")
     lp.printLP()
     print(lp.getLP())
-
