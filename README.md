@@ -14,6 +14,7 @@ Zum starten des Prototypen:
       - PyQT5
       - PyQtWebEngine
       - qroundprogressbar
+      - certifi
       - pyautogui
       - win32gui
   3. Main.py ausführen

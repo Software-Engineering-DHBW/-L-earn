@@ -3,7 +3,7 @@ from urllib.error import URLError
 
 from PyQt5.QtCore import QUrl, Qt
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout, QSizePolicy
+from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout
 from PyQt5.QtGui import QBrush, QColor, QPalette
 
 from qroundprogressbar import QRoundProgressBar
@@ -42,6 +42,7 @@ class LecturePlanGUI(QWidget):
         self.webView.loadFinished.connect(self.loadFinishedHandler)
 
         self.progress = QRoundProgressBar()
+        self.loadedWebsite = False
 
         # -----------------
         # Set Side
@@ -82,7 +83,7 @@ class LecturePlanGUI(QWidget):
             print(url)
 
     def loadStartedHandler(self):
-        try:
+        if not self.loadedWebsite:
             if self.layout() is not None:
                 QWidget().setLayout(self.layout())
 
@@ -101,11 +102,12 @@ class LecturePlanGUI(QWidget):
             main_layout.setAlignment(Qt.AlignCenter)
             main_layout.addWidget(self.progress)
             self.setLayout(main_layout)
-        except Exception as e:
-            print(e)
 
     def loadProgressHandler(self, prog):
-        self.progress.setValue(prog)
+        if not self.loadedWebsite:
+            self.progress.setValue(prog)
 
     def loadFinishedHandler(self):
-        self.setSecondSide()
+        if not self.loadedWebsite:
+            self.loadedWebsite = True
+            self.setSecondSide()
