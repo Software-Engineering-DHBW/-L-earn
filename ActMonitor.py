@@ -7,9 +7,9 @@ import os
 import subprocess
 import pync
 
-def check_idle_linux():
+def check_idle_linux(temp_idle_value_sec):
     idle_time = int(subprocess.getoutput('xprintidle')) / 1000 # Requires xprintidle (sudo apt install xprintidle)
-    if idle_time > 3:
+    if idle_time > temp_idle_value_sec:
         print("You have been logged out due to inactivity.")
         sendmessageLinux('test','This is a Testmessage')
         time.sleep(2)
@@ -52,18 +52,20 @@ def sendmessageWindows(title, message):
 def sendmessageMac(title, message):
     pync.notify(message, title=title)
 
-if platform.system() == 'Linux':
-    print('linux')
-    while 1:
-        check_idle_linux()
-elif platform.system() == 'Darwin':
-    print('Macn not yet')
-    while 1:
-        check_idle_Mac(3)
-elif platform.system() == 'Windows':
-    print('windows')
-    while 1:
-        check_idle_windows(3)
+
+def idleTime(idle_time_sec):
+    if platform.system() == 'Linux':
+        print('linux')
+        while 1:
+            check_idle_linux(idle_time_sec)
+    elif platform.system() == 'Darwin':
+        print('Macn not yet')
+        while 1:
+            check_idle_Mac(idle_time_sec)
+    elif platform.system() == 'Windows':
+        print('windows')
+        while 1:
+            check_idle_windows(idle_time_sec)
 
 
 
