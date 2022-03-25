@@ -19,20 +19,21 @@ class LecturePlanGUI(QWidget):
     def __init__(self):
         super().__init__()
 
+        main_layout = QVBoxLayout(self)
+        main_layout.setAlignment(Qt.AlignTop)
+
         # -----------------
         # First Side
         self.nameLabel = QLabel()
         self.nameLabel.setText('Vorlesungsplanurl:')
         self.line = QLineEdit()
 
-        # self.line.move(150, 10)
-        # self.line.resize(300, 20)
-        # self.nameLabel.move(20, 20)
-
         self.pybutton = QPushButton('Verbinden')
         self.pybutton.clicked.connect(self.setLecturePlan)
-        # self.pybutton.resize(200, 32)
-        # self.pybutton.move(80, 60)
+
+        main_layout.addWidget(self.nameLabel)
+        main_layout.addWidget(self.line)
+        main_layout.addWidget(self.pybutton)
 
         # -----------------
         # Second Side
@@ -41,11 +42,20 @@ class LecturePlanGUI(QWidget):
         self.webView.loadProgress.connect(self.loadProgressHandler)
         self.webView.loadFinished.connect(self.loadFinishedHandler)
 
+        self.pybutton2 = QPushButton('Neu Verbinden')
+        self.pybutton2.clicked.connect(self.setFirstSide)
+
         self.progress = QRoundProgressBar()
         self.loadedWebsite = False
 
+        main_layout.addWidget(self.webView)
+        main_layout.addWidget(self.pybutton2)
+        main_layout.addWidget(self.progress)
+
         # -----------------
         # Set Side
+        self.setLayout(main_layout)
+
         url = Defaults().get(DEF_LECTUREPLANURL)
         if url != "":
             self.webView.setUrl(QUrl(url))
@@ -53,39 +63,40 @@ class LecturePlanGUI(QWidget):
             self.setFirstSide()
 
     def setFirstSide(self):
-        if self.layout() is not None:
-            QWidget().setLayout(self.layout())
-        main_layout = QVBoxLayout(self)
-        main_layout.addWidget(self.nameLabel)
-        main_layout.addWidget(self.line)
-        main_layout.addWidget(self.pybutton)
-        main_layout.addStretch(5)
-        self.setLayout(main_layout)
+        self.loadedWebsite = False
+
+        self.hideAll()
+
+        self.nameLabel.setHidden(False)
+        self.line.setHidden(False)
+        self.pybutton.setHidden(False)
 
     def setSecondSide(self):
-        if self.layout() is not None:
-            QWidget().setLayout(self.layout())
-        main_layout = QVBoxLayout(self)
-        main_layout.addWidget(self.webView)
-        self.setLayout(main_layout)
+        self.hideAll()
+
+        self.webView.setHidden(False)
+        self.pybutton2.setHidden(False)
 
     def setLecturePlan(self):
         url = self.line.text()
         try:
             lecturePlan = LecturePlan(url).getLP()
 
-            if len(lecturePlan) > 0:
+            if len(lecturePlan) > 0 and "vorlesungsplan.dhbw-mannheim.de" in url:
                 Defaults().set(DEF_LECTUREPLANURL, url)
                 self.webView.setUrl(QUrl(url))
 
-        except URLError as e:
+        except (URLError, ValueError) as e:
             print(e)
             print(url)
 
+    def hideAll(self):
+        for i in range(self.layout().count()):
+            self.layout().itemAt(i).widget().hide()
+
     def loadStartedHandler(self):
         if not self.loadedWebsite:
-            if self.layout() is not None:
-                QWidget().setLayout(self.layout())
+            self.hideAll()
 
             self.progress.setBarStyle(QRoundProgressBar.BarStyle.DONUT)
 
@@ -98,10 +109,7 @@ class LecturePlanGUI(QWidget):
             self.progress.setPalette(palette)
             self.progress.setFixedSize(50, 50)
 
-            main_layout = QVBoxLayout(self)
-            main_layout.setAlignment(Qt.AlignCenter)
-            main_layout.addWidget(self.progress)
-            self.setLayout(main_layout)
+            self.progress.setHidden(False)
 
     def loadProgressHandler(self, prog):
         if not self.loadedWebsite:

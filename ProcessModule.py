@@ -37,7 +37,7 @@ def get_processes_info():
             # get process name
             try:
                 name = process.name()
-            except (psutil.AccessDenied, psutil.ZombieProcess):
+            except (psutil.AccessDenied, psutil.ZombieProcess, psutil.NoSuchProcess):
                 continue
 
             # get process create time
@@ -57,14 +57,17 @@ def get_processes_info():
 
             # append process with information to process list
             processes.append({
-                'pid': pid, 'name': name, 'create_time': create_time, 'runtime': runtime.total_seconds(), 'date': date.today()
+                'pid': pid, 'name': name, 'create_time': create_time, 'runtime': runtime.total_seconds(),
+                'date': date.today()
             })
 
     # return process list
     return processes
 
+
 def checkSystemProcess(name):
-    sysWin = ['alg.exe', 'csrss.exe', 'ctfmon.exe', 'explorer.exe', 'lsass.exe', 'services.exe', 'smss.exe', 'spoolsv.exe', 'svchost.exe', 'ntoskrnl.exe', 'winlogon.exe', 'System']
+    sysWin = ['alg.exe', 'csrss.exe', 'ctfmon.exe', 'explorer.exe', 'lsass.exe', 'services.exe', 'smss.exe',
+              'spoolsv.exe', 'svchost.exe', 'ntoskrnl.exe', 'winlogon.exe', 'System']
 
     system = set(sysWin)
     # if os.name == 'nt':
@@ -95,22 +98,25 @@ def processTest():
     print(df.to_string())
 
     # filter for all Edge processes
-    #data = df.loc[df['name'] == "msedge.exe"]
-    #print(data.to_string())
+    # data = df.loc[df['name'] == "msedge.exe"]
+    # print(data.to_string())
 
     # kill every Edge process
-    #for i in data.index:
+    # for i in data.index:
     #    p = psutil.Process(i)
     #    p.kill()
 
+
 if __name__ == "__main__":
     processTest()
+
 
 # Gives back the dataframe with all processes and information
 def getAllProcesses():
     processes = get_processes_info()
     df = construct_dataframe(processes)
     return df
+
 
 class ProcessData(object):
     class __ProcessData:
@@ -165,6 +171,7 @@ class ProcessData(object):
                     self.bannedProcesses.remove(name)
                 except ValueError:
                     raise Exceptions.NotFoundError
+
     instance = None
 
     def __new__(cls, *args, **kwargs):
