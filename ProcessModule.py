@@ -6,6 +6,7 @@ handle operations on processes such as kill() in the future.
 # import all necessary libraries and packages
 import psutil
 from datetime import datetime, date, timedelta
+import time
 import pandas as pd
 import os, sys
 import Exceptions
@@ -55,6 +56,7 @@ def get_processes_info():
             except psutil.AccessDenied:
                 status = "unknown"
 
+            now = time.time()
             # append process with information to process list
             processes.append({
                 'pid': pid, 'name': name, 'create_time': create_time, 'runtime': runtime.total_seconds()
@@ -121,13 +123,21 @@ class ProcessData():
         self.data = getAllProcesses()
 
     def checkProcesses(self):
-        processes = self.data['name']
+        processes = self.data[['name', 'runtime']]
         running = []
         proc = set(processes)
-        for b in self.banned:
+        for b in self.bannedProcesses:
             for p in proc:
-                if b in p:
-                    running.append(b)
+                if b['limit'] != "NN":
+                    if b['limit'] <= p['runtime']:
+                        running.append(b)
+                    else:
+                        continue
+                else:
+                    if b in p['name']:
+                        running.append(b)
+                    else:
+                        continue
 
         return running
 
@@ -164,3 +174,33 @@ class ProcessData():
                 self.bannedProcesses.remove(name)
             except ValueError:
                 raise Exceptions.NotFoundError
+
+    def killProcess(self, name):
+        print(name)
+        if isinstance(name, (list, tuple, np.ndarray)):
+            names = set(name)
+            for n in names:
+                df = set(self.data['name'])
+                for d in df:
+                    ds = set(d)
+                    for s in ds:
+                        if n in s:
+                            p = psutil.Process(s['pid'])
+                            p.kill()
+        else:
+            df = set(self.data.loc[name in self.data['name']])
+            print(df)
+            for d in df:
+                #print(d)
+                if name in d:
+                    #print(d.index)
+                    # p = psutil.Process(d['pid'])
+                    # p.kill()
+                    continue
+
+if __name__ == "__main__":
+    # processTest()
+    pD = ProcessData(["msedge"])
+    #print(pD.getData())
+    print(pD.getBannedProcesses())
+    pD.killProcess("msedge")
