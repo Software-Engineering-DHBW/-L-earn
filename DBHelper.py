@@ -1,14 +1,17 @@
+import os
 import sqlite3
 import logging
+import pandas as pd
+from datetime import datetime
 
 # table names
 table_data = "data"
 table_bp = "bannedProcesses"
 
 # column names
-column_pName = "processName"
+column_pName = "name"
 column_date = "date"
-column_time = "time"
+column_time = "runtime"
 column_user = "user"
 
 
@@ -53,6 +56,8 @@ class DBHelper(object):
             # logger.setLevel(logging.INFO)
             # logger.setLevel(logging.DEBUG)
 
+            if not os.path.isdir('logs'):
+                os.makedirs('logs')
             handler = logging.FileHandler('logs/dblog.log')
             # create a logging format
             formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s')
@@ -61,20 +66,46 @@ class DBHelper(object):
 
         # Methods for data table
         def readData(self, date):
-            stmt = f"SELECT {column_pName}, {column_time} FROM {table_data} WHERE {column_date} = (?)"
+
+            try:
+                self.conn = sqlite3.connect(self.dbname)
+            except sqlite3.Error as e:
+                self.logger.critical('local database initialisation error: "%s"', e)
+
+            stmt = f"SELECT * FROM {table_data} WHERE {column_date} = (?)"
             args = (date,)
-            return list(self.conn.execute(stmt, args))
+            query = self.conn.execute(stmt, args)
+            cols = [column[0] for column in query.description]
+            results = pd.DataFrame.from_records(data=query.fetchall(), columns=cols)
+            results['date'] = results['date'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d').date())
+            return results
 
         def readAllData(self):
+
+            try:
+                self.conn = sqlite3.connect(self.dbname)
+            except sqlite3.Error as e:
+                self.logger.critical('local database initialisation error: "%s"', e)
+
             stmt = "SELECT * FROM " + table_data
-            return list(self.conn.execute(stmt))
+            query = self.conn.execute(stmt)
+            cols = [column[0] for column in query.description]
+            results = pd.DataFrame.from_records(data=query.fetchall(), columns=cols)
+            results['date'] = results['date'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d').date())
+            return results
 
         def updateData(self, date, time, processName):
+
+            try:
+                self.conn = sqlite3.connect(self.dbname)
+            except sqlite3.Error as e:
+                self.logger.critical('local database initialisation error: "%s"', e)
+
             stmt = f"SELECT {column_time} FROM {table_data} WHERE {column_pName} = (?) AND {column_date} = (?)"
             args = (processName, date,)
             result = self.conn.execute(stmt, args).fetchall()
             if len(result) != 0:
-                time = result[0][0] + time
+                # time = result[0][0] + time
                 stmt = f"UPDATE {table_data} SET {column_time} = (?) WHERE {column_pName} = (?) AND {column_date} = (?)"
                 args = (time, processName, date,)
                 try:
@@ -89,6 +120,12 @@ class DBHelper(object):
                                     + ' and could not be updated')
 
         def writeData(self, date, time, processName):
+
+            try:
+                self.conn = sqlite3.connect(self.dbname)
+            except sqlite3.Error as e:
+                self.logger.critical('local database initialisation error: "%s"', e)
+
             stmt = f"SELECT rowid FROM {table_data} WHERE {column_pName} = (?) AND {column_date} = (?)"
             args = (processName, date,)
             data = self.conn.execute(stmt, args).fetchall()
@@ -107,11 +144,26 @@ class DBHelper(object):
 
         # Methods for bannedProcesses table
         def readBP(self, userName):
+
+            try:
+                self.conn = sqlite3.connect(self.dbname)
+            except sqlite3.Error as e:
+                self.logger.critical('local database initialisation error: "%s"', e)
+
             stmt = f"SELECT {column_pName} FROM {table_bp} WHERE {column_user} = (?)"
             args = (userName,)
-            return [x[0] for x in self.conn.execute(stmt, args)]
+            query = self.conn.execute(stmt, args)
+            cols = [column[0] for column in query.description]
+            results = pd.DataFrame.from_records(data=query.fetchall(), columns=cols)
+            return results
 
         def writeBP(self, processName, userName):
+
+            try:
+                self.conn = sqlite3.connect(self.dbname)
+            except sqlite3.Error as e:
+                self.logger.critical('local database initialisation error: "%s"', e)
+
             stmt = f"INSERT INTO {table_bp} ({column_pName}, {column_user}) VALUES (?, ?)"
             args = (processName, userName,)
             self.__write(stmt, args, processName, table_bp)
@@ -121,6 +173,12 @@ class DBHelper(object):
 
         # Methods for both tables
         def __write(self, stmt, args, processName, table):
+
+            try:
+                self.conn = sqlite3.connect(self.dbname)
+            except sqlite3.Error as e:
+                self.logger.critical('local database initialisation error: "%s"', e)
+
             try:
                 self.conn.execute(stmt, args)
                 self.conn.commit()
@@ -130,6 +188,12 @@ class DBHelper(object):
                                   + f' into table {table}: ' + ''.join(e.args))
 
         def __delete(self, table, col1, col2, val1, val2):
+
+            try:
+                self.conn = sqlite3.connect(self.dbname)
+            except sqlite3.Error as e:
+                self.logger.critical('local database initialisation error: "%s"', e)
+
             stmt = f"DELETE FROM {table} WHERE {col1} = (?) AND {col2} = (?)"
             args = (val1, val2,)
             try:

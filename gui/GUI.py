@@ -3,17 +3,18 @@ Includes the functionality to run the graphical user interface
 """
 import sys
 
-from PyQt5.QtGui import QIcon, QPixmap, QFont
-from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QHBoxLayout, QWidget, QVBoxLayout, QLabel, QTabWidget, \
-    QMainWindow, QLineEdit
-from PyQt5.QtCore import QObject, QThread, QSize
-from PyQt5.uic import loadUi
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtWidgets import QApplication, QPushButton, QHBoxLayout, QWidget, QVBoxLayout, QLabel, QTabWidget, \
+    QMainWindow
+from PyQt5.QtCore import QThread, QSize
 
 from Worker import Worker
 
 
 # class that represents the main GUI window
 from gui.LecturePlanGUI import LecturePlanGUI
+from gui.NotificationsGUI import NotificationsGUI
+from gui.WeekReview import WeekReview
 
 
 class MainWindow(QMainWindow):
@@ -22,22 +23,10 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.worker = None
         self.thread = None
-
-        """# load UI from file
-        loadUi("UserInterface.ui", self)
-
-        # init table
-        self.tableWidget.setColumnWidth(0, 200)
-        self.tableWidget.setColumnWidth(1, 150)
-        self.tableWidget.setColumnWidth(2, 150)
-
-        # init start button
-        self.pushButton.setToolTip("This button starts the [L]earn session.")
-
-        # init stop button
-        self.pushButton_2.setToolTip("This button stops the [L]earn session.")"""
-
-        self.createProcessThread()
+        self.worker2 = None
+        self.thread2 = None
+        self.worker3 = None
+        self.thread3 = None
 
         # set the title of main window
         self.setWindowTitle('[L]earn')
@@ -61,20 +50,43 @@ class MainWindow(QMainWindow):
         self.right_widget = None
 
         # add tabs
-        self.tab1 = self.ui1()
-        self.tab2 = self.ui2()
+        self.weekReview = WeekReview()
+        self.lecturePlan = LecturePlanGUI()
+        self.notifications = NotificationsGUI()
+
+        self.tab1 = self.weekReview
+        self.tab2 = self.lecturePlan
         self.tab3 = self.ui3()
-        self.tab4 = self.ui4()
+        self.tab4 = self.notifications
 
         self.initUI()
+
+        # create Threads
+        self.createProcessThread()
+        self.createProcessThread2()
+        self.createProcessThread3()
 
     # function to create a thread, which updates the process table
     def createProcessThread(self):
         self.thread = QThread()
-        self.worker = Worker(self)
+        self.worker = Worker(self.weekReview)
         self.worker.moveToThread(self.thread)
         self.thread.started.connect(self.worker.loadProcesses)
         self.thread.start()
+
+    def createProcessThread2(self):
+        self.thread2 = QThread()
+        self.worker2 = Worker(self.weekReview)
+        self.worker2.moveToThread(self.thread2)
+        self.thread2.started.connect(self.worker2.updateProcessData)
+        self.thread2.start()
+
+    def createProcessThread3(self):
+        self.thread3 = QThread()
+        self.worker3 = Worker(self.weekReview)
+        self.worker3.moveToThread(self.thread3)
+        self.thread3.started.connect(self.worker3.updateCurrentDayData)
+        self.thread3.start()
 
     def initUI(self):
         left_layout = QVBoxLayout()
@@ -144,7 +156,12 @@ class MainWindow(QMainWindow):
         return main
 
     def ui2(self):
-        return LecturePlanGUI()
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(QLabel('page 2'))
+        main_layout.addStretch(5)
+        main = QWidget()
+        main.setLayout(main_layout)
+        return main
 
     def ui3(self):
         main_layout = QVBoxLayout()

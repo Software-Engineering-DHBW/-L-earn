@@ -37,7 +37,7 @@ def get_processes_info():
             # get process name
             try:
                 name = process.name()
-            except (psutil.AccessDenied, psutil.ZombieProcess):
+            except (psutil.AccessDenied, psutil.ZombieProcess, psutil.NoSuchProcess):
                 continue
 
             # get process create time
@@ -57,14 +57,17 @@ def get_processes_info():
 
             # append process with information to process list
             processes.append({
-                'pid': pid, 'name': name, 'create_time': create_time, 'runtime': runtime.total_seconds()
+                'pid': pid, 'name': name, 'create_time': create_time, 'runtime': runtime.total_seconds(),
+                'date': date.today()
             })
 
     # return process list
     return processes
 
+
 def checkSystemProcess(name):
-    sysWin = ['alg.exe', 'csrss.exe', 'ctfmon.exe', 'explorer.exe', 'lsass.exe', 'services.exe', 'smss.exe', 'spoolsv.exe', 'svchost.exe', 'ntoskrnl.exe', 'winlogon.exe', 'System']
+    sysWin = ['alg.exe', 'csrss.exe', 'ctfmon.exe', 'explorer.exe', 'lsass.exe', 'services.exe', 'smss.exe',
+              'spoolsv.exe', 'svchost.exe', 'ntoskrnl.exe', 'winlogon.exe', 'System']
 
     system = set(sysWin)
     # if os.name == 'nt':
@@ -95,16 +98,18 @@ def processTest():
     print(df.to_string())
 
     # filter for all Edge processes
-    #data = df.loc[df['name'] == "msedge.exe"]
-    #print(data.to_string())
+    # data = df.loc[df['name'] == "msedge.exe"]
+    # print(data.to_string())
 
     # kill every Edge process
-    #for i in data.index:
+    # for i in data.index:
     #    p = psutil.Process(i)
     #    p.kill()
 
+
 if __name__ == "__main__":
     processTest()
+
 
 # Gives back the dataframe with all processes and information
 def getAllProcesses():
@@ -112,55 +117,70 @@ def getAllProcesses():
     df = construct_dataframe(processes)
     return df
 
-class ProcessData():
-    def __init__(self, bannedProcesses=[]):
-        self.data = getAllProcesses()
-        self.bannedProcesses = bannedProcesses
 
-    def updateData(self):
-        self.data = getAllProcesses()
+class ProcessData(object):
+    class __ProcessData:
+        def __init__(self, bannedProcesses=[]):
+            self.data = getAllProcesses()
+            self.bannedProcesses = bannedProcesses
 
-    def checkProcesses(self):
-        processes = self.data['name']
-        running = []
-        proc = set(processes)
-        for b in self.banned:
-            for p in proc:
-                if b in p:
-                    running.append(b)
+        def updateData(self):
+            self.data = getAllProcesses()
 
-        return running
+        def checkProcesses(self):
+            processes = self.data['name']
+            running = []
+            proc = set(processes)
+            for b in self.banned:
+                for p in proc:
+                    if b in p:
+                        running.append(b)
 
-    def setBannedProcesses(self, bp):
-        if len(bp) != 0:
-            self.bannedProcesses = bp
-        else:
-            raise Exceptions.EmptyValueError
+            return running
 
-    def clearBannedProcesses(self):
-        self.bannedProcesses.clear()
+        def setBannedProcesses(self, bp):
+            if len(bp) != 0:
+                self.bannedProcesses = bp
+            else:
+                raise Exceptions.EmptyValueError
 
-    def getData(self):
-        return self.data
+        def clearBannedProcesses(self):
+            self.bannedProcesses.clear()
 
-    def getBannedProcesses(self):
-        return self.bannedProcesses
+        def getData(self):
+            return self.data
 
-    def extendBannedProcesses(self, name):
-        if isinstance(name, (list, tuple, np.ndarray)):
-            self.bannedProcesses.extend(name)
-        else:
-            self.bannedProcesses.append(name)
+        def getBannedProcesses(self):
+            return self.bannedProcesses
 
-    def removeBannedProcess(self, name):
-        if isinstance(name, (list, tuple, np.ndarray)):
-            for n in name:
+        def extendBannedProcesses(self, name):
+            if isinstance(name, (list, tuple, np.ndarray)):
+                self.bannedProcesses.extend(name)
+            else:
+                self.bannedProcesses.append(name)
+
+        def removeBannedProcess(self, name):
+            if isinstance(name, (list, tuple, np.ndarray)):
+                for n in name:
+                    try:
+                        self.bannedProcesses.remove(n)
+                    except ValueError:
+                        raise Exceptions.NotFoundError
+            else:
                 try:
-                    self.bannedProcesses.remove(n)
+                    self.bannedProcesses.remove(name)
                 except ValueError:
                     raise Exceptions.NotFoundError
-        else:
-            try:
-                self.bannedProcesses.remove(name)
-            except ValueError:
-                raise Exceptions.NotFoundError
+
+    instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if not ProcessData.instance:
+            ProcessData.instance = ProcessData.__ProcessData()
+        return ProcessData.instance
+
+    def __getattr__(self, name):
+        return getattr(self.instance, name)
+
+    def __setattr__(self, name, value):
+        return setattr(self.instance, name, value)
