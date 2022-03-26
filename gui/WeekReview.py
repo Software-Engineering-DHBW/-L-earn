@@ -77,6 +77,16 @@ class WeekReview(QDialog):
         # get review data form DataClasses
         data = DataClasses.ReviewData().createReview()
 
+        if data.empty:
+            msgLabel = QLabel("Ganz schön leer hier :( !?\n"
+                              "Es gibt bisher leider nicht genug Daten um einen Rückblick zu erstellen!")
+            msgLabel.setStyleSheet("QLabel{"
+                                   "text-align: Center;"
+                                   "color: white;}")
+            msgLabel.setAlignment(QtCore.Qt.AlignCenter)
+            layout.addWidget(msgLabel)
+            return
+
         data.drop(['date'], axis=1, inplace=True)
         data = data.groupby(data['name']).aggregate({'runtime': 'sum'})
         data.sort_values(by=['runtime'], ascending=False, inplace=True)
@@ -94,11 +104,12 @@ class WeekReview(QDialog):
             barTime = ""
             runtime = (datetime.timedelta(seconds=round(row.runtime)))
             if runtime.days != 0:
-                barTime += str(runtime.days) + "d " + str(runtime.seconds//3600) + "h " + str((runtime.seconds//60) % 60) + "min"
-            elif runtime.seconds//3600 != 0:
-                barTime += str(runtime.seconds//3600) + "h " + str((runtime.seconds//60) % 60) + "min"
-            elif (runtime.seconds//60)%60 != 0:
-                barTime += str((runtime.seconds//60) % 60) + "min"
+                barTime += str(runtime.days) + "d " + str(runtime.seconds // 3600) + "h " + str(
+                    (runtime.seconds // 60) % 60) + "min"
+            elif runtime.seconds // 3600 != 0:
+                barTime += str(runtime.seconds // 3600) + "h " + str((runtime.seconds // 60) % 60) + "min"
+            elif (runtime.seconds // 60) % 60 != 0:
+                barTime += str((runtime.seconds // 60) % 60) + "min"
             else:
                 return
 
@@ -109,7 +120,7 @@ class WeekReview(QDialog):
             bar = QProgressBar()
             bar.setMinimum(0)
             bar.setMaximum(maxVal)
-            bar.setValue(200000)
+            bar.setValue(row.runtime)
             bar.setFormat(barText)
             bar.setAlignment(QtCore.Qt.AlignLeft)
             bar.setStyleSheet("QProgressBar {"
@@ -124,4 +135,3 @@ class WeekReview(QDialog):
                               " border-radius: 5px;}")
 
             layout.addWidget(bar)
-

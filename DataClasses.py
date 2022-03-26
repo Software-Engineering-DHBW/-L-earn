@@ -93,7 +93,9 @@ class ReviewData(object):
             lastSevenDays = [currDate - dt.timedelta(days=x + 1) for x in range(2)]
 
             for d in lastSevenDays:
-                self.data = pd.concat([self.data, db.readData(d)])
+                dayData = db.readData(d)
+                if not dayData.empty:
+                    self.data = pd.concat([self.data, dayData])
 
             return self.data
 
