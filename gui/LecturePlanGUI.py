@@ -10,6 +10,7 @@ from qroundprogressbar import QRoundProgressBar
 
 from Defaults import Defaults
 from LecturePlan import LecturePlan
+from gui.NotificationsGUI import NotificationsGUI
 
 DEF_LECTUREPLANURL = "LecturePlanURL"
 
@@ -113,6 +114,7 @@ class LecturePlanGUI(QWidget):
                 if len(lecturePlan) > 0:
                     Defaults().set(DEF_LECTUREPLANURL, url)
                     self.webView.setUrl(QUrl(url))
+                    NotificationsGUI().initTimers(url)
 
             except (URLError, ValueError) as e:
                 print(e)
