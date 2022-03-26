@@ -1,5 +1,15 @@
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QProgressBar, QLabel
+import datetime
+
+import DataClasses
+
+
+class ProgressBar(QProgressBar):
+
+    def __init__(self, *args, **kwargs):
+        super(ProgressBar, self).__init__(*args, **kwargs)
+        self.setValue(0)
 
 
 class WeekReview(QDialog):
@@ -7,16 +17,25 @@ class WeekReview(QDialog):
     def __init__(self):
         super().__init__()
 
-        # load UI from file
-        self.tableWidget = QtWidgets.QTableWidget(self)
-        self.setupUi()
+        layout = QVBoxLayout(self)
 
-        # init table
-        self.tableWidget.setColumnWidth(0, 200)
-        self.tableWidget.setColumnWidth(1, 150)
-        self.tableWidget.setColumnWidth(2, 150)
+        self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+        self.setStyleSheet('background-color: #2196f3;')
+
+        titleLabel = QLabel("Wochenrückblick")
+        titleLabel.setAlignment(QtCore.Qt.AlignCenter)
+        titleLabel.setMaximumHeight(80)
+        titleLabel.setStyleSheet("QLabel {"
+                                 "background-color: #0069c0;"
+                                 "text-align: Center;"
+                                 "font-size: 30px;"
+                                 "font-family: 'Times New Roman', Times, serif;"
+                                 "color: white;}")
+        layout.addWidget(titleLabel)
+        self.createReviewBars(layout)
 
     def setupUi(self):
+
         self.setObjectName("Dialog")
         self.resize(982, 707)
         self.setAutoFillBackground(False)
@@ -52,3 +71,57 @@ class WeekReview(QDialog):
         item = self.tableWidget.horizontalHeaderItem(2)
         item.setText(_translate("Dialog", "Productivity"))
         self.label.setText(_translate("Dialog", "Running processes"))
+
+    def createReviewBars(self, layout):
+
+        # get review data form DataClasses
+        data = DataClasses.ReviewData().createReview()
+
+        data.drop(['date'], axis=1, inplace=True)
+        data = data.groupby(data['name']).aggregate({'runtime': 'sum'})
+        data.sort_values(by=['runtime'], ascending=False, inplace=True)
+
+        i = 0
+        for name, row in data.iterrows():
+
+            if i == 0:
+                maxVal = row.runtime
+            if i >= 10:
+                break
+            i += 1
+
+            # create the string for the runtime of each process
+            barTime = ""
+            runtime = (datetime.timedelta(seconds=round(row.runtime)))
+            if runtime.days != 0:
+                barTime += str(runtime.days) + "d " + str(runtime.seconds//3600) + "h " + str((runtime.seconds//60) % 60) + "min"
+            elif runtime.seconds//3600 != 0:
+                barTime += str(runtime.seconds//3600) + "h " + str((runtime.seconds//60) % 60) + "min"
+            elif (runtime.seconds//60)%60 != 0:
+                barTime += str((runtime.seconds//60) % 60) + "min"
+            else:
+                return
+
+            # put together final process description
+            barText = "     " + name + ":   " + barTime
+
+            # create progress bar
+            bar = QProgressBar()
+            bar.setMinimum(0)
+            bar.setMaximum(maxVal)
+            bar.setValue(200000)
+            bar.setFormat(barText)
+            bar.setAlignment(QtCore.Qt.AlignLeft)
+            bar.setStyleSheet("QProgressBar {"
+                              " border-radius: 5px;"
+                              " text-align: left;"
+                              " font-size: 18px;"
+                              " font-family: 'Times New Roman', Times, serif;"
+                              " color: black;"
+                              " T min-height: 35px;} "
+                              "QProgressBar::chunk {"
+                              "background-color: #6ec6ff;"
+                              " border-radius: 5px;}")
+
+            layout.addWidget(bar)
+

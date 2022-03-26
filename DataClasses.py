@@ -86,14 +86,14 @@ class CurrentDayData(object):
 
 class ReviewData(object):
     class __ReviewData:
-        data = []
+        data = pd.DataFrame()
 
         def createReview(self):
             currDate = date.today()
-            lastSevenDays = [currDate - dt.timedelta(days=x + 1) for x in range(7)]
+            lastSevenDays = [currDate - dt.timedelta(days=x + 1) for x in range(2)]
 
             for d in lastSevenDays:
-                self.data.append(db.readData(d))
+                self.data = pd.concat([self.data, db.readData(d)])
 
             return self.data
 
