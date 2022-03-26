@@ -3,7 +3,7 @@ from urllib.error import URLError
 
 from PyQt5.QtCore import QUrl, Qt
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout, QHBoxLayout
 from PyQt5.QtGui import QBrush, QColor, QPalette
 
 from qroundprogressbar import QRoundProgressBar
@@ -19,6 +19,8 @@ class LecturePlanGUI(QWidget):
     def __init__(self):
         super().__init__()
 
+        self.loadedWebsite = False
+
         main_layout = QVBoxLayout(self)
         main_layout.setAlignment(Qt.AlignTop)
 
@@ -31,6 +33,7 @@ class LecturePlanGUI(QWidget):
         self.pybutton = QPushButton('Verbinden')
         self.pybutton.clicked.connect(self.setLecturePlan)
 
+        # Add Widgets
         main_layout.addWidget(self.nameLabel)
         main_layout.addWidget(self.line)
         main_layout.addWidget(self.pybutton)
@@ -45,12 +48,30 @@ class LecturePlanGUI(QWidget):
         self.pybutton2 = QPushButton('Neu Verbinden')
         self.pybutton2.clicked.connect(self.setFirstSide)
 
-        self.progress = QRoundProgressBar()
-        self.loadedWebsite = False
+        # ProgressBar
+        self.progressWidget = QWidget()
+        progressLayout = QHBoxLayout()
+        progressLayout.setAlignment(Qt.AlignCenter)
 
+        self.progress = QRoundProgressBar()
+        self.progress.setBarStyle(QRoundProgressBar.BarStyle.DONUT)
+
+        # style accordingly via palette
+        palette = QPalette()
+        brush = QBrush(QColor(244, 0, 27))
+        brush.setStyle(Qt.SolidPattern)
+        palette.setBrush(QPalette.Active, QPalette.Highlight, brush)
+
+        self.progress.setPalette(palette)
+        self.progress.setFixedSize(50, 50)
+
+        progressLayout.addWidget(self.progress)
+        self.progressWidget.setLayout(progressLayout)
+
+        # Add Widgets
         main_layout.addWidget(self.webView)
         main_layout.addWidget(self.pybutton2)
-        main_layout.addWidget(self.progress)
+        main_layout.addWidget(self.progressWidget)
 
         # -----------------
         # Set Side
@@ -97,19 +118,7 @@ class LecturePlanGUI(QWidget):
     def loadStartedHandler(self):
         if not self.loadedWebsite:
             self.hideAll()
-
-            self.progress.setBarStyle(QRoundProgressBar.BarStyle.DONUT)
-
-            # style accordingly via palette
-            palette = QPalette()
-            brush = QBrush(QColor(244, 0, 27))
-            brush.setStyle(Qt.SolidPattern)
-            palette.setBrush(QPalette.Active, QPalette.Highlight, brush)
-
-            self.progress.setPalette(palette)
-            self.progress.setFixedSize(50, 50)
-
-            self.progress.setHidden(False)
+            self.progressWidget.setHidden(False)
 
     def loadProgressHandler(self, prog):
         if not self.loadedWebsite:
