@@ -100,16 +100,23 @@ class LecturePlanGUI(QWidget):
 
     def setLecturePlan(self):
         url = self.line.text()
-        try:
-            lecturePlan = LecturePlan(url).getLP()
+        if "vorlesungsplan.dhbw-mannheim.de" in url:
+            # remove date parameter
+            dateIndex = url.find("date=")
+            if dateIndex != -1:
+                url = url[0:dateIndex-1]
+                print(url)
 
-            if len(lecturePlan) > 0 and "vorlesungsplan.dhbw-mannheim.de" in url:
-                Defaults().set(DEF_LECTUREPLANURL, url)
-                self.webView.setUrl(QUrl(url))
+            try:
+                lecturePlan = LecturePlan(url).getLP()
 
-        except (URLError, ValueError) as e:
-            print(e)
-            print(url)
+                if len(lecturePlan) > 0:
+                    Defaults().set(DEF_LECTUREPLANURL, url)
+                    self.webView.setUrl(QUrl(url))
+
+            except (URLError, ValueError) as e:
+                print(e)
+                print(url)
 
     def hideAll(self):
         for i in range(self.layout().count()):
