@@ -3,7 +3,7 @@ from urllib.error import URLError
 
 from PyQt5.QtCore import QUrl, Qt
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout, QHBoxLayout
 from PyQt5.QtGui import QBrush, QColor, QPalette
 
 from qroundprogressbar import QRoundProgressBar
@@ -19,20 +19,24 @@ class LecturePlanGUI(QWidget):
     def __init__(self):
         super().__init__()
 
+        self.loadedWebsite = False
+
+        main_layout = QVBoxLayout(self)
+        main_layout.setAlignment(Qt.AlignTop)
+
         # -----------------
         # First Side
         self.nameLabel = QLabel()
         self.nameLabel.setText('Vorlesungsplanurl:')
         self.line = QLineEdit()
 
-        # self.line.move(150, 10)
-        # self.line.resize(300, 20)
-        # self.nameLabel.move(20, 20)
-
         self.pybutton = QPushButton('Verbinden')
         self.pybutton.clicked.connect(self.setLecturePlan)
-        # self.pybutton.resize(200, 32)
-        # self.pybutton.move(80, 60)
+
+        # Add Widgets
+        main_layout.addWidget(self.nameLabel)
+        main_layout.addWidget(self.line)
+        main_layout.addWidget(self.pybutton)
 
         # -----------------
         # Second Side
@@ -41,11 +45,38 @@ class LecturePlanGUI(QWidget):
         self.webView.loadProgress.connect(self.loadProgressHandler)
         self.webView.loadFinished.connect(self.loadFinishedHandler)
 
+        self.pybutton2 = QPushButton('Neu Verbinden')
+        self.pybutton2.clicked.connect(self.setFirstSide)
+
+        # ProgressBar
+        self.progressWidget = QWidget()
+        progressLayout = QHBoxLayout()
+        progressLayout.setAlignment(Qt.AlignCenter)
+
         self.progress = QRoundProgressBar()
-        self.loadedWebsite = False
+        self.progress.setBarStyle(QRoundProgressBar.BarStyle.DONUT)
+
+        # style accordingly via palette
+        palette = QPalette()
+        brush = QBrush(QColor(244, 0, 27))
+        brush.setStyle(Qt.SolidPattern)
+        palette.setBrush(QPalette.Active, QPalette.Highlight, brush)
+
+        self.progress.setPalette(palette)
+        self.progress.setFixedSize(50, 50)
+
+        progressLayout.addWidget(self.progress)
+        self.progressWidget.setLayout(progressLayout)
+
+        # Add Widgets
+        main_layout.addWidget(self.webView)
+        main_layout.addWidget(self.pybutton2)
+        main_layout.addWidget(self.progressWidget)
 
         # -----------------
         # Set Side
+        self.setLayout(main_layout)
+
         url = Defaults().get(DEF_LECTUREPLANURL)
         if url != "":
             self.webView.setUrl(QUrl(url))
@@ -53,55 +84,41 @@ class LecturePlanGUI(QWidget):
             self.setFirstSide()
 
     def setFirstSide(self):
-        if self.layout() is not None:
-            QWidget().setLayout(self.layout())
-        main_layout = QVBoxLayout(self)
-        main_layout.addWidget(self.nameLabel)
-        main_layout.addWidget(self.line)
-        main_layout.addWidget(self.pybutton)
-        main_layout.addStretch(5)
-        self.setLayout(main_layout)
+        self.loadedWebsite = False
+
+        self.hideAll()
+
+        self.nameLabel.setHidden(False)
+        self.line.setHidden(False)
+        self.pybutton.setHidden(False)
 
     def setSecondSide(self):
-        if self.layout() is not None:
-            QWidget().setLayout(self.layout())
-        main_layout = QVBoxLayout(self)
-        main_layout.addWidget(self.webView)
-        self.setLayout(main_layout)
+        self.hideAll()
+
+        self.webView.setHidden(False)
+        self.pybutton2.setHidden(False)
 
     def setLecturePlan(self):
         url = self.line.text()
         try:
             lecturePlan = LecturePlan(url).getLP()
 
-            if len(lecturePlan) > 0:
+            if len(lecturePlan) > 0 and "vorlesungsplan.dhbw-mannheim.de" in url:
                 Defaults().set(DEF_LECTUREPLANURL, url)
                 self.webView.setUrl(QUrl(url))
 
-        except URLError as e:
+        except (URLError, ValueError) as e:
             print(e)
             print(url)
 
+    def hideAll(self):
+        for i in range(self.layout().count()):
+            self.layout().itemAt(i).widget().hide()
+
     def loadStartedHandler(self):
         if not self.loadedWebsite:
-            if self.layout() is not None:
-                QWidget().setLayout(self.layout())
-
-            self.progress.setBarStyle(QRoundProgressBar.BarStyle.DONUT)
-
-            # style accordingly via palette
-            palette = QPalette()
-            brush = QBrush(QColor(244, 0, 27))
-            brush.setStyle(Qt.SolidPattern)
-            palette.setBrush(QPalette.Active, QPalette.Highlight, brush)
-
-            self.progress.setPalette(palette)
-            self.progress.setFixedSize(50, 50)
-
-            main_layout = QVBoxLayout(self)
-            main_layout.setAlignment(Qt.AlignCenter)
-            main_layout.addWidget(self.progress)
-            self.setLayout(main_layout)
+            self.hideAll()
+            self.progressWidget.setHidden(False)
 
     def loadProgressHandler(self, prog):
         if not self.loadedWebsite:

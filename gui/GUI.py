@@ -13,6 +13,7 @@ from Worker import Worker
 
 # class that represents the main GUI window
 from gui.LecturePlanGUI import LecturePlanGUI
+from gui.NotificationsGUI import NotificationsGUI
 from gui.WeekReview import WeekReview
 
 
@@ -51,11 +52,12 @@ class MainWindow(QMainWindow):
         # add tabs
         self.weekReview = WeekReview()
         self.lecturePlan = LecturePlanGUI()
+        self.notifications = NotificationsGUI()
 
         self.tab1 = self.weekReview
         self.tab2 = self.lecturePlan
         self.tab3 = self.ui3()
-        self.tab4 = self.ui4()
+        self.tab4 = self.notifications
 
         self.initUI()
 
