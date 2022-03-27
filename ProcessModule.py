@@ -39,7 +39,7 @@ def get_processes_info():
             # get process name
             try:
                 name = process.name()
-            except (psutil.AccessDenied, psutil.ZombieProcess):
+            except (psutil.AccessDenied, psutil.ZombieProcess, psutil.NoSuchProcess):
                 continue
 
             # get process create time
@@ -110,22 +110,25 @@ def processTest():
     print(df.to_string())
 
     # filter for all Edge processes
-    #data = df.loc[df['name'] == "msedge.exe"]
-    #print(data.to_string())
+    # data = df.loc[df['name'] == "msedge.exe"]
+    # print(data.to_string())
 
     # kill every Edge process
-    #for i in data.index:
+    # for i in data.index:
     #    p = psutil.Process(i)
     #    p.kill()
 
+
 if __name__ == "__main__":
     processTest()
+
 
 # Gives back the dataframe with all processes and information
 def getAllProcesses():
     processes = get_processes_info()
     df = construct_dataframe(processes)
     return df
+
 
 class ProcessData(object):
     class __ProcessData:
