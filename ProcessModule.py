@@ -11,6 +11,7 @@ import pandas as pd
 import os, sys
 import Exceptions
 import numpy as np
+import subprocess
 
 
 # Returns an array with all processes and their information
@@ -31,9 +32,9 @@ def get_processes_info():
                 continue
 
             # Check if process is a system process
-            if os.name == 'nt':
-                if checkSystemProcess(process.name()):
-                    continue
+            #if os.name == 'nt':
+            #    if checkSystemProcess(process.name()):
+            #        continue
 
             # get process name
             try:
@@ -65,12 +66,21 @@ def get_processes_info():
     # return process list
     return processes
 
+# Checks if a proces is a system process
 def checkSystemProcess(name):
-    sysWin = ['alg.exe', 'csrss.exe', 'ctfmon.exe', 'explorer.exe', 'lsass.exe', 'services.exe', 'smss.exe', 'spoolsv.exe', 'svchost.exe', 'ntoskrnl.exe', 'winlogon.exe', 'System']
+    #sysWin = ['alg.exe', 'csrss.exe', 'ctfmon.exe', 'explorer.exe', 'lsass.exe', 'services.exe', 'smss.exe', 'spoolsv.exe', 'svchost.exe', 'ntoskrnl.exe', 'winlogon.exe', 'System']
 
-    system = set(sysWin)
+    #system = set(sysWin)
     # if os.name == 'nt':
     #    sys = set(sysWin)
+    system = []
+
+    # getting all processes that are opened through a window, which means they are no system process
+    cmd = 'powershell "gps | where {$_.MainWindowTitle } | select ProcessName'
+    proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    for line in proc.stdout:
+        if line.rstrip():
+            system.append(line.decode().rstrip())
 
     if name in system:
         return True
