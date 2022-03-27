@@ -3,10 +3,10 @@ Includes the functionality to run the graphical user interface
 """
 import sys
 
-from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtGui import QIcon, QPixmap, QFontDatabase
 from PyQt5.QtWidgets import QApplication, QPushButton, QHBoxLayout, QWidget, QVBoxLayout, QLabel, QTabWidget, \
     QMainWindow
-from PyQt5.QtCore import QThread, QSize
+from PyQt5.QtCore import QThread, QSize, Qt
 
 from Worker import Worker
 
@@ -20,7 +20,9 @@ from gui.WeekReview import WeekReview
 class MainWindow(QMainWindow):
 
     def __init__(self):
+
         super().__init__()
+
         self.worker = None
         self.thread = None
         self.worker2 = None
@@ -30,6 +32,7 @@ class MainWindow(QMainWindow):
 
         # set the title of main window
         self.setWindowTitle('[L]earn')
+        self.setWindowIcon(QIcon('Logo.png'))
 
         # set the size of window
         self.Width = 1000
@@ -62,7 +65,7 @@ class MainWindow(QMainWindow):
         self.initUI()
 
         # create Threads
-        self.createProcessThread()
+        #self.createProcessThread()
         self.createProcessThread2()
         self.createProcessThread3()
 
@@ -109,7 +112,7 @@ class MainWindow(QMainWindow):
 
         self.right_widget.setCurrentIndex(0)
         self.right_widget.setStyleSheet('''QTabBar::tab{width: 0; \
-            height: 0; margin: 0; padding: 0; border: none;}''')
+            height: 0; margin: 0; padding: 0; border: none; border-radius: 5px;}''')
 
         main_layout = QHBoxLayout()
         main_layout.addWidget(left_widget)
@@ -125,7 +128,7 @@ class MainWindow(QMainWindow):
     def getButton(self, image, text):
         button = QPushButton(text, self)
         button.setIcon(QIcon(QPixmap("images/" + image)))
-        button.setStyleSheet("QPushButton { text-align: left; }")
+        button.setStyleSheet("QPushButton { text-align: left; border-radius: 5px; background-color: white; min-height: 30px; min-width: 150px;}")
         font = button.font()
         font.setPointSize(13)
         button.setFont(font)
@@ -181,6 +184,7 @@ class MainWindow(QMainWindow):
 
 
 def startWindow():
+
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
