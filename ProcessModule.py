@@ -49,7 +49,7 @@ def get_processes_info():
                 # system processes, using boot time instead
                 create_time = datetime.fromtimestamp(psutil.boot_time())
 
-            runtime = datetime.now() - create_time
+            runtime = (datetime.now() - create_time).total_seconds()
 
             # get the status of the process (running, idle, etc.)
             try:
@@ -58,9 +58,12 @@ def get_processes_info():
                 status = "unknown"
 
             now = time.time()
+            if now < runtime:
+                runtime = runtime - now
+
             # append process with information to process list
             processes.append({
-                'pid': pid, 'name': name, 'create_time': create_time, 'runtime': runtime.total_seconds(), 'date': date.today()
+                'pid': pid, 'name': name, 'create_time': create_time, 'runtime': runtime, 'date': date.today()
             })
 
     # return process list
@@ -126,7 +129,7 @@ def getAllProcesses():
 
 class ProcessData(object):
     class __ProcessData:
-        def __init__(self, bannedProcesses=[]):
+        def __init__(self, bannedProcesses):
             self.data = getAllProcesses()
             self.bannedProcesses = bannedProcesses
 
@@ -134,19 +137,22 @@ class ProcessData(object):
             self.data = getAllProcesses()
 
         def checkProcesses(self):
-            processes = self.data[['name', 'runtime']]
+            processes = self.data
             running = []
             proc = set(processes)
-            for b in self.bannedProcesses:
+            names = self.bannedProcesses["name"]
+            limits = self.bannedProcesses["limit"]
+            for n in names:
                 for p in proc:
-                    if b['limit'] != "NN":
-                        if b['limit'] <= p['runtime']:
-                            running.append(b)
+                    index = self.bannedProcesses.index[self.bannedProcesses['name'] == n]
+                    if limits[index] != -1:
+                        if limits[index] <= p['runtime']:
+                            running.append(n)
                         else:
                             continue
                     else:
-                        if b in p['name']:
-                            running.append(b)
+                        if n in p['name']:
+                            running.append(n)
                         else:
                             continue
 
@@ -187,33 +193,37 @@ class ProcessData(object):
                     raise Exceptions.NotFoundError
 
         def killProcess(self, name):
-            print(name)
-            if isinstance(name, (list, tuple, np.ndarray)):
-                names = set(name)
-                for n in names:
-                    df = set(self.data['name'])
-                    for d in df:
-                        ds = set(d)
-                        for s in ds:
-                            if n in s:
-                                p = psutil.Process(s['pid'])
-                                p.kill()
+            if len(name) == 0:
+                raise Exceptions.EmptyValueError
             else:
-                df = set(self.data.loc[name in self.data['name']])
-                print(df)
-                for d in df:
-                    # print(d)
-                    if name in d:
-                        # print(d.index)
-                        # p = psutil.Process(d['pid'])
-                        # p.kill()
-                        continue
+                if isinstance(name, (list, tuple, np.ndarray)):
+                    names = set(name)
+                    df = set(self.data['name'])
+                    for n in names:
+                        for d in df:
+                            if n in d:
+                                kill = self.data.loc[self.data["name"] == d]
+                                for i in kill.index:
+                                    proc = psutil.Process(i)
+                                    proc.kill()
+
+                else:
+                    df = set(self.data['name'])
+                    print(df)
+                    for n in df:
+                        if name in n:
+                            kill = self.data.loc[self.data["name"] == n]
+                            for i in kill.index:
+                                proc = psutil.Process(i)
+                                proc.kill()
+
+
 
     instance = None
 
     def __new__(cls, *args, **kwargs):
         if not ProcessData.instance:
-            ProcessData.instance = ProcessData.__ProcessData()
+            ProcessData.instance = ProcessData.__ProcessData(banned)
         return ProcessData.instance
 
     def __getattr__(self, name):
@@ -226,7 +236,10 @@ class ProcessData(object):
 
 if __name__ == "__main__":
     # processTest()
-    pD = ProcessData(["msedge"])
+    b = {'name': ["msegde", "Spotify"], 'limit': [-1, -1]}
+    banned = pd.DataFrame(b)
+    pD = ProcessData(banned)
     #print(pD.getData())
     print(pD.getBannedProcesses())
-    pD.killProcess("msedge")
+    # pD.killProcess(["msedge", "Spotify"])
+    print(pD.checkProcesses())
