@@ -1,6 +1,7 @@
-from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QProgressBar, QLabel
+from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QProgressBar, QLabel, QHBoxLayout, QFrame
 import datetime
+import pandas as pd
 
 import DataClasses
 
@@ -20,19 +21,37 @@ class WeekReview(QDialog):
         layout = QVBoxLayout(self)
 
         self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
-        self.setStyleSheet('background-color: #2196f3;')
+        self.setStyleSheet('background-color: #eeeeee;'
+                           'border-radius: 5px;')
 
         titleLabel = QLabel("Wochenrückblick")
         titleLabel.setAlignment(QtCore.Qt.AlignCenter)
         titleLabel.setMaximumHeight(80)
+        titleLabel.setMinimumHeight(80)
         titleLabel.setStyleSheet("QLabel {"
-                                 "background-color: #0069c0;"
+                                 "background-color: white;"
                                  "text-align: Center;"
+                                 "margin-left: 40px;"
+                                 "margin-right: 40px;"
                                  "font-size: 30px;"
                                  "font-family: 'Times New Roman', Times, serif;"
-                                 "color: white;}")
+                                 "color: black;}")
         layout.addWidget(titleLabel)
-        self.createReviewBars(layout)
+
+        reviewFrame = QFrame()
+        frameLayout = QVBoxLayout(reviewFrame)
+        reviewFrame.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+        reviewFrame.setStyleSheet("QFrame {"
+                                  "margin-left: 40px;"
+                                  "margin-right: 40px;"
+                                  "background-color: white;"
+                                  "border-radius: 5px}")
+
+        self.createReviewBars(frameLayout)
+        layout.addWidget(reviewFrame)
+
+        verticalSpacer = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        layout.addItem(verticalSpacer)
 
     def setupUi(self):
 
@@ -96,7 +115,7 @@ class WeekReview(QDialog):
 
             if i == 0:
                 maxVal = row.runtime
-            if i >= 10:
+            if i >= 14:
                 break
             i += 1
 
@@ -106,15 +125,22 @@ class WeekReview(QDialog):
             if runtime.days != 0:
                 barTime += str(runtime.days) + "d " + str(runtime.seconds // 3600) + "h " + str(
                     (runtime.seconds // 60) % 60) + "min"
-            elif runtime.seconds // 3600 != 0:
+            elif (runtime.seconds // 3600) != 0:
                 barTime += str(runtime.seconds // 3600) + "h " + str((runtime.seconds // 60) % 60) + "min"
-            elif (runtime.seconds // 60) % 60 != 0:
+            elif ((runtime.seconds // 60) % 60) != 0:
                 barTime += str((runtime.seconds // 60) % 60) + "min"
             else:
                 return
 
             # put together final process description
-            barText = "     " + name + ":   " + barTime
+            barText = "     " + name
+
+            barBox = QDialog()
+            barLayout = QHBoxLayout(barBox)
+            barLayout.setSpacing(0)
+            barLayout.setContentsMargins(0, 0, 0, 0)
+            barBox.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+            barBox.setStyleSheet('background-color: white;')
 
             # create progress bar
             bar = QProgressBar()
@@ -130,8 +156,17 @@ class WeekReview(QDialog):
                               " font-family: 'Times New Roman', Times, serif;"
                               " color: black;"
                               " T min-height: 35px;} "
-                              "QProgressBar::chunk {"
-                              "background-color: #6ec6ff;"
+                              " QProgressBar::chunk {"
+                              " background-color: #d6d6d6;"
                               " border-radius: 5px;}")
 
-            layout.addWidget(bar)
+            timeLabel = QLabel(barTime)
+            timeLabel.setStyleSheet("QLabel{"
+                                    "text-align: right;"
+                                    "color: black;"
+                                    "font-size: 18px;"
+                                    "font-family: 'Times New Roman', Times, serif;}")
+            barLayout.addWidget(bar)
+            barLayout.addWidget(timeLabel)
+
+            layout.addWidget(barBox)

@@ -90,7 +90,7 @@ class ReviewData(object):
 
         def createReview(self):
             currDate = date.today()
-            lastSevenDays = [currDate - dt.timedelta(days=x + 1) for x in range(2)]
+            lastSevenDays = [currDate - dt.timedelta(days=x) for x in range(7)]
 
             for d in lastSevenDays:
                 dayData = db.readData(d)
