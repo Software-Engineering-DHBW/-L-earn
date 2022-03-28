@@ -120,8 +120,10 @@ class MainWindow(QMainWindow):
         self.right_widget.addTab(self.tab5, '')
 
         self.right_widget.setCurrentIndex(0)
+        self.right_widget.setDocumentMode(True)
         self.right_widget.setStyleSheet('''QTabBar::tab{width: 0; \
-            height: 0; margin: 0; padding: 0; border: none; border-radius: 5px;}''')
+            height: 0; margin: 0; padding: 0; border: none; border-radius: 5px;}
+            QTabBar::pane { border: none;}''')
 
         main_layout = QHBoxLayout()
         main_layout.addWidget(left_widget)
