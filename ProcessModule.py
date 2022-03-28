@@ -63,7 +63,7 @@ def get_processes_info():
 
             # append process with information to process list
             processes.append({
-                'pid': pid, 'name': name, 'create_time': create_time, 'runtime': runtime, 'date': date.today()
+                'pid': pid, 'name': name.lower(), 'create_time': create_time, 'runtime': runtime, 'date': date.today()
             })
 
     # return process list
@@ -140,22 +140,31 @@ class ProcessData(object):
             self.data = getAllProcesses()
 
         def checkProcesses(self):
-            processes = self.data
+            proc = self.data[['name', 'runtime']]
             running = []
-            proc = set(processes)
             names = self.bannedProcesses["name"]
-            limits = self.bannedProcesses["limit"]
             for n in names:
-                for p in proc:
-                    index = self.bannedProcesses.index[self.bannedProcesses['name'] == n]
-                    if limits[index] != -1:
-                        if limits[index] <= p['runtime']:
-                            running.append(n)
+                for index, row in proc.iterrows():
+                    limits = self.bannedProcesses[self.bannedProcesses["name"] == n]
+                    limit = -1
+
+                    for index1, row1 in limits.iterrows():
+                        limit = row1['limit']
+
+                    if limit != -1:
+                        if limit <= row['runtime']:
+                            if n.lower() in running:
+                                continue
+                            else:
+                                running.append(n.lower())
                         else:
                             continue
                     else:
-                        if n in p['name']:
-                            running.append(n)
+                        if n.lower() in row['name']:
+                            if n.lower() in running:
+                                continue
+                            else:
+                                running.append(n.lower())
                         else:
                             continue
 
@@ -204,7 +213,7 @@ class ProcessData(object):
                     df = set(self.data['name'])
                     for n in names:
                         for d in df:
-                            if n in d:
+                            if n.lower() in d:
                                 kill = self.data.loc[self.data["name"] == d]
                                 for i in kill.index:
                                     proc = psutil.Process(i)
@@ -212,19 +221,23 @@ class ProcessData(object):
 
                 else:
                     df = set(self.data['name'])
-                    print(df)
                     for n in df:
-                        if name in n:
+                        if name.lower() in n:
                             kill = self.data.loc[self.data["name"] == n]
                             for i in kill.index:
                                 proc = psutil.Process(i)
-                                proc.kill()
+                                try:
+                                    proc.kill()
+                                except psutil.AccessDenied:
+                                    continue
 
 
 
     instance = None
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, banned=None, *args, **kwargs):
+        if banned is None:
+            banned = []
         if not ProcessData.instance:
             ProcessData.instance = ProcessData.__ProcessData(banned)
         return ProcessData.instance
@@ -239,10 +252,10 @@ class ProcessData(object):
 
 if __name__ == "__main__":
     # processTest()
-    b = {'name': ["msegde", "Spotify"], 'limit': [-1, -1]}
+    b = {'name': ["msegde", "Spotify", "chrome"], 'limit': [-1, -1, 500]}
     banned = pd.DataFrame(b)
     pD = ProcessData(banned)
     #print(pD.getData())
     print(pD.getBannedProcesses())
-    # pD.killProcess(["msedge", "Spotify"])
+    # pD.killProcess("spotify")
     print(pD.checkProcesses())
