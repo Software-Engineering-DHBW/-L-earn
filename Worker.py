@@ -1,4 +1,5 @@
 import threading
+from sys import platform
 
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QObject
@@ -6,7 +7,7 @@ import time
 
 import ProcessModule as pm
 import DataClasses as dc
-
+import ActMonitor as am
 
 # class to run update functions in a thread
 class Worker(QObject):
@@ -55,6 +56,14 @@ class Worker(QObject):
                             self.timers.append(threading.Timer(300, self.timerEnds(r)))
                             self.setTimers.append(r)
                             self.timers[i].start()
+                            title = "[L]earn - Limit Alert"
+                            message = "Das Programm " + r + " läuft und hat sein eingestelltes Limit erreicht! Es wird deshalb in 5 Minuten beendet!"
+                            switcher = {
+                                "win32": am.sendmessageWindows(title, message),
+                                "linux": am.sendmessageLinux(title, message),
+                                "darwin": am.sendmessageMac(title, message)
+                            }
+                            switcher.get(platform)
                             i += 1
 
             time.sleep(5)
