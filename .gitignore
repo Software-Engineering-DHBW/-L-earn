@@ -2,3 +2,5 @@
 /defaults/defaults.pkl
 /logs/dblog.log
 /logs/ntflog.log
+/dist/
+/build/

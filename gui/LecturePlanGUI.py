@@ -1,6 +1,5 @@
 from urllib.error import URLError
 
-from PyQt5 import QtCore
 from PyQt5.QtCore import QUrl, Qt
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout, QHBoxLayout, QSizePolicy
@@ -9,7 +8,7 @@ from PyQt5.QtGui import QBrush, QColor, QPalette
 from qroundprogressbar import QRoundProgressBar
 
 from defaults.Defaults import Defaults
-from LecturePlan import LecturePlan
+from classes.LecturePlan import LecturePlan
 from defaults.Values import DEF_LECTUREPLANURL
 from gui.NotificationsGUI import NotificationsGUI
 
@@ -21,7 +20,7 @@ class LecturePlanGUI(QWidget):
 
         self.loadedWebsite = False
 
-        main_layout = QVBoxLayout(self)
+        mainLayout = QVBoxLayout()
 
         # -----------------
         # First Side
@@ -43,7 +42,7 @@ class LecturePlanGUI(QWidget):
         firstLayout.addWidget(pybutton)
 
         self.firstWidget.setLayout(firstLayout)
-        main_layout.addWidget(self.firstWidget)
+        mainLayout.addWidget(self.firstWidget)
 
         # -----------------
         # Second Side
@@ -77,13 +76,13 @@ class LecturePlanGUI(QWidget):
         self.progressWidget.setLayout(progressLayout)
 
         # Add Widgets
-        main_layout.addWidget(self.webView)
-        main_layout.addWidget(self.pybutton2)
-        main_layout.addWidget(self.progressWidget)
+        mainLayout.addWidget(self.webView)
+        mainLayout.addWidget(self.pybutton2)
+        mainLayout.addWidget(self.progressWidget)
 
         # -----------------
         # Set Side
-        self.setLayout(main_layout)
+        self.setLayout(mainLayout)
 
         url = Defaults().get(DEF_LECTUREPLANURL)
         if url != "":

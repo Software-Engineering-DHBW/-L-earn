@@ -1,0 +1,110 @@
+* {
+    color: #000000;
+    background-color: #EEEEEE;
+}
+QLabel {
+    background-color: white;
+    color: black;
+}
+QLabel#title {
+    background-color: white;
+    text-align: Center;
+    margin-left: 40px;
+    margin-right: 40px;
+    font-size: 30px;
+    font-family: 'Times New Roman', Times, serif;
+    color: black;
+    border-radius: 5px;
+}
+QLabel#switchLabel {
+    font-size: 18px;
+    font-family: 'Times New Roman', Times, serif;
+}
+QLabel#label {
+    color: black;
+    background-color: white;
+    font-size: 13px;
+    font-family: 'Times New Roman', Times, serif;
+}
+QPushButton#tabButton {
+    text-align: left;
+    background-color: white;
+    padding-left: 10px;
+    border-radius: 5px;
+    min-height: 30px;
+    min-width: 150px;
+}
+QLineEdit {
+    color: black;
+    background-color: white;
+}
+QDialog {
+    color: black;
+    background-color: #EEEEEE;
+}
+QWidget {
+    color: black;
+    background-color: #EEEEEE;
+}
+QWidget#switchWidget {
+    color: black;
+    background-color: white;
+}
+QWidget#widget {
+    color: black;
+    background-color: white;
+}
+QFrame {
+    color: black;
+    background-color: #EEEEEE;
+    border-radius: 5px;
+}
+QFrame#limitsFrame {
+    background-color: white;
+    margin-left: 40px;
+    margin-right: 40px;
+    border-radius: 5px;
+}
+QTabBar::tab {
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 5px;
+}
+QTabBar::pane {
+    border: none;
+}
+QSlider::groove:horizontal {
+    border-radius: 1px;
+    height: 3px;
+    margin: 0px;
+    background-color: #EEEEEE;
+}
+QSlider::groove:horizontal:hover {
+    background-color: #EEEEEE;
+}
+QSlider::handle:horizontal {
+    background-color: rgb(17, 101, 174);
+    border: none;
+    height: 20px;
+    width: 10px;
+    margin: -20px 0;
+    padding: -20px 0px;
+}
+QSlider::handle:horizontal:hover {
+    background-color: rgb(0, 111, 212);
+}
+QSlider::handle:horizontal:pressed {
+    background-color: rgb(85, 170, 255);
+}
+QSlider {
+    height: 20px;
+    background-color: white;
+}
+QComboBox {
+    background-color: #EEEEEE;
+    selection-color: #EEEEEE;
+    selection-background-color: rgb(17, 101, 174);
+}

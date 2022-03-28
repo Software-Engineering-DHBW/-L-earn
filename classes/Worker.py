@@ -2,8 +2,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import QObject
 import time
 
-import ProcessModule as pm
-import DataClasses as dc
+from classes import DataClasses as dc, ProcessModule as pm
 
 
 # class to run update functions in a thread

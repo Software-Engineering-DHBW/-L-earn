@@ -35,7 +35,7 @@ class Defaults(object):
 
     instance = None
 
-    def __new__(cls, filename):
+    def __new__(cls, filename="defaults/defaults.pkl"):
         if not Defaults.instance:
             Defaults.instance = Defaults.__Defaults(filename)
         return Defaults.instance
@@ -45,12 +45,3 @@ class Defaults(object):
 
     def __setattr__(self, name, value):
         return setattr(self.instance, name, value)
-
-
-if __name__ == "__main__":
-    defaults = Defaults()
-    defaults.set("a", 1)
-    defaults.set("b", 2)
-    print(defaults.getDefaults())
-    print(defaults.get("a"))
-    print(defaults.get("c"))

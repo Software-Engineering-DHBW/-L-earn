@@ -25,9 +25,9 @@ class Notifications(object):
         # logger.setLevel(logging.INFO)
         # logger.setLevel(logging.DEBUG)
 
-        if not os.path.isdir('logs'):
-            os.makedirs('logs')
-        handler = logging.FileHandler('logs/ntflog.log')
+        if not os.path.isdir('../logs'):
+            os.makedirs('../logs')
+        handler = logging.FileHandler('../logs/ntflog.log')
         # create a logging format
         formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s')
         handler.setFormatter(formatter)

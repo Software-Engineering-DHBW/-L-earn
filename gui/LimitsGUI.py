@@ -7,9 +7,8 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QHBoxLayout, QWidget, QComboBox, QSlider, \
     QPushButton, QFrame
 
-import DataClasses
-import ProcessModule as pm
-from DBHelper import DBHelper
+from classes import DataClasses, ProcessModule as pm
+from classes.DBHelper import DBHelper
 
 
 class LimitsGUI(QDialog):
@@ -26,38 +25,23 @@ class LimitsGUI(QDialog):
         titleLabel.setAlignment(QtCore.Qt.AlignCenter)
         titleLabel.setMaximumHeight(80)
         titleLabel.setMinimumHeight(80)
-        titleLabel.setStyleSheet("QLabel {"
-                                 "background-color: white;"
-                                 "text-align: Center;"
-                                 "margin-left: 40px;"
-                                 "margin-right: 40px;"
-                                 "font-size: 30px;"
-                                 "font-family: 'Times New Roman', Times, serif;"
-                                 "color: black;"
-                                 "border-radius: 5px}")
+        titleLabel.setObjectName("title")
         main_layout.addWidget(titleLabel)
 
         limitsFrame = QFrame()
         limitsFrame.setAttribute(QtCore.Qt.WA_StyledBackground, True)
         limitsFrame.setObjectName("limitsFrame")
-        limitsFrame.setStyleSheet("""
-                                    QFrame#limitsFrame {
-                                        background-color: white;
-                                        margin-left: 40px;
-                                        margin-right: 40px;
-                                        border-radius: 5px;
-                                    }
-                                    """)
         frameLayout = QVBoxLayout(limitsFrame)
 
         # Add widgets to the layout
         limitsWidget = QWidget()
+        limitsWidget.setObjectName("widget")
         limitsLayout = QHBoxLayout()
         limitsLayout.setAlignment(Qt.AlignLeft)
 
         limitsLabel = QLabel()
         limitsLabel.setText("Limit setzen für")
-        limitsLabel.setFont(QFont('Times New Roman', 13))
+        limitsLabel.setObjectName("label")
         limitsLayout.addWidget(limitsLabel)
 
         self.combo = QComboBox(self)
@@ -71,16 +55,18 @@ class LimitsGUI(QDialog):
         frameLayout.addWidget(limitsWidget)
 
         timeWidget = QWidget()
+        timeWidget.setObjectName("widget")
         timeLayout = QHBoxLayout()
         timeLayout.setAlignment(Qt.AlignLeft)
 
         timeLabel = QLabel()
         timeLabel.setText("Limit:")
-        timeLabel.setFont(QFont('Times New Roman', 13))
+        timeLabel.setObjectName("label")
 
         timeLayout.addWidget(timeLabel)
 
         sliderWidget = QWidget()
+        sliderWidget.setObjectName("widget")
         sliderLayout = QVBoxLayout()
         sliderLayout.setAlignment(Qt.AlignCenter)
 
@@ -88,20 +74,20 @@ class LimitsGUI(QDialog):
         self.slider.setMinimum(0)
         self.slider.setMaximum(180)
         self.slider.setSingleStep(5)
-        self.slider.setFont(QFont('Times New Roman', 13))
         self.slider.setValue(60)
         self.slider.valueChanged.connect(self.sliderChangedValue)
 
         sliderLayout.addWidget(self.slider)
 
         valueWidget = QWidget()
+        valueWidget.setObjectName("widget")
         valueLayout = QHBoxLayout()
         valueLayout.setAlignment(Qt.AlignCenter)
 
         self.valueLabel = QLabel()
         text = self.slider.value().__str__() + " Minuten"
         self.valueLabel.setText(text)
-        self.valueLabel.setFont(QFont('Times New Roman', 13))
+        self.valueLabel.setObjectName("label")
 
         valueLayout.addWidget(self.valueLabel)
         valueWidget.setLayout(valueLayout)
@@ -115,6 +101,7 @@ class LimitsGUI(QDialog):
         frameLayout.addWidget(timeWidget)
 
         buttonWidget = QWidget()
+        buttonWidget.setObjectName("widget")
         buttonLayout = QHBoxLayout()
         buttonLayout.setAlignment(Qt.AlignCenter)
         button = QPushButton()

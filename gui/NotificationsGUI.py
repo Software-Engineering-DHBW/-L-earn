@@ -9,8 +9,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QSizePolicy, QFrame
 
 from defaults.Defaults import Defaults
-from LecturePlan import LecturePlan
-from Notifications import Notifications
+from classes.LecturePlan import LecturePlan
+from classes.Notifications import Notifications
 from defaults.Values import DEF_NOTIFICATIONSALLOWED, DEF_LECTUREPLANURL, DEF_LECTURENOTIFICATIONS
 from gui.OnOffButton import Switch
 
@@ -45,20 +45,11 @@ class NotificationsGUI(QDialog):
         titleLabel.setAlignment(QtCore.Qt.AlignCenter)
         titleLabel.setMaximumHeight(80)
         titleLabel.setMinimumHeight(80)
-        titleLabel.setStyleSheet("QLabel {"
-                                 "background-color: white;"
-                                 "text-align: Center;"
-                                 "margin-left: 40px;"
-                                 "margin-right: 40px;"
-                                 "font-size: 30px;"
-                                 "font-family: 'Times New Roman', Times, serif;"
-                                 "color: black;"
-                                 "border-radius: 5px}")
+        titleLabel.setObjectName("title")
         main_layout.addWidget(titleLabel)
 
         frame = QFrame()
         frameLayout = QVBoxLayout(frame)
-        #frameLayout.setContentsMargins(0, 0, 0, 0)
         frameLayout.setAlignment(Qt.AlignTop)
         frame.setAttribute(QtCore.Qt.WA_StyledBackground, True)
         frame.setStyleSheet("""
@@ -72,40 +63,28 @@ class NotificationsGUI(QDialog):
                             """)
 
         notificationWidget = QWidget()
+        notificationWidget.setObjectName("switchWidget")
         notificationLayout = QHBoxLayout()
         ntfSwitch = self.getSwitch()
         ntfSwitch.clicked.connect(self.switchNotifications)
         notificationLayout.addWidget(ntfSwitch)
         notificationLabel = QLabel()
         notificationLabel.setText("Mitteilungen erlauben")
-        notificationLabel.setStyleSheet("""              
-                            QLabel
-                            {
-                                font-size: 18px;
-                                font-family: 'Times New Roman', Times, serif;
-                            }
-                            """)
+        notificationLabel.setObjectName("switchLabel")
         notificationLayout.addWidget(notificationLabel)
         notificationWidget.setLayout(notificationLayout)
-        #main_layout.addWidget(notificationWidget)
 
         lectureWidget = QWidget()
+        lectureWidget.setObjectName("switchWidget")
         lectureLayout = QHBoxLayout()
         lectureSwitch = self.getSwitch()
         lectureSwitch.clicked.connect(self.switchLectureNotifications)
         lectureLayout.addWidget(lectureSwitch)
         lectureLabel = QLabel()
         lectureLabel.setText("Mitteilungen während der Vorlesungszeit ausschalten")
-        lectureLabel.setStyleSheet("""              
-                            QLabel
-                            {
-                                font-size: 18px;
-                                font-family: 'Times New Roman', Times, serif;
-                            }
-                            """)
+        lectureLabel.setObjectName("switchLabel")
         lectureLayout.addWidget(lectureLabel)
         lectureWidget.setLayout(lectureLayout)
-        #main_layout.addWidget(lectureWidget)
 
         frameLayout.addWidget(notificationWidget)
         frameLayout.addWidget(lectureWidget)
@@ -114,13 +93,10 @@ class NotificationsGUI(QDialog):
         verticalSpacer = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         main_layout.addItem(verticalSpacer)
 
-        #self.setLayout(main_layout)
-
         # Set Switch Values
         if self.notificationsAllowed:
             self.notificationsAllowed = False
             ntfSwitch.click()
-            # self.__setNotifications(True)
 
         if self.lectureNotifications:
             lectureSwitch.click()
