@@ -128,7 +128,12 @@ class MainWindow(QMainWindow):
     def getButton(self, image, text):
         button = QPushButton(text, self)
         button.setIcon(QIcon(QPixmap("images/" + image)))
-        button.setStyleSheet("QPushButton { text-align: left; border-radius: 5px; background-color: white; min-height: 30px; min-width: 150px;}")
+        button.setStyleSheet("QPushButton { text-align: left;"
+                             "padding-left: 10px;"
+                             "border-radius: 5px;"
+                             "background-color: white;"
+                             "min-height: 30px;"
+                             "min-width: 150px;}")
         font = button.font()
         font.setPointSize(13)
         button.setFont(font)

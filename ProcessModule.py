@@ -3,17 +3,22 @@ This file includes all functions, that are needed to get processes and their inf
 handle operations on processes such as kill() in the future.
 """
 
+import os
+import platform
+from datetime import datetime, date
+
+import numpy as np
+import pandas as pd
 # import all necessary libraries and packages
 import psutil
-from datetime import datetime, date, timedelta
-import pandas as pd
-import os, sys
-import Exceptions
-import numpy as np
-import win32process
-import win32gui
-import platform
+
+if platform == "win32":
+    import win32gui
+    import win32process
+
 import wmctrl
+
+import Exceptions
 
 consideredProc = []
 
