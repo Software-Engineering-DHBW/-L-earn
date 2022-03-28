@@ -4,9 +4,9 @@ import threading
 from datetime import datetime
 from urllib.error import URLError
 
-from PyQt5 import QtCore
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QSizePolicy
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QSizePolicy, QFrame
 
 from defaults.Defaults import Defaults
 from LecturePlan import LecturePlan
@@ -36,8 +36,9 @@ class NotificationsGUI(QDialog):
             self.lectureNotifications = False
 
         # Create a QGridLayout instance
-        main_layout = QVBoxLayout()
-        main_layout.setAlignment(Qt.AlignTop)
+        main_layout = QVBoxLayout(self)
+        #main_layout.setAlignment(Qt.AlignTop)
+
 
         # Add widgets to the layout
         titleLabel = QLabel("Kommunikationsbeschränkung")
@@ -55,6 +56,21 @@ class NotificationsGUI(QDialog):
                                  "border-radius: 5px}")
         main_layout.addWidget(titleLabel)
 
+        frame = QFrame()
+        frameLayout = QVBoxLayout(frame)
+        #frameLayout.setContentsMargins(0, 0, 0, 0)
+        frameLayout.setAlignment(Qt.AlignTop)
+        frame.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+        frame.setStyleSheet("""
+                            QFrame 
+                            { 
+                                margin-left: 40px;
+                                margin-right: 40px;
+                                background-color: white;
+                                border-radius: 5px;
+                            }
+                            """)
+
         notificationWidget = QWidget()
         notificationLayout = QHBoxLayout()
         ntfSwitch = self.getSwitch()
@@ -62,9 +78,16 @@ class NotificationsGUI(QDialog):
         notificationLayout.addWidget(ntfSwitch)
         notificationLabel = QLabel()
         notificationLabel.setText("Mitteilungen erlauben")
+        notificationLabel.setStyleSheet("""              
+                            QLabel
+                            {
+                                font-size: 18px;
+                                font-family: 'Times New Roman', Times, serif;
+                            }
+                            """)
         notificationLayout.addWidget(notificationLabel)
         notificationWidget.setLayout(notificationLayout)
-        main_layout.addWidget(notificationWidget)
+        #main_layout.addWidget(notificationWidget)
 
         lectureWidget = QWidget()
         lectureLayout = QHBoxLayout()
@@ -73,11 +96,25 @@ class NotificationsGUI(QDialog):
         lectureLayout.addWidget(lectureSwitch)
         lectureLabel = QLabel()
         lectureLabel.setText("Mitteilungen während der Vorlesungszeit ausschalten")
+        lectureLabel.setStyleSheet("""              
+                            QLabel
+                            {
+                                font-size: 18px;
+                                font-family: 'Times New Roman', Times, serif;
+                            }
+                            """)
         lectureLayout.addWidget(lectureLabel)
         lectureWidget.setLayout(lectureLayout)
-        main_layout.addWidget(lectureWidget)
+        #main_layout.addWidget(lectureWidget)
 
-        self.setLayout(main_layout)
+        frameLayout.addWidget(notificationWidget)
+        frameLayout.addWidget(lectureWidget)
+        main_layout.addWidget(frame)
+
+        verticalSpacer = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        main_layout.addItem(verticalSpacer)
+
+        #self.setLayout(main_layout)
 
         # Set Switch Values
         if self.notificationsAllowed:
@@ -94,6 +131,7 @@ class NotificationsGUI(QDialog):
 
     def getSwitch(self):
         switch = Switch()
+        switch.setStyleSheet("Switch { margin-left: 40px;}")
         switch.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
         return switch
 

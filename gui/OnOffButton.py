@@ -74,7 +74,7 @@ class Switch(QAbstractButton):
         self.clicked.connect(self.dPtr.animate)
 
     def sizeHint(self):
-        return QSize(50, 30)
+        return QSize(41, 25)
 
     def paintEvent(self, event):
         painter = QPainter(self)
