@@ -11,7 +11,28 @@ import pandas as pd
 import os, sys
 import Exceptions
 import numpy as np
-import subprocess
+import win32process
+import win32gui
+import platform
+import wmctrl
+
+consideredProc = []
+
+def filterProcLin(df):
+    for win in wmctrl.Window.list():
+        consideredProc.append(psutil.Process(win.pid).name())
+
+#wmctrl.Window.get_active()
+def winEnumHandler(hwnd, ctx):
+    if win32gui.IsWindowVisible(hwnd):
+        consideredProc.append(psutil.Process(win32process.GetWindowThreadProcessId(hwnd)[1]).name())
+
+
+def filterProcWin(df):
+    win32gui.EnumWindows(winEnumHandler, None)
+    for index, row in df.iterrows():
+        if row["name"] not in consideredProc:
+            df.drop(index, inplace=True)
 
 
 # Returns an array with all processes and their information
@@ -32,9 +53,9 @@ def get_processes_info():
                 continue
 
             # Check if process is a system process
-            #if os.name == 'nt':
-            #    if checkSystemProcess(process.name()):
-            #        continue
+            if os.name == 'nt':
+                if checkSystemProcess(process.name()):
+                    continue
 
             # get process name
             try:
@@ -71,19 +92,11 @@ def get_processes_info():
 
 # Checks if a proces is a system process
 def checkSystemProcess(name):
-    #sysWin = ['alg.exe', 'csrss.exe', 'ctfmon.exe', 'explorer.exe', 'lsass.exe', 'services.exe', 'smss.exe', 'spoolsv.exe', 'svchost.exe', 'ntoskrnl.exe', 'winlogon.exe', 'System']
+    sysWin = ['alg.exe', 'csrss.exe', 'ctfmon.exe', 'explorer.exe', 'lsass.exe', 'services.exe', 'smss.exe', 'spoolsv.exe', 'svchost.exe', 'ntoskrnl.exe', 'winlogon.exe', 'System']
 
-    #system = set(sysWin)
+    system = set(sysWin)
     # if os.name == 'nt':
     #    sys = set(sysWin)
-    system = []
-
-    # getting all processes that are opened through a window, which means they are no system process
-    cmd = 'powershell "gps | where {$_.MainWindowTitle } | select ProcessName'
-    proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-    for line in proc.stdout:
-        if line.rstrip():
-            system.append(line.decode().rstrip())
 
     if name in system:
         return True
@@ -127,6 +140,11 @@ if __name__ == "__main__":
 def getAllProcesses():
     processes = get_processes_info()
     df = construct_dataframe(processes)
+
+    if platform.system() == "Windows":
+        filterProcWin(df)
+    elif platform.system() == "Linux":
+        filterProcWin(df)
     return df
 
 

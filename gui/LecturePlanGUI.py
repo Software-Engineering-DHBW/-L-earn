@@ -1,4 +1,3 @@
-import time
 from urllib.error import URLError
 
 from PyQt5.QtCore import QUrl, Qt
@@ -8,10 +7,10 @@ from PyQt5.QtGui import QBrush, QColor, QPalette
 
 from qroundprogressbar import QRoundProgressBar
 
-from Defaults import Defaults
+from defaults.Defaults import Defaults
 from LecturePlan import LecturePlan
-
-DEF_LECTUREPLANURL = "LecturePlanURL"
+from defaults.Values import DEF_LECTUREPLANURL
+from gui.NotificationsGUI import NotificationsGUI
 
 
 class LecturePlanGUI(QWidget):
@@ -22,21 +21,26 @@ class LecturePlanGUI(QWidget):
         self.loadedWebsite = False
 
         main_layout = QVBoxLayout(self)
-        main_layout.setAlignment(Qt.AlignTop)
 
         # -----------------
         # First Side
-        self.nameLabel = QLabel()
-        self.nameLabel.setText('Vorlesungsplanurl:')
+        self.firstWidget = QWidget()
+        firstLayout = QVBoxLayout(self)
+        firstLayout.setAlignment(Qt.AlignTop)
+        nameLabel = QLabel()
+        nameLabel.setText('Vorlesungsplanurl:')
         self.line = QLineEdit()
 
-        self.pybutton = QPushButton('Verbinden')
-        self.pybutton.clicked.connect(self.setLecturePlan)
+        pybutton = QPushButton('Verbinden')
+        pybutton.clicked.connect(self.setLecturePlan)
 
         # Add Widgets
-        main_layout.addWidget(self.nameLabel)
-        main_layout.addWidget(self.line)
-        main_layout.addWidget(self.pybutton)
+        firstLayout.addWidget(nameLabel)
+        firstLayout.addWidget(self.line)
+        firstLayout.addWidget(pybutton)
+
+        self.firstWidget.setLayout(firstLayout)
+        main_layout.addWidget(self.firstWidget)
 
         # -----------------
         # Second Side
@@ -88,9 +92,7 @@ class LecturePlanGUI(QWidget):
 
         self.hideAll()
 
-        self.nameLabel.setHidden(False)
-        self.line.setHidden(False)
-        self.pybutton.setHidden(False)
+        self.firstWidget.setHidden(False)
 
     def setSecondSide(self):
         self.hideAll()
@@ -100,16 +102,23 @@ class LecturePlanGUI(QWidget):
 
     def setLecturePlan(self):
         url = self.line.text()
-        try:
-            lecturePlan = LecturePlan(url).getLP()
+        if "vorlesungsplan.dhbw-mannheim.de" in url:
+            # remove date parameter
+            dateIndex = url.find("date=")
+            if dateIndex != -1:
+                url = url[0:dateIndex-1]
 
-            if len(lecturePlan) > 0 and "vorlesungsplan.dhbw-mannheim.de" in url:
-                Defaults().set(DEF_LECTUREPLANURL, url)
-                self.webView.setUrl(QUrl(url))
+            try:
+                lecturePlan = LecturePlan(url).getLP()
 
-        except (URLError, ValueError) as e:
-            print(e)
-            print(url)
+                if len(lecturePlan) > 0:
+                    Defaults().set(DEF_LECTUREPLANURL, url)
+                    self.webView.setUrl(QUrl(url))
+                    NotificationsGUI().initTimers(url)
+
+            except (URLError, ValueError) as e:
+                print(e)
+                print(url)
 
     def hideAll(self):
         for i in range(self.layout().count()):
