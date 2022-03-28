@@ -1,13 +1,42 @@
-import threading
-from sys import platform
-
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QObject
 import time
+from sys import platform
 
+from ActMonitor import check_idle_Mac, check_idle_windows, check_idle_linux
 import ProcessModule as pm
 import DataClasses as dc
-import ActMonitor as am
+
+global idle_time_sec
+idle_time_sec = 600
+def checkFile():
+    with open('logs/transfer.txt') as f:
+        lines = f.readlines()
+        f.close()
+        print(lines[0])
+    if lines[0] == 'True':
+        return True
+    else:
+        return False
+
+class ActWorker(QObject):
+    def __init__(self):
+        super().__init__()
+
+
+    def idleTime(self):
+        while True:
+            if platform == 'linux' and checkFile() or platform == 'linux2' and checkFile():
+                print('linux')
+                check_idle_linux(idle_time_sec)
+            elif platform == 'darwin' and checkFile():
+                print('Macn not yet')
+                check_idle_Mac(idle_time_sec)
+            elif platform == 'win32'and checkFile():
+                print('windows')
+                check_idle_windows(idle_time_sec)
+            time.sleep(5)
+
 
 # class to run update functions in a thread
 class Worker(QObject):
@@ -15,8 +44,7 @@ class Worker(QObject):
     def __init__(self, window):
         super().__init__()
         self.window = window
-        self.timers = []
-        self.setTimers = []
+
     # function to load the current processes and update the table
     def loadProcesses(self):
         previousDf = None
@@ -47,28 +75,6 @@ class Worker(QObject):
         pD = pm.ProcessData()
         while True:
             pD.updateData()
-            if len(pD.getBannedProcesses()) != 0:
-                running = pD.checkProcesses()
-                if len(running) != 0:
-                    i = 0
-                    for r in running:
-                        if not r in self.setTimers:
-                            self.timers.append(threading.Timer(300, self.timerEnds, r))
-                            self.setTimers.append(r)
-                            self.timers[i].start()
-                            title = "[L]earn - Limit Alert"
-                            message = "Das Programm " + r + " läuft und hat sein eingestelltes Limit erreicht! Es wird deshalb in 5 Minuten beendet!"
-                            if platform == "win32":
-                                am.sendmessageWindows(title, message)
-
-                            if platform == "linux":
-                                am.sendmessageLinux(title, message)
-
-                            if platform == "darwin":
-                                am.sendmessageMac(title, message)
-
-                            i += 1
-
             time.sleep(5)
 
     def updateCurrentDayData(self):
@@ -81,7 +87,3 @@ class Worker(QObject):
                 print(e)
 
             time.sleep(300)
-
-    def timerEnds(self, proc):
-        pm.ProcessData().killProcess(proc)
-        self.setTimers.remove(proc)

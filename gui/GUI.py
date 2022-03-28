@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QApplication, QPushButton, QHBoxLayout, QWidget, QVB
     QMainWindow
 from PyQt5.QtCore import QThread, QSize, Qt
 
-from Worker import Worker
+from Worker import Worker, ActWorker
 
 
 # class that represents the main GUI window
@@ -31,6 +31,8 @@ class MainWindow(QMainWindow):
         self.thread2 = None
         self.worker3 = None
         self.thread3 = None
+        self.worker4 = None
+        self.thread4 = None
 
         # set the title of main window
         self.setWindowTitle('[L]earn')
@@ -75,6 +77,8 @@ class MainWindow(QMainWindow):
         #self.createProcessThread()
         self.createProcessThread2()
         self.createProcessThread3()
+        self.createProcessThread4()
+
 
     # function to create a thread, which updates the process table
     def createProcessThread(self):
@@ -97,6 +101,14 @@ class MainWindow(QMainWindow):
         self.worker3.moveToThread(self.thread3)
         self.thread3.started.connect(self.worker3.updateCurrentDayData)
         self.thread3.start()
+
+    def createProcessThread4(self):
+        self.thread4 = QThread()
+        self.worker4 = ActWorker()
+        self.worker4.moveToThread(self.thread4)
+        self.thread4.started.connect(self.worker4.idleTime)
+        self.thread4.start()
+
 
     def initUI(self):
         left_layout = QVBoxLayout()
