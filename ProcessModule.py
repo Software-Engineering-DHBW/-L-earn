@@ -29,6 +29,9 @@ def filterProcMac(df):
     windowList = subprocess.check_output(["osascript -e 'tell application \"System Events\" "
                                           "to get the name of every process whose visible is true'"],
                                          shell=True).decode().replace("\n", "").split(", ")
+    for i in range(len(windowList)):
+        windowList[i] = windowList[i].lower()
+
     for index, row in df.iterrows():
         if row['name'] not in windowList:
             df.drop(index, inplace=True)
@@ -36,7 +39,7 @@ def filterProcMac(df):
 
 def filterProcLin(df):
     for win in wmctrl.Window.list():
-        consideredProc.append(psutil.Process(win.pid).name())
+        consideredProc.append(psutil.Process(win.pid).name().lower())
     for index, row in df.iterrows():
         if row["name"] not in consideredProc:
             df.drop(index, inplace=True)
@@ -45,7 +48,7 @@ def filterProcLin(df):
 # wmctrl.Window.get_active()
 def winEnumHandler(hwnd, ctx):
     if win32gui.IsWindowVisible(hwnd):
-        consideredProc.append(psutil.Process(win32process.GetWindowThreadProcessId(hwnd)[1]).name())
+        consideredProc.append(psutil.Process(win32process.GetWindowThreadProcessId(hwnd)[1]).name().lower())
 
 
 def filterProcWin(df):

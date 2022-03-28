@@ -1,9 +1,11 @@
+import getpass
+
 import pandas as pd
-from PyQt5 import QtCore
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QHBoxLayout, QWidget, QComboBox, QSlider, \
-    QPushButton
+    QPushButton, QFrame
 
 import DataClasses
 import ProcessModule as pm
@@ -19,7 +21,6 @@ class LimitsGUI(QDialog):
         # Create a QGridLayout instance
         main_layout = QVBoxLayout(self)
         main_layout.setAlignment(Qt.AlignTop)
-        # main_layout.addStretch(10)
 
         titleLabel = QLabel("Anwendungslimits")
         titleLabel.setAlignment(QtCore.Qt.AlignCenter)
@@ -38,8 +39,9 @@ class LimitsGUI(QDialog):
 
         limitsFrame = QFrame()
         limitsFrame.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+        limitsFrame.setObjectName("limitsFrame")
         limitsFrame.setStyleSheet("""
-                                    QFrame {
+                                    QFrame#limitsFrame {
                                         background-color: white;
                                         margin-left: 40px;
                                         margin-right: 40px;
@@ -144,11 +146,15 @@ class LimitsGUI(QDialog):
 
         DBHelper().writeBP(processName, limittime, username)
 
+        self.combo.removeItem(self.combo.currentIndex())
+
     def addProcesses(self):
         data = DataClasses.ReviewData().createReview()
-        # savedItems
+
+        username = getpass.getuser()
+        savedItems = list(DBHelper().readBP(username)["name"])
 
         for name, row in data.iterrows():
             currentItems = [self.combo.itemText(i) for i in range(self.combo.count())]
-            if row['name'] not in currentItems:
+            if row['name'] not in currentItems and row['name'] not in savedItems:
                 self.combo.addItem(row['name'])
