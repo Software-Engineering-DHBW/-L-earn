@@ -2,21 +2,24 @@
 This file includes all functions, that are needed to get processes and their information for all operating systems and
 handle operations on processes such as kill() in the future.
 """
-
-import os
-import platform
-from datetime import datetime, date
-
 import numpy as np
 import pandas as pd
 # import all necessary libraries and packages
 import psutil
 
-if platform.system() == "Windows":
+from datetime import datetime, date, timedelta
+import pandas as pd
+import os, sys
+import Exceptions
+import numpy as np
+from sys import platform
+
+if platform == "win32":
     import win32gui
     import win32process
+elif platform == "linux":
+    import wmctrl
 
-import wmctrl
 
 import Exceptions
 
@@ -143,9 +146,9 @@ def getAllProcesses():
     processes = get_processes_info()
     df = construct_dataframe(processes)
 
-    if platform.system() == "Windows":
+    if platform == "win32":
         filterProcWin(df)
-    elif platform.system() == "Linux":
+    elif platform == "linux":
         filterProcWin(df)
     return df
 
