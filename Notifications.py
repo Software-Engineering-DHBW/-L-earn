@@ -5,7 +5,7 @@ import logging
 import pyautogui
 import time
 
-if platform.system() == "Windows":
+if platform == "win32":
     from win32gui import GetWindowText, GetForegroundWindow
 
 
