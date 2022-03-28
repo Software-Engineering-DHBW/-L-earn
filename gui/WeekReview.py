@@ -101,7 +101,7 @@ class WeekReview(QDialog):
                               "Es gibt bisher leider nicht genug Daten um einen Rückblick zu erstellen!")
             msgLabel.setStyleSheet("QLabel{"
                                    "text-align: Center;"
-                                   "color: white;}")
+                                   "color: black;}")
             msgLabel.setAlignment(QtCore.Qt.AlignCenter)
             layout.addWidget(msgLabel)
             return
