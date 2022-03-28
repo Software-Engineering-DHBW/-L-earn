@@ -1,4 +1,3 @@
-import time
 from urllib.error import URLError
 
 from PyQt5.QtCore import QUrl, Qt
@@ -8,11 +7,10 @@ from PyQt5.QtGui import QBrush, QColor, QPalette
 
 from qroundprogressbar import QRoundProgressBar
 
-from Defaults import Defaults
+from defaults.Defaults import Defaults
 from LecturePlan import LecturePlan
+from defaults.Values import DEF_LECTUREPLANURL
 from gui.NotificationsGUI import NotificationsGUI
-
-DEF_LECTUREPLANURL = "LecturePlanURL"
 
 
 class LecturePlanGUI(QWidget):
@@ -23,21 +21,26 @@ class LecturePlanGUI(QWidget):
         self.loadedWebsite = False
 
         main_layout = QVBoxLayout(self)
-        main_layout.setAlignment(Qt.AlignTop)
 
         # -----------------
         # First Side
-        self.nameLabel = QLabel()
-        self.nameLabel.setText('Vorlesungsplanurl:')
+        self.firstWidget = QWidget()
+        firstLayout = QVBoxLayout(self)
+        firstLayout.setAlignment(Qt.AlignTop)
+        nameLabel = QLabel()
+        nameLabel.setText('Vorlesungsplanurl:')
         self.line = QLineEdit()
 
-        self.pybutton = QPushButton('Verbinden')
-        self.pybutton.clicked.connect(self.setLecturePlan)
+        pybutton = QPushButton('Verbinden')
+        pybutton.clicked.connect(self.setLecturePlan)
 
         # Add Widgets
-        main_layout.addWidget(self.nameLabel)
-        main_layout.addWidget(self.line)
-        main_layout.addWidget(self.pybutton)
+        firstLayout.addWidget(nameLabel)
+        firstLayout.addWidget(self.line)
+        firstLayout.addWidget(pybutton)
+
+        self.firstWidget.setLayout(firstLayout)
+        main_layout.addWidget(self.firstWidget)
 
         # -----------------
         # Second Side
@@ -89,9 +92,7 @@ class LecturePlanGUI(QWidget):
 
         self.hideAll()
 
-        self.nameLabel.setHidden(False)
-        self.line.setHidden(False)
-        self.pybutton.setHidden(False)
+        self.firstWidget.setHidden(False)
 
     def setSecondSide(self):
         self.hideAll()
@@ -106,7 +107,6 @@ class LecturePlanGUI(QWidget):
             dateIndex = url.find("date=")
             if dateIndex != -1:
                 url = url[0:dateIndex-1]
-                print(url)
 
             try:
                 lecturePlan = LecturePlan(url).getLP()

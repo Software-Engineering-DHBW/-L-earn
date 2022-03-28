@@ -2,18 +2,14 @@ import threading
 from datetime import datetime
 from urllib.error import URLError
 
-import wx
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QGridLayout, QPushButton, QWidget, QHBoxLayout, QLabel, QSizePolicy
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QSizePolicy
 
-from Defaults import Defaults
+from defaults.Defaults import Defaults
 from LecturePlan import LecturePlan
 from Notifications import Notifications
-from gui.LecturePlanGUI import DEF_LECTUREPLANURL
+from defaults.Values import DEF_NOTIFICATIONSALLOWED, DEF_LECTUREPLANURL, DEF_LECTURENOTIFICATIONS
 from gui.OnOffButton import Switch
-
-DEF_NOTIFICATIONSALLOWED = "notificationsAllowed"
-DEF_LECTURENOTIFICATIONS = "lectureNotifications"
 
 
 class NotificationsGUI(QDialog):
@@ -22,6 +18,8 @@ class NotificationsGUI(QDialog):
         super().__init__()
 
         # Set Variables
+        self.timers = []
+
         value = Defaults().get(DEF_NOTIFICATIONSALLOWED)
         if value != "":
             self.notificationsAllowed = value
@@ -65,8 +63,9 @@ class NotificationsGUI(QDialog):
 
         # Set Switch Values
         if self.notificationsAllowed:
+            self.notificationsAllowed = False
             ntfSwitch.click()
-            self.__setNotifications(True)
+            # self.__setNotifications(True)
 
         if self.lectureNotifications:
             lectureSwitch.click()
@@ -99,7 +98,8 @@ class NotificationsGUI(QDialog):
         if url != "":
             try:
                 lecturePlan = LecturePlan(url).getStartBeginLP()
-                timers = []
+                print(lecturePlan)
+                self.timers = []
                 i = 0
                 for index, row in lecturePlan.iterrows():
                     now = datetime.now()
@@ -108,17 +108,19 @@ class NotificationsGUI(QDialog):
                     begin = row["date"] + " " + row["begin"]
                     beginDatetime = datetime.strptime(begin, "%d.%m.%Y %H:%M")
                     difference = beginDatetime-now
-                    timers.append(threading.Timer(difference.seconds, self.startLecture))
-                    timers[i].start()
+                    self.timers.append(threading.Timer(difference.seconds, self.startLecture))
+                    self.timers[i].start()
                     i += 1
+                    print(begin)
 
                     # Add Timer for end
                     end = row["date"] + " " + row["end"]
                     endDatetime = datetime.strptime(end, "%d.%m.%Y %H:%M")
                     difference = endDatetime-now
-                    timers.append(threading.Timer(difference.seconds, self.endLecture))
-                    timers[i].start()
+                    self.timers.append(threading.Timer(difference.seconds, self.endLecture))
+                    self.timers[i].start()
                     i += 1
+                    print(end)
 
             except (URLError, ValueError) as e:
                 print(e)

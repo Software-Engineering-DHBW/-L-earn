@@ -72,13 +72,13 @@ class LecturePlan:
             if isinstance(lecture, list):
                 today = datetime.now()
                 date = lecture[1].strip() + "." + str(today.year)
-                act = datetime.strptime(date, "%d.%m.%Y")
-                if act.date() >= today.date():
-                    time = lecture[2]
-                    time = remove_prefix(time, "cal-time:")
-                    timeArr = time.split("-")
-                    begin = timeArr[0]
-                    end = timeArr[1]
+                time = lecture[2]
+                time = remove_prefix(time, "cal-time:")
+                timeArr = time.split("-")
+                begin = timeArr[0]
+                end = timeArr[1]
+                act = datetime.strptime(date + " " + end, "%d.%m.%Y %H:%M")
+                if act >= today:
                     new_row = pd.DataFrame({'date': date, 'begin': begin, 'end': end}, index=[index])
                     dfLecture = pd.concat([dfLecture, new_row])
                     index += 1
