@@ -44,6 +44,8 @@ class WeekReview(QDialog):
                                   "background-color: white;"
                                   "border-radius: 5px}")
         self.createReviewBars(frameLayout)
+        verticalSpacer = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        frameLayout.addItem(verticalSpacer)
 
         # put frame inside scrollable area
         scrollArea = QScrollArea()
@@ -151,7 +153,6 @@ class WeekReview(QDialog):
             barLayout.setSpacing(0)
             barLayout.setContentsMargins(0, 0, 0, 0)
             barBox.setAttribute(QtCore.Qt.WA_StyledBackground, True)
-            barBox.setStyleSheet('background-color: white;')
 
             # create progress bar
             bar = QProgressBar()
@@ -159,14 +160,15 @@ class WeekReview(QDialog):
             bar.setMaximum(maxVal)
             bar.setValue(row.runtime)
             bar.setFormat(barText)
-            bar.setAlignment(QtCore.Qt.AlignLeft)
+            bar.setAlignment(QtCore.Qt.AlignTop)
             bar.setStyleSheet("QProgressBar {"
                               " border-radius: 5px;"
                               " text-align: left;"
                               " font-size: 18px;"
                               " font-family: 'Times New Roman', Times, serif;"
                               " color: black;"
-                              " T min-height: 35px;}"
+                              " T min-height: 35px;"
+                              " background-color: white;}"
                               " QProgressBar::chunk {"
                               " background-color: #d6d6d6;"
                               " border-radius: 5px;}")

@@ -19,7 +19,7 @@ class LimitsGUI(QDialog):
         self.timers = []
 
         # Create a QGridLayout instance
-        main_layout = QVBoxLayout()
+        main_layout = QVBoxLayout(self)
         main_layout.setAlignment(Qt.AlignTop)
         # main_layout.addStretch(10)
 
@@ -37,6 +37,19 @@ class LimitsGUI(QDialog):
                                  "color: black;"
                                  "border-radius: 5px}")
         main_layout.addWidget(titleLabel)
+
+        limitsFrame = QFrame()
+        limitsFrame.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+        limitsFrame.setStyleSheet("""
+                                    QFrame {
+                                        background-color: white;
+                                        margin-left: 40px;
+                                        margin-right: 40px;
+                                        border-radius: 5px;
+                                    }
+                                    """)
+        frameLayout = QVBoxLayout(limitsFrame)
+
         # Add widgets to the layout
         limitsWidget = QWidget()
         limitsLayout = QHBoxLayout()
@@ -56,7 +69,7 @@ class LimitsGUI(QDialog):
         limitsLayout.addWidget(self.combo)
 
         limitsWidget.setLayout(limitsLayout)
-        main_layout.addWidget(limitsWidget)
+        frameLayout.addWidget(limitsWidget)
 
         timeWidget = QWidget()
         timeLayout = QHBoxLayout()
@@ -104,7 +117,7 @@ class LimitsGUI(QDialog):
         timeWidget.setLayout(timeLayout)
 
 
-        main_layout.addWidget(timeWidget)
+        frameLayout.addWidget(timeWidget)
 
         buttonWidget = QWidget()
         buttonLayout = QHBoxLayout()
@@ -117,8 +130,11 @@ class LimitsGUI(QDialog):
         buttonLayout.addWidget(button)
         buttonWidget.setLayout(buttonLayout)
 
-        main_layout.addWidget(buttonWidget)
-        self.setLayout(main_layout)
+        frameLayout.addWidget(buttonWidget)
+        main_layout.addWidget(limitsFrame)
+
+        verticalSpacer = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        main_layout.addItem(verticalSpacer)
 
     def dropdownChanged(self, text):
         self.bannedName = text
