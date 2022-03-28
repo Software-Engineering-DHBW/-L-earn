@@ -234,6 +234,7 @@ class ProcessData(object):
             return self.bannedProcesses.copy()
 
         def extendBannedProcesses(self, banned):
+            print(self.bannedProcesses)
             if len(self.bannedProcesses) == 0:
                 self.bannedProcesses = banned
             else:
@@ -241,7 +242,7 @@ class ProcessData(object):
                     for ind, bn in self.bannedProcesses.iterrows():
                         if name['name'] in bn['name']:
                             self.bannedProcesses.drop(ind)
-                self.bannedProcesses.append(banned)
+                pd.concat([self.bannedProcesses, banned])
 
         def removeBannedProcess(self, name):
             for ind, row in self.bannedProcesses.iterrows():

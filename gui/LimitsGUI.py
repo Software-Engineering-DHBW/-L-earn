@@ -152,7 +152,14 @@ class LimitsGUI(QDialog):
         data = DataClasses.ReviewData().createReview()
 
         username = getpass.getuser()
-        savedItems = list(DBHelper().readBP(username)["name"])
+        dbItems = DBHelper().readBP(username)
+
+        for index, row in dbItems.iterrows():
+            banned = {'name': [row['name']], 'limit': [row['limittime']]}
+            banned = pd.DataFrame(banned)
+            pm.ProcessData().extendBannedProcesses(banned)
+
+        savedItems = list(dbItems["name"])
 
         for name, row in data.iterrows():
             currentItems = [self.combo.itemText(i) for i in range(self.combo.count())]
