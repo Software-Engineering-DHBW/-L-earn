@@ -149,7 +149,7 @@ def getAllProcesses():
     if platform == "win32":
         filterProcWin(df)
     elif platform == "linux":
-        filterProcWin(df)
+        filterProcLin(df)
     return df
 
 
