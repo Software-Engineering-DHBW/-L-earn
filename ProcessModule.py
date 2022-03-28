@@ -196,7 +196,7 @@ class ProcessData(object):
                     for index1, row1 in limits.iterrows():
                         limit = row1['limit']
 
-                    if n in row['name']:
+                    if n.lower() in row['name']:
                         if limit != -1:
                             if limit <= row['runtime']:
                                 if n.lower() in running:
@@ -239,9 +239,10 @@ class ProcessData(object):
             else:
                 for index, name in banned.iterrows():
                     for ind, bn in self.bannedProcesses.iterrows():
-                        if name['name'] in bn['name']:
-                            self.bannedProcesses.drop(ind)
-                self.bannedProcesses.append(banned)
+                        print(bn['name'])
+                        if name['name'].lower() in bn['name'].lower():
+                            self.bannedProcesses = self.bannedProcesses.drop(ind)
+                self.bannedProcesses = self.bannedProcesses.append(banned)
 
         def removeBannedProcess(self, name):
             for ind, row in self.bannedProcesses.iterrows():
@@ -293,10 +294,16 @@ class ProcessData(object):
 
 if __name__ == "__main__":
     # processTest()
-    b = {'name': ["steam", "chrome"], 'limit': [500.0, 5000.0]}
+    b = {'name': ["steam", "chrome"], 'limit': [500, 5000]}
+    c = {'name': ["steam", "discord"], 'limit': [300, 5000]}
+    cunt = pd.DataFrame(c)
     banned = pd.DataFrame(b)
     pD = ProcessData(banned)
     # print(pD.getData())
     #print(pD.getBannedProcesses())
     # pD.killProcess("spotify")
     print(pD.checkProcesses())
+    pD.extendBannedProcesses(cunt)
+    print(pD.getBannedProcesses())
+    print(pD.checkProcesses())
+

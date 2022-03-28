@@ -1,3 +1,6 @@
+import threading
+from sys import platform
+
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QObject
 import time
@@ -6,6 +9,7 @@ from sys import platform
 from ActMonitor import check_idle_Mac, check_idle_windows, check_idle_linux
 import ProcessModule as pm
 import DataClasses as dc
+import ActMonitor as am
 
 global idle_time_sec
 idle_time_sec = 600
@@ -44,7 +48,8 @@ class Worker(QObject):
     def __init__(self, window):
         super().__init__()
         self.window = window
-
+        self.timers = []
+        self.setTimers = []
     # function to load the current processes and update the table
     def loadProcesses(self):
         previousDf = None
@@ -75,6 +80,28 @@ class Worker(QObject):
         pD = pm.ProcessData()
         while True:
             pD.updateData()
+            if len(pD.getBannedProcesses()) != 0:
+                running = pD.checkProcesses()
+                if len(running) != 0:
+                    i = 0
+                    for r in running:
+                        if not r in self.setTimers:
+                            self.timers.append(threading.Timer(300, self.timerEnds, [r]))
+                            self.setTimers.append(r)
+                            self.timers[i].start()
+                            title = "[L]earn - Limit Alert"
+                            message = "Das Programm " + r + " läuft und hat sein eingestelltes Limit erreicht! Es wird deshalb in 5 Minuten beendet!"
+                            if platform == "win32":
+                                am.sendmessageWindows(title, message)
+
+                            if platform == "linux":
+                                am.sendmessageLinux(title, message)
+
+                            if platform == "darwin":
+                                am.sendmessageMac(title, message)
+
+                            i += 1
+
             time.sleep(5)
 
     def updateCurrentDayData(self):
@@ -87,3 +114,7 @@ class Worker(QObject):
                 print(e)
 
             time.sleep(300)
+
+    def timerEnds(self, proc):
+        pm.ProcessData().killProcess(proc)
+        self.setTimers.remove(proc)
