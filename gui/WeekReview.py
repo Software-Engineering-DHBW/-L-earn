@@ -17,7 +17,8 @@ class WeekReview(QDialog):
         mainLayout = QVBoxLayout(self)
 
         self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
-        self.setStyleSheet('border-radius: 5px;')
+        self.setStyleSheet('border-radius: 5px;'
+                           'background-color: #eeeeee;')
 
         # title
         titleLabel = QLabel("Wochenrückblick")
