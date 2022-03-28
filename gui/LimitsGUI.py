@@ -1,12 +1,18 @@
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QHBoxLayout, QFrame, QWidget
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QHBoxLayout, QFrame, QWidget, QComboBox, QSizePolicy
 
-class LimitsGUI(QDialog):
+from gui.OnOffButton import Switch
+
+
+class LimitsGUI(QWidget):
     def __init__(self):
         super().__init__()
-        self.notificationsAllowed = False
-        self.lectureNotifications = False
+
+        self.columns = ['name', 'limit']
+        self.banned = []
+
+        self.timers = []
 
         # Create a QGridLayout instance
         main_layout = QVBoxLayout()
@@ -14,26 +20,34 @@ class LimitsGUI(QDialog):
         # main_layout.addStretch(10)
 
         # Add widgets to the layout
-        notificationWidget = QWidget()
-        notificationLayout = QHBoxLayout()
-        switch1 = self.getSwitch()
-        switch1.clicked.connect(self.switchNotifications)
-        notificationLayout.addWidget(switch1)
-        notificationLabel = QLabel()
-        notificationLabel.setText("Mitteilungen erlauben")
-        notificationLayout.addWidget(notificationLabel)
-        notificationWidget.setLayout(notificationLayout)
-        main_layout.addWidget(notificationWidget)
+        limitsWidget = QWidget()
+        limitsLayout = QHBoxLayout()
+        limitsLayout.setAlignment(Qt.AlignLeft)
 
-        lectureWidget = QWidget()
-        lectureLayout = QHBoxLayout()
-        switch2 = self.getSwitch()
-        switch2.clicked.connect(self.switchLectureNotifications)
-        lectureLayout.addWidget(switch2)
-        lectureLabel = QLabel()
-        lectureLabel.setText("Mitteilungen während der Vorlesungszeit ausschalten")
-        lectureLayout.addWidget(lectureLabel)
-        lectureWidget.setLayout(lectureLayout)
-        main_layout.addWidget(lectureWidget)
+        limitsLabel = QLabel()
+        limitsLabel.setText("Limit setzen für")
+        limitsLabel.setFont()
+        limitsLabel.adjustSize()
+        limitsLayout.addWidget(limitsLabel)
+
+        combo = QComboBox(self)
+        combo.addItem("Steam")
+        combo.addItem("Valorant")
+        #combo.addItem("")
+        combo.activated[str].connect(self.onChanged)
+        limitsLayout.addWidget(combo)
+
+
+
+        limitsWidget.setLayout(limitsLayout)
+        main_layout.addWidget(limitsWidget)
 
         self.setLayout(main_layout)
+
+
+
+    def onChanged(self, text):
+        print(text)
+
+
+

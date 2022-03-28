@@ -15,6 +15,7 @@ from Worker import Worker
 from gui.LecturePlanGUI import LecturePlanGUI
 from gui.NotificationsGUI import NotificationsGUI
 from gui.WeekReview import WeekReview
+from gui.LimitsGUI import LimitsGUI
 
 
 class MainWindow(QMainWindow):
@@ -56,10 +57,11 @@ class MainWindow(QMainWindow):
         self.weekReview = WeekReview()
         self.lecturePlan = LecturePlanGUI()
         self.notifications = NotificationsGUI()
+        self.limits = LimitsGUI()
 
         self.tab1 = self.weekReview
         self.tab2 = self.lecturePlan
-        self.tab3 = self.ui3()
+        self.tab3 = self.limits
         self.tab4 = self.notifications
 
         self.initUI()
