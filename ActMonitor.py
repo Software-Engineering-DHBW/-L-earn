@@ -1,11 +1,13 @@
 import time
-import platform
+from sys import platform
 import notify2
-from win10toast import ToastNotifier
-import win32api
 import os
 import subprocess
 import pync
+
+if platform == "win32":
+    from win32gui import GetWindowText, GetForegroundWindow
+    from win10toast import ToastNotifier
 
 def check_idle_linux(temp_idle_value_sec):
     idle_time = int(subprocess.getoutput('xprintidle')) / 1000 # Requires xprintidle (sudo apt install xprintidle)
@@ -54,15 +56,15 @@ def sendmessageMac(title, message):
 
 
 def idleTime(idle_time_sec):
-    if platform.system() == 'Linux':
+    if platform == 'linux':
         print('linux')
         while 1:
             check_idle_linux(idle_time_sec)
-    elif platform.system() == 'Darwin':
+    elif platform == 'darwin':
         print('Macn not yet')
         while 1:
             check_idle_Mac(idle_time_sec)
-    elif platform.system() == 'Windows':
+    elif platform == 'win32':
         print('windows')
         while 1:
             check_idle_windows(idle_time_sec)

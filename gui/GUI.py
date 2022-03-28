@@ -12,7 +12,9 @@ from Worker import Worker
 
 
 # class that represents the main GUI window
+from gui.ActivityMonitorGUI import ActivityMonitorGUI
 from gui.LecturePlanGUI import LecturePlanGUI
+from gui.LimitsGUI import LimitsGUI
 from gui.NotificationsGUI import NotificationsGUI
 from gui.WeekReview import WeekReview
 
@@ -44,23 +46,28 @@ class MainWindow(QMainWindow):
         self.btn_2 = self.getButton(image='dhbw.png', text='Vorlesungsplan')
         self.btn_3 = self.getButton(image='stopwatch.png', text='Limits')
         self.btn_4 = self.getButton(image='notification.png', text='Mitteilungen')
+        self.btn_5 = self.getButton(image='activityMonitor.png', text='Activity Monitor')
 
         self.btn_1.clicked.connect(self.button1)
         self.btn_2.clicked.connect(self.button2)
         self.btn_3.clicked.connect(self.button3)
         self.btn_4.clicked.connect(self.button4)
+        self.btn_5.clicked.connect(self.button5)
 
         self.right_widget = None
 
         # add tabs
         self.weekReview = WeekReview()
         self.lecturePlan = LecturePlanGUI()
+        self.limits = LimitsGUI()
         self.notifications = NotificationsGUI()
+        self.activityMonitor = ActivityMonitorGUI()
 
         self.tab1 = self.weekReview
         self.tab2 = self.lecturePlan
-        self.tab3 = self.ui3()
+        self.tab3 = self.limits
         self.tab4 = self.notifications
+        self.tab5 = self.activityMonitor
 
         self.initUI()
 
@@ -97,6 +104,7 @@ class MainWindow(QMainWindow):
         left_layout.addWidget(self.btn_2)
         left_layout.addWidget(self.btn_3)
         left_layout.addWidget(self.btn_4)
+        left_layout.addWidget(self.btn_5)
         left_layout.addStretch(40)
         left_layout.setSpacing(20)
         left_widget = QWidget()
@@ -109,6 +117,7 @@ class MainWindow(QMainWindow):
         self.right_widget.addTab(self.tab2, '')
         self.right_widget.addTab(self.tab3, '')
         self.right_widget.addTab(self.tab4, '')
+        self.right_widget.addTab(self.tab5, '')
 
         self.right_widget.setCurrentIndex(0)
         self.right_widget.setStyleSheet('''QTabBar::tab{width: 0; \
@@ -128,7 +137,12 @@ class MainWindow(QMainWindow):
     def getButton(self, image, text):
         button = QPushButton(text, self)
         button.setIcon(QIcon(QPixmap("images/" + image)))
-        button.setStyleSheet("QPushButton { text-align: left; border-radius: 5px; background-color: white; min-height: 30px; min-width: 150px;}")
+        button.setStyleSheet("QPushButton { text-align: left;"
+                             "padding-left: 10px;"
+                             "border-radius: 5px;"
+                             "background-color: white;"
+                             "min-height: 30px;"
+                             "min-width: 150px;}")
         font = button.font()
         font.setPointSize(13)
         button.setFont(font)
@@ -147,40 +161,8 @@ class MainWindow(QMainWindow):
     def button4(self):
         self.right_widget.setCurrentIndex(3)
 
-    # -----------------
-    # pages
-
-    def ui1(self):
-        main_layout = QVBoxLayout()
-        main_layout.addWidget(QLabel('page 1'))
-        main_layout.addStretch(5)
-        main = QWidget()
-        main.setLayout(main_layout)
-        return main
-
-    def ui2(self):
-        main_layout = QVBoxLayout()
-        main_layout.addWidget(QLabel('page 2'))
-        main_layout.addStretch(5)
-        main = QWidget()
-        main.setLayout(main_layout)
-        return main
-
-    def ui3(self):
-        main_layout = QVBoxLayout()
-        main_layout.addWidget(QLabel('page 3'))
-        main_layout.addStretch(5)
-        main = QWidget()
-        main.setLayout(main_layout)
-        return main
-
-    def ui4(self):
-        main_layout = QVBoxLayout()
-        main_layout.addWidget(QLabel('page 4'))
-        main_layout.addStretch(5)
-        main = QWidget()
-        main.setLayout(main_layout)
-        return main
+    def button5(self):
+        self.right_widget.setCurrentIndex(4)
 
 
 def startWindow():

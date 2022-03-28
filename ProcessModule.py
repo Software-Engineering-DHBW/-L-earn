@@ -2,9 +2,11 @@
 This file includes all functions, that are needed to get processes and their information for all operating systems and
 handle operations on processes such as kill() in the future.
 """
-
+import numpy as np
+import pandas as pd
 # import all necessary libraries and packages
 import psutil
+
 from datetime import datetime, date, timedelta
 import pandas as pd
 import os, sys
@@ -18,6 +20,8 @@ if platform == "win32":
 elif platform == "linux":
     import wmctrl
 
+
+import Exceptions
 
 consideredProc = []
 

@@ -1,10 +1,13 @@
+import os
 import pickle
 import Exceptions as ex
 
 
 class Defaults(object):
     class __Defaults:
-        def __init__(self, filename="defaults/defaults.pkl"):
+        file_path = os.path.abspath(os.path.dirname(__file__)) + "/defaults.pkl"
+
+        def __init__(self, filename=file_path):
             self.filename = filename
             self.__defaults = {}
             try:

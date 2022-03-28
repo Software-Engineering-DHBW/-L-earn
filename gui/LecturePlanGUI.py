@@ -1,8 +1,9 @@
 from urllib.error import URLError
 
+from PyQt5 import QtCore
 from PyQt5.QtCore import QUrl, Qt
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout, QHBoxLayout, QSizePolicy
 from PyQt5.QtGui import QBrush, QColor, QPalette
 
 from qroundprogressbar import QRoundProgressBar
@@ -27,11 +28,13 @@ class LecturePlanGUI(QWidget):
         self.firstWidget = QWidget()
         firstLayout = QVBoxLayout(self)
         firstLayout.setAlignment(Qt.AlignTop)
+
         nameLabel = QLabel()
         nameLabel.setText('Vorlesungsplanurl:')
         self.line = QLineEdit()
 
         pybutton = QPushButton('Verbinden')
+        pybutton.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
         pybutton.clicked.connect(self.setLecturePlan)
 
         # Add Widgets
@@ -50,6 +53,7 @@ class LecturePlanGUI(QWidget):
         self.webView.loadFinished.connect(self.loadFinishedHandler)
 
         self.pybutton2 = QPushButton('Neu Verbinden')
+        self.pybutton2.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
         self.pybutton2.clicked.connect(self.setFirstSide)
 
         # ProgressBar
