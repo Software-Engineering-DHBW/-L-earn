@@ -215,26 +215,23 @@ class ProcessData(object):
             return self.data
 
         def getBannedProcesses(self):
-            return self.bannedProcesses
+            return self.bannedProcesses.copy()
 
-        def extendBannedProcesses(self, name):
-            if isinstance(name, (list, tuple, np.ndarray)):
-                self.bannedProcesses.extend(name)
+        def extendBannedProcesses(self, banned):
+            if len(self.bannedProcesses) == 0:
+                self.bannedProcesses = banned
             else:
-                self.bannedProcesses.append(name)
+                for index, name in banned.iterrows():
+                    for ind, bn in self.bannedProcesses.iterrows():
+                        if name['name'] in bn['name']:
+                            self.bannedProcesses.drop(ind)
+                self.bannedProcesses.append(banned)
+
 
         def removeBannedProcess(self, name):
-            if isinstance(name, (list, tuple, np.ndarray)):
-                for n in name:
-                    try:
-                        self.bannedProcesses.remove(n)
-                    except ValueError:
-                        raise Exceptions.NotFoundError
-            else:
-                try:
-                    self.bannedProcesses.remove(name)
-                except ValueError:
-                    raise Exceptions.NotFoundError
+            for ind, row in self.bannedProcesses.iterrows():
+                if name in row['name']:
+                    self.bannedProcesses.drop(ind)
 
         def killProcess(self, name):
             if len(name) == 0:
