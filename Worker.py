@@ -53,17 +53,20 @@ class Worker(QObject):
                     i = 0
                     for r in running:
                         if not r in self.setTimers:
-                            self.timers.append(threading.Timer(300, self.timerEnds(r)))
+                            self.timers.append(threading.Timer(300, self.timerEnds, r))
                             self.setTimers.append(r)
                             self.timers[i].start()
                             title = "[L]earn - Limit Alert"
                             message = "Das Programm " + r + " läuft und hat sein eingestelltes Limit erreicht! Es wird deshalb in 5 Minuten beendet!"
-                            switcher = {
-                                "win32": am.sendmessageWindows(title, message),
-                                "linux": am.sendmessageLinux(title, message),
-                                "darwin": am.sendmessageMac(title, message)
-                            }
-                            switcher.get(platform)
+                            if platform == "win32":
+                                am.sendmessageWindows(title, message)
+
+                            if platform == "linux":
+                                am.sendmessageLinux(title, message)
+
+                            if platform == "darwin":
+                                am.sendmessageMac(title, message)
+
                             i += 1
 
             time.sleep(5)

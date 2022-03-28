@@ -196,22 +196,25 @@ class ProcessData(object):
                     for index1, row1 in limits.iterrows():
                         limit = row1['limit']
 
-                    if limit != -1:
-                        if limit <= row['runtime']:
-                            if n.lower() in running:
-                                continue
+                    if n in row['name']:
+                        if limit != -1:
+                            if limit <= row['runtime']:
+                                if n.lower() in running:
+                                    continue
+                                else:
+                                    running.append(n.lower())
                             else:
-                                running.append(n.lower())
+                                continue
                         else:
-                            continue
+                            if n.lower() in row['name']:
+                                if n.lower() in running:
+                                    continue
+                                else:
+                                    running.append(n.lower())
+                            else:
+                                continue
                     else:
-                        if n.lower() in row['name']:
-                            if n.lower() in running:
-                                continue
-                            else:
-                                running.append(n.lower())
-                        else:
-                            continue
+                        continue
 
             return running
 
@@ -290,10 +293,10 @@ class ProcessData(object):
 
 if __name__ == "__main__":
     # processTest()
-    b = {'name': ["msegde", "Spotify", "chrome"], 'limit': [-1, -1, 500]}
+    b = {'name': ["steam", "chrome"], 'limit': [500.0, 5000.0]}
     banned = pd.DataFrame(b)
     pD = ProcessData(banned)
     # print(pD.getData())
-    print(pD.getBannedProcesses())
+    #print(pD.getBannedProcesses())
     # pD.killProcess("spotify")
     print(pD.checkProcesses())

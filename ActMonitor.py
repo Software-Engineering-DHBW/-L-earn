@@ -1,10 +1,16 @@
 import time
 from sys import platform
-import notify2
+
+
 import os
 import subprocess
-import pync
 import win32api
+
+if platform == "darwin":
+    import pync
+
+if platform == "linux":
+    import notify2
 
 if platform == "win32":
     from win32gui import GetWindowText, GetForegroundWindow
