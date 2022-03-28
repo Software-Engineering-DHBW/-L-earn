@@ -53,7 +53,7 @@ class Worker(QObject):
                     i = 0
                     for r in running:
                         if not r in self.setTimers:
-                            self.timers.append(threading.Timer(300, self.timerEnds, r))
+                            self.timers.append(threading.Timer(300, self.timerEnds, [r]))
                             self.setTimers.append(r)
                             self.timers[i].start()
                             title = "[L]earn - Limit Alert"
