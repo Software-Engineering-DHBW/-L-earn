@@ -17,8 +17,6 @@ class WeekReview(QDialog):
         mainLayout = QVBoxLayout(self)
 
         self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
-        # self.setStyleSheet('border-radius: 5px;'
-        #                    'background-color: #eeeeee;')
 
         # title
         titleLabel = QLabel("Wochenrückblick")
@@ -26,14 +24,6 @@ class WeekReview(QDialog):
         titleLabel.setMaximumHeight(80)
         titleLabel.setMinimumHeight(80)
         titleLabel.setObjectName("title")
-        # titleLabel.setStyleSheet("QLabel {"
-        #                          "background-color: white;"
-        #                          "text-align: Center;"
-        #                          "margin-left: 40px;"
-        #                          "margin-right: 40px;"
-        #                          "font-size: 30px;"
-        #                          "font-family: 'Times New Roman', Times, serif;"
-        #                          "color: black;}")
         mainLayout.addWidget(titleLabel)
 
         # review
@@ -53,56 +43,6 @@ class WeekReview(QDialog):
         scrollArea.setWidget(reviewFrame)
         scrollArea.setWidgetResizable(True)
         scrollArea.setAttribute(QtCore.Qt.WA_StyledBackground, True)
-        scrollArea.setStyleSheet("""
-                                QScrollArea 
-                                {
-                                    margin-left: 40px;
-                                    margin-right: 40px;
-                                    min-height: 485px;
-                                    background-color: white;
-                                }
-                                QScrollBar:vertical
-                                {
-                                    background-color: white;
-                                    width: 9px;
-                                    border-radius: 5px;
-                                }
-                            
-                                QScrollBar::handle:vertical
-                                {
-                                    background-color: #d6d6d6;
-                                    border-radius: 5px;
-                                }
-                            
-                                QScrollBar::sub-line:vertical
-                                {
-                                    margin: 3px 0px 3px 0px;
-                                    border-image: url(:/qss_icons/rc/up_arrow_disabled.png);
-                                    height: 10px;
-                                    width: 10px;
-                                    subcontrol-position: top;
-                                    subcontrol-origin: margin;
-                                }
-                            
-                                QScrollBar::add-line:vertical
-                                {
-                                    margin: 3px 0px 3px 0px;
-                                    border-image: url(:/qss_icons/rc/down_arrow_disabled.png);
-                                    height: 10px;
-                                    width: 10px;
-                                    subcontrol-position: bottom;
-                                    subcontrol-origin: margin;
-                                }
-                            
-                                QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical
-                                {
-                                    background: none;
-                                }
-                            
-                                QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical
-                                {
-                                    background: none;
-                                }""")
         mainLayout.addWidget(scrollArea)
 
         verticalSpacer = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)

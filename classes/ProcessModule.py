@@ -197,7 +197,7 @@ class ProcessData(object):
                     limit = -1
 
                     for index1, row1 in limits.iterrows():
-                        limit = row1['limit']
+                        limit = row1['limittime']
 
                     if n.lower() in row['name']:
                         if limit != -1:
@@ -222,10 +222,7 @@ class ProcessData(object):
             return running
 
         def setBannedProcesses(self, bp):
-            if len(bp) != 0:
-                self.bannedProcesses = bp
-            else:
-                raise Exceptions.EmptyValueError
+            self.bannedProcesses = bp
 
         def clearBannedProcesses(self):
             self.bannedProcesses.clear()

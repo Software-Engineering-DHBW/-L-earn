@@ -1,4 +1,5 @@
 * {
+    /*border-radius: 5px;*/
     color: #000000;
     background-color: #EEEEEE;
 }
@@ -17,6 +18,7 @@ QLabel#title {
     border-radius: 5px;
 }
 QLabel#switchLabel {
+    background-color: white;
     font-size: 18px;
     font-family: 'Times New Roman', Times, serif;
 }
@@ -24,6 +26,19 @@ QLabel#label {
     color: black;
     background-color: white;
     font-size: 13px;
+    font-family: 'Times New Roman', Times, serif;
+}
+QLabel#centerLabel{
+    background-color: white;
+    text-align: Center;
+    color: black;
+}
+QLabel#limitLabel {
+    min-height: 20px;
+    text-align: left;
+    color: black;
+    background-color: white;
+    font-size: 18px;
     font-family: 'Times New Roman', Times, serif;
 }
 QPushButton#tabButton {
@@ -59,11 +74,20 @@ QFrame {
     background-color: #EEEEEE;
     border-radius: 5px;
 }
-QFrame#limitsFrame {
+QFrame#frame {
     background-color: white;
     margin-left: 40px;
     margin-right: 40px;
     border-radius: 5px;
+}
+QFrame#bottomFrame {
+    background-color: white;
+    border-radius: 5px;
+}
+QFrame#rowFrame {
+    background-color: white;
+    border-radius: 5px;
+    max-height: 25px;
 }
 QTabBar::tab {
     width: 0;
@@ -107,4 +131,54 @@ QComboBox {
     background-color: #EEEEEE;
     selection-color: #EEEEEE;
     selection-background-color: rgb(17, 101, 174);
+}
+QScrollArea
+{
+    margin-left: 40px;
+    margin-right: 40px;
+    background-color: white;
+    border-radius: 5px;
+    border: None;
+}
+QScrollBar:vertical
+{
+    background-color: white;
+    width: 9px;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:vertical
+{
+    background-color: #d6d6d6;
+    border-radius: 5px;
+}
+
+QScrollBar::sub-line:vertical
+{
+    margin: 3px 0px 3px 0px;
+    border-image: url(:/qss_icons/rc/up_arrow_disabled.png);
+    height: 10px;
+    width: 10px;
+    subcontrol-position: top;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::add-line:vertical
+{
+    margin: 3px 0px 3px 0px;
+    border-image: url(:/qss_icons/rc/down_arrow_disabled.png);
+    height: 10px;
+    width: 10px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical
+{
+    background: none;
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical
+{
+    background: none;
 }

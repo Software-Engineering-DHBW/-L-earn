@@ -6,38 +6,39 @@ import time
 from classes import DataClasses as dc, ProcessModule as pm
 from sys import platform
 from classes.ActMonitor import check_idleTime_Mac, check_idleTime_windows, check_idleTime_linux
-import ActMonitor as am
+import classes.ActMonitor as am
 
-#variable determines how long idle time is tolerated
+# variable determines how long idle time is tolerated
 global idle_time_sec
 idle_time_sec = 600
+
 
 def checkFile():
     with open('logs/transfer.txt') as f:
         lines = f.readlines()
         f.close()
-        print(lines[0])
     if lines[0] == 'True':
         return True
     else:
         return False
 
+
 class ActWorker(QObject):
     def __init__(self):
         super().__init__()
 
-
     def idleTime(self):
         while True:
-            if platform == 'linux' and checkFile() or platform == 'linux2' and checkFile():
-                print('linux')
-                check_idleTime_linux(idle_time_sec)
-            elif platform == 'darwin' and checkFile():
-                print('Macn not yet')
-                check_idleTime_Mac(idle_time_sec)
-            elif platform == 'win32'and checkFile():
-                print('windows')
-                check_idleTime_windows(idle_time_sec)
+            if checkFile():
+                if platform == 'linux' or platform == 'linux2':
+                    print('linux')
+                    check_idleTime_linux(idle_time_sec)
+                elif platform == 'darwin':
+                    print('Macn not yet')
+                    check_idleTime_Mac(idle_time_sec)
+                elif platform == 'win32':
+                    print('windows')
+                    check_idleTime_windows(idle_time_sec)
             time.sleep(5)
 
 
@@ -49,6 +50,7 @@ class Worker(QObject):
         self.window = window
         self.timers = []
         self.setTimers = []
+
     # function to load the current processes and update the table
     def loadProcesses(self):
         previousDf = None
@@ -84,12 +86,14 @@ class Worker(QObject):
                 if len(running) != 0:
                     i = 0
                     for r in running:
-                        if not r in self.setTimers:
-                            self.timers.append(threading.Timer(300, self.timerEnds, [r]))
+                        timer = threading.Timer(300, self.timerEnds, [r])
+                        if not r in self.setTimers and timer not in self.timers:
+                            self.timers.append(timer)
                             self.setTimers.append(r)
                             self.timers[i].start()
                             title = "[L]earn - Limit Alert"
-                            message = "Das Programm " + r + " läuft und hat sein eingestelltes Limit erreicht! Es wird deshalb in 5 Minuten beendet!"
+                            message = "Das Programm " + r + "läuft und hat sein eingestelltes Limit erreicht! Es wird " \
+                                                            "deshalb in 5 Minuten beendet! "
                             if platform == "win32":
                                 am.sendmessageWindows(title, message)
 

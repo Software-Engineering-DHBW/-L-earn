@@ -1,5 +1,4 @@
 
-
 import threading
 from datetime import datetime
 from urllib.error import URLError
@@ -36,9 +35,7 @@ class NotificationsGUI(QDialog):
             self.lectureNotifications = False
 
         # Create a QGridLayout instance
-        main_layout = QVBoxLayout(self)
-        #main_layout.setAlignment(Qt.AlignTop)
-
+        mainLayout = QVBoxLayout(self)
 
         # Add widgets to the layout
         titleLabel = QLabel("Kommunikationsbeschränkung")
@@ -46,7 +43,7 @@ class NotificationsGUI(QDialog):
         titleLabel.setMaximumHeight(80)
         titleLabel.setMinimumHeight(80)
         titleLabel.setObjectName("title")
-        main_layout.addWidget(titleLabel)
+        mainLayout.addWidget(titleLabel)
 
         frame = QFrame()
         frameLayout = QVBoxLayout(frame)
@@ -88,10 +85,10 @@ class NotificationsGUI(QDialog):
 
         frameLayout.addWidget(notificationWidget)
         frameLayout.addWidget(lectureWidget)
-        main_layout.addWidget(frame)
+        mainLayout.addWidget(frame)
 
         verticalSpacer = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        main_layout.addItem(verticalSpacer)
+        mainLayout.addItem(verticalSpacer)
 
         # Set Switch Values
         if self.notificationsAllowed:
@@ -138,7 +135,7 @@ class NotificationsGUI(QDialog):
                     # Add Timer for begin
                     begin = row["date"] + " " + row["begin"]
                     beginDatetime = datetime.strptime(begin, "%d.%m.%Y %H:%M")
-                    difference = beginDatetime-now
+                    difference = beginDatetime - now
                     self.timers.append(threading.Timer(difference.seconds, self.startLecture))
                     self.timers[i].start()
                     i += 1
@@ -146,7 +143,7 @@ class NotificationsGUI(QDialog):
                     # Add Timer for end
                     end = row["date"] + " " + row["end"]
                     endDatetime = datetime.strptime(end, "%d.%m.%Y %H:%M")
-                    difference = endDatetime-now
+                    difference = endDatetime - now
                     self.timers.append(threading.Timer(difference.seconds, self.endLecture))
                     self.timers[i].start()
                     i += 1
@@ -160,7 +157,5 @@ class NotificationsGUI(QDialog):
             Notifications().disableNtf()
 
     def endLecture(self):
-        if self.notificationsAllowed:
+        if self.lectureNotifications and self.notificationsAllowed:
             Notifications().enableNtf()
-
-
