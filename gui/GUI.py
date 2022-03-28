@@ -32,7 +32,7 @@ class MainWindow(QMainWindow):
 
         # set the title of main window
         self.setWindowTitle('[L]earn')
-        self.setWindowIcon(QIcon('Logo.png'))
+        self.setWindowIcon(QIcon('images/Logo.png'))
 
         # set the size of window
         self.Width = 1000

@@ -10,10 +10,14 @@ import pandas as pd
 import os, sys
 import Exceptions
 import numpy as np
-import win32process
-import win32gui
-import platform
-import wmctrl
+from sys import platform
+
+if platform == "win32":
+    import win32gui
+    import win32process
+elif platform == "linux":
+    import wmctrl
+
 
 consideredProc = []
 
@@ -138,9 +142,9 @@ def getAllProcesses():
     processes = get_processes_info()
     df = construct_dataframe(processes)
 
-    if platform.system() == "Windows":
+    if platform == "win32":
         filterProcWin(df)
-    elif platform.system() == "Linux":
+    elif platform == "linux":
         filterProcWin(df)
     return df
 
