@@ -1,9 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QFrame
-
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt, QThread
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QSizePolicy
-
 from gui.OnOffButton import Switch
 
 
@@ -16,14 +14,13 @@ class ActivityMonitorGUI(QWidget):
 
 
 
-        #self.createProcessThread4()
-
         #Set Variables
         self.monitoringActive =False
         with open('logs/transfer.txt', 'w') as f:
             f.write('False')
             f.close()
         print('false')
+
         # Create a QGridLayout instance
         main_layout = QVBoxLayout()
         main_layout.setAlignment(Qt.AlignTop)
@@ -89,7 +86,7 @@ class ActivityMonitorGUI(QWidget):
         if self.monitoringActive:
             self.monitoringActive = False
             monSwitch.click()
-            # self.__setNotifications(True)
+
 
 
     def getSwitch(self):
@@ -98,15 +95,7 @@ class ActivityMonitorGUI(QWidget):
         switch.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
         return switch
 
-    def checkMonitoring(self):
-        if self.monitoringActive:
-            return True
-        else:
-            return False
-
-    def stopMonitoring(self):
-        print('stop')
-
+    #toggle monitoring status
     def switchMonitoring(self):
         if not self.monitoringActive:
             self.monitoringActive = True
