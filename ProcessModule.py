@@ -199,22 +199,25 @@ class ProcessData(object):
                     for index1, row1 in limits.iterrows():
                         limit = row1['limit']
 
-                    if limit != -1:
-                        if limit <= row['runtime']:
-                            if n.lower() in running:
-                                continue
+                    if n.lower() in row['name']:
+                        if limit != -1:
+                            if limit <= row['runtime']:
+                                if n.lower() in running:
+                                    continue
+                                else:
+                                    running.append(n.lower())
                             else:
-                                running.append(n.lower())
+                                continue
                         else:
-                            continue
+                            if n.lower() in row['name']:
+                                if n.lower() in running:
+                                    continue
+                                else:
+                                    running.append(n.lower())
+                            else:
+                                continue
                     else:
-                        if n.lower() in row['name']:
-                            if n.lower() in running:
-                                continue
-                            else:
-                                running.append(n.lower())
-                        else:
-                            continue
+                        continue
 
             return running
 
@@ -234,14 +237,13 @@ class ProcessData(object):
             return self.bannedProcesses.copy()
 
         def extendBannedProcesses(self, banned):
-            print(self.bannedProcesses)
             if len(self.bannedProcesses) == 0:
                 self.bannedProcesses = banned
             else:
                 for index, name in banned.iterrows():
                     for ind, bn in self.bannedProcesses.iterrows():
-                        if name['name'] in bn['name']:
-                            self.bannedProcesses.drop(ind)
+                        if name['name'].lower() in bn['name'].lower():
+                            self.bannedProcesses = self.bannedProcesses.drop(ind)
                 pd.concat([self.bannedProcesses, banned])
 
         def removeBannedProcess(self, name):

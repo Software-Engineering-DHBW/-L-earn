@@ -1,29 +1,31 @@
 import time
 from sys import platform
-import notify2
 import os
 import subprocess
-import pync
-
 if platform == "win32":
-    from win32gui import GetWindowText, GetForegroundWindow
+    import win32api
     from win10toast import ToastNotifier
 
-def check_idle_linux(temp_idle_value_sec):
+if platform == "linux" or platform == 'linux2':
+    import notify2
+
+if platform == "darwin":
+    import pync
+
+def check_idleTime_linux(temp_idle_value_sec):
     idle_time = int(subprocess.getoutput('xprintidle')) / 1000 # Requires xprintidle (sudo apt install xprintidle)
     if idle_time > temp_idle_value_sec:
-        print("You have been logged out due to inactivity.")
-        sendmessageLinux('test','This is a Testmessage')
+        sendmessageLinux('Erinnerung','Sie haben schon 10 Minuten nichts mehr gemacht')
         time.sleep(2)
 
-def check_idle_windows(temp_idle_value_sec):
+def check_idleTime_windows(temp_idle_value_sec):
     idle_time = (win32api.GetTickCount() - win32api.GetLastInputInfo()) / 1000.0
     if idle_time > temp_idle_value_sec:
-        sendmessageWindows('test','This is a Testmessage')
+        sendmessageWindows('Erinnerung','Sie haben schon 10 Minuten nichts mehr gemacht')
         time.sleep(2)
-        print("You have been logged out due to inactivity.")
 
-def check_idle_Mac(temp_idle_value_sec):
+
+def check_idleTime_Mac(temp_idle_value_sec):
         time.sleep(2)
         cmd = "ioreg -c IOHIDSystem | perl -ane 'if (/Idle/) {$idle=(pop @F)/1000000000; print $idle}'"
         result = os.popen(cmd)  # use popen instead of os.system to open a perl script
@@ -31,8 +33,7 @@ def check_idle_Mac(temp_idle_value_sec):
         temp_idle = int(str.split(".")[0])
         # print(str)
         if temp_idle > temp_idle_value_sec:
-            sendmessageMac('Test','This is a Text Message')
-            print("You have been logged out due to inactivity.")
+            sendmessageMac('Erinnerung','Sie haben schon 10 Minuten nichts mehr gemacht')
 
 
 def sendmessageLinux(title, message):
@@ -53,23 +54,6 @@ def sendmessageWindows(title, message):
 
 def sendmessageMac(title, message):
     pync.notify(message, title=title)
-
-
-def idleTime(idle_time_sec):
-    if platform == 'linux':
-        print('linux')
-        while 1:
-            check_idle_linux(idle_time_sec)
-    elif platform == 'darwin':
-        print('Macn not yet')
-        while 1:
-            check_idle_Mac(idle_time_sec)
-    elif platform == 'win32':
-        print('windows')
-        while 1:
-            check_idle_windows(idle_time_sec)
-
-
 
 
 
