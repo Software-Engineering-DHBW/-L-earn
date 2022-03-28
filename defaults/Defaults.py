@@ -35,7 +35,7 @@ class Defaults(object):
 
     instance = None
 
-    def __new__(cls, filename):
+    def __new__(cls, filename="defaults/defaults.pkl"):
         if not Defaults.instance:
             Defaults.instance = Defaults.__Defaults(filename)
         return Defaults.instance

@@ -5,7 +5,7 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QHBoxLayout, QWidget, QComboBox, QSlider, \
-    QPushButton, QFrame
+    QPushButton, QFrame, QScrollArea
 
 import DataClasses
 import ProcessModule as pm
@@ -126,10 +126,129 @@ class LimitsGUI(QDialog):
         buttonWidget.setLayout(buttonLayout)
 
         frameLayout.addWidget(buttonWidget)
+
+        bottomFrame = QFrame()
+        bottomFrameLayout = QHBoxLayout(bottomFrame)
+        bottomFrame.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+        bottomFrame.setObjectName("bottomFrame")
+        bottomFrame.setStyleSheet("""
+                                    QFrame#bottomFrame {
+                                        background-color: white;
+                                        margin-left: 40px;
+                                        margin-right: 40px;
+                                        border-radius: 5px;
+                                    }
+                                    """)
+        self.createLimitList(bottomFrameLayout)
+
+        scrollArea = QScrollArea()
+        scrollArea.setWidget(bottomFrame)
+        scrollArea.setWidgetResizable(True)
+        scrollArea.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+        scrollArea.setStyleSheet("""
+                                        QScrollArea 
+                                        {
+                                            margin-left: 40px;
+                                            margin-right: 40px;
+                                            min-height: 485px;
+                                            background-color: white;
+                                        }
+                                        QScrollBar:vertical
+                                        {
+                                            background-color: white;
+                                            width: 9px;
+                                            border-radius: 5px;
+                                        }
+
+                                        QScrollBar::handle:vertical
+                                        {
+                                            background-color: #d6d6d6;
+                                            border-radius: 5px;
+                                        }
+
+                                        QScrollBar::sub-line:vertical
+                                        {
+                                            margin: 3px 0px 3px 0px;
+                                            border-image: url(:/qss_icons/rc/up_arrow_disabled.png);
+                                            height: 10px;
+                                            width: 10px;
+                                            subcontrol-position: top;
+                                            subcontrol-origin: margin;
+                                        }
+
+                                        QScrollBar::add-line:vertical
+                                        {
+                                            margin: 3px 0px 3px 0px;
+                                            border-image: url(:/qss_icons/rc/down_arrow_disabled.png);
+                                            height: 10px;
+                                            width: 10px;
+                                            subcontrol-position: bottom;
+                                            subcontrol-origin: margin;
+                                        }
+
+                                        QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical
+                                        {
+                                            background: none;
+                                        }
+
+                                        QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical
+                                        {
+                                            background: none;
+                                        }""")
+
         main_layout.addWidget(limitsFrame)
+        main_layout.addWidget(scrollArea)
 
         verticalSpacer = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         main_layout.addItem(verticalSpacer)
+
+    def deleteLimit(self):
+        print("delete")
+        return
+
+    def createLimitList(self, layout):
+
+        data = pm.ProcessData().bannedProcesses
+
+        if data.empty:
+            msgLabel = QLabel("Bisher gibt es noch keine Limits")
+            msgLabel.setStyleSheet("QLabel{"
+                                   "text-align: Center;"
+                                   "color: black;}")
+            msgLabel.setAlignment(QtCore.Qt.AlignCenter)
+            layout.addWidget(msgLabel)
+            return
+
+        for i, row in data.iterrows():
+            limitRow = QFrame()
+            limitRowLayout = QHBoxLayout(limitRow)
+            limitRowLayout.setSpacing(0)
+            limitRowLayout.setContentsMargins(0, 0, 0, 0)
+            limitRow.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+
+            limitRowText = row.name + ":    Limit: " + str(row.limittime % 60) + " min"
+            limitRowLabel = QLabel(limitRowText)
+            limitRowLabel.setAlignment(QtCore.Qt.AlignLeft)
+            limitRowLabel.setStyleSheet("""
+                                        QLabel
+                                        {
+                                           text-align: right;
+                                           color: black;
+                                           font-size: 18px;
+                                           min-width: 100px;
+                                           font-family: 'Times New Roman', Times, serif;
+                                        }""")
+
+            limitRowLayout.addWidget(limitRowLabel)
+
+            limitRowButton = QPushButton("Entfernen")
+            limitRowButton.setAlignment(QtCore.Qt.AlignRight)
+            limitRowButton.clicked.connect(self.deleteLimit)
+
+            limitRowLayout.addWidget(limitRowButton)
+
+            layout.addWidget(limitRow)
+
 
     def sliderChangedValue(self):
         text = self.slider.value().__str__() + " Minuten"
