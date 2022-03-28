@@ -4,7 +4,9 @@ import subprocess
 import logging
 import pyautogui
 import time
-from win32gui import GetWindowText, GetForegroundWindow
+
+if platform == "win32":
+    from win32gui import GetWindowText, GetForegroundWindow
 
 
 class Notifications(object):
