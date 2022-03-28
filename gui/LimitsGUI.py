@@ -134,15 +134,15 @@ class LimitsGUI(QDialog):
     def createBottomWidget(self):
 
         bottomFrame = QFrame()
-        bottomFrameLayout = QHBoxLayout(bottomFrame)
+        bottomFrameLayout = QVBoxLayout(bottomFrame)
         bottomFrame.setAttribute(QtCore.Qt.WA_StyledBackground, True)
         bottomFrame.setObjectName("bottomFrame")
         bottomFrame.setStyleSheet("""
-                                            QFrame#bottomFrame {
-                                                background-color: white;
-                                                border-radius: 5px;
-                                            }
-                                            """)
+                                QFrame#bottomFrame {
+                                    background-color: white;
+                                    border-radius: 5px;
+                                }
+                                """)
         self.createLimitList(bottomFrameLayout)
         verticalSpacer = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         bottomFrameLayout.addItem(verticalSpacer)
@@ -156,7 +156,6 @@ class LimitsGUI(QDialog):
                                                 {
                                                     margin-left: 40px;
                                                     margin-right: 40px;
-                                                    min-height: 200px;
                                                     background-color: white;
                                                     border-radius: 5px;
                                                     border: None;
