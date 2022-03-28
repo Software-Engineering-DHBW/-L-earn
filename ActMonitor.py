@@ -4,6 +4,7 @@ import notify2
 import os
 import subprocess
 import pync
+import win32api
 
 if platform == "win32":
     from win32gui import GetWindowText, GetForegroundWindow
