@@ -12,10 +12,16 @@ import Exceptions
 import numpy as np
 import win32process
 import win32gui
+import platform
+import wmctrl
 
 consideredProc = []
 
+def filterProcLin(df):
+    for win in wmctrl.Window.list():
+        consideredProc.append(psutil.Process(win.pid).name())
 
+#wmctrl.Window.get_active()
 def winEnumHandler(hwnd, ctx):
     if win32gui.IsWindowVisible(hwnd):
         consideredProc.append(psutil.Process(win32process.GetWindowThreadProcessId(hwnd)[1]).name())
@@ -131,7 +137,11 @@ if __name__ == "__main__":
 def getAllProcesses():
     processes = get_processes_info()
     df = construct_dataframe(processes)
-    filterProcWin(df)
+
+    if platform.system() == "Windows":
+        filterProcWin(df)
+    elif platform.system() == "Linux":
+        filterProcWin(df)
     return df
 
 
