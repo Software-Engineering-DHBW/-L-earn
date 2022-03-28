@@ -147,7 +147,7 @@ class LimitsGUI(QDialog):
         self.valueLabel.setText(text)
 
     def buttonClicked(self):
-        banned = {'name': [self.bannedName], 'limit': [self.bannedTime]}
+        banned = {'name': [self.bannedName], 'limit': [self.bannedTime*60]}
         banned = pd.DataFrame(banned)
         pm.ProcessData().extendBannedProcesses(banned)
 
