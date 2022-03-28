@@ -113,7 +113,7 @@ class WeekReview(QDialog):
 
         # print message if there is no review data yet
         if data.empty:
-            msgLabel = QLabel("Es gibt bisher leider nicht genug Daten um einen Rückblick zu erstellen!")
+            msgLabel = QLabel("Es gibt bisher leider nicht genug Daten, um einen Rückblick zu erstellen!")
             msgLabel.setStyleSheet("QLabel{"
                                    "text-align: Center;"
                                    "color: black;}")

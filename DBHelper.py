@@ -11,8 +11,9 @@ table_bp = "bannedProcesses"
 # column names
 column_pName = "name"
 column_date = "date"
-column_time = "runtime"
+column_runtime = "runtime"
 column_user = "user"
+column_limittime = "limittime"
 
 
 class DBHelper(object):
@@ -33,12 +34,13 @@ class DBHelper(object):
             stmt = f"CREATE TABLE IF NOT EXISTS {table_data} (" \
                    f"{column_pName} Text, " \
                    f"{column_date} Text, " \
-                   f"{column_time} Integer)"
+                   f"{column_runtime} Integer)"
             self.conn.execute(stmt)
 
             # Create table for banned Processes
             stmt = f"CREATE TABLE IF NOT EXISTS {table_bp} (" \
                    f"{column_pName} Text, " \
+                   f"{column_limittime} INTEGER, " \
                    f"{column_user} Text, CONSTRAINT unq UNIQUE (" \
                    f"{column_pName} , {column_user}))"
             self.conn.execute(stmt)
@@ -101,12 +103,12 @@ class DBHelper(object):
             except sqlite3.Error as e:
                 self.logger.critical('local database initialisation error: "%s"', e)
 
-            stmt = f"SELECT {column_time} FROM {table_data} WHERE {column_pName} = (?) AND {column_date} = (?)"
+            stmt = f"SELECT {column_runtime} FROM {table_data} WHERE {column_pName} = (?) AND {column_date} = (?)"
             args = (processName, date,)
             result = self.conn.execute(stmt, args).fetchall()
             if len(result) != 0:
                 # time = result[0][0] + time
-                stmt = f"UPDATE {table_data} SET {column_time} = (?) WHERE {column_pName} = (?) AND {column_date} = (?)"
+                stmt = f"UPDATE {table_data} SET {column_runtime} = (?) WHERE {column_pName} = (?) AND {column_date} = (?)"
                 args = (time, processName, date,)
                 try:
                     self.conn.execute(stmt, args)
@@ -133,7 +135,7 @@ class DBHelper(object):
             # if there is no entry insert
             # else update time
             if len(data) == 0:
-                stmt = f"INSERT INTO {table_data} ({column_pName}, {column_time}, {column_date}) VALUES (?, ?, ?)"
+                stmt = f"INSERT INTO {table_data} ({column_pName}, {column_runtime}, {column_date}) VALUES (?, ?, ?)"
                 args = (processName, time, date,)
                 self.__write(stmt, args, processName, table_data)
             else:
@@ -150,22 +152,22 @@ class DBHelper(object):
             except sqlite3.Error as e:
                 self.logger.critical('local database initialisation error: "%s"', e)
 
-            stmt = f"SELECT {column_pName} FROM {table_bp} WHERE {column_user} = (?)"
+            stmt = f"SELECT {column_pName}, {column_limittime} FROM {table_bp} WHERE {column_user} = (?)"
             args = (userName,)
             query = self.conn.execute(stmt, args)
             cols = [column[0] for column in query.description]
             results = pd.DataFrame.from_records(data=query.fetchall(), columns=cols)
             return results
 
-        def writeBP(self, processName, userName):
+        def writeBP(self, processName, limittime, userName):
 
             try:
                 self.conn = sqlite3.connect(self.dbname)
             except sqlite3.Error as e:
                 self.logger.critical('local database initialisation error: "%s"', e)
 
-            stmt = f"INSERT INTO {table_bp} ({column_pName}, {column_user}) VALUES (?, ?)"
-            args = (processName, userName,)
+            stmt = f"INSERT INTO {table_bp} ({column_pName}, {column_limittime}, {column_user}) VALUES (?, ?, ?)"
+            args = (processName, limittime, userName,)
             self.__write(stmt, args, processName, table_bp)
 
         def deleteBP(self, processName, userName):

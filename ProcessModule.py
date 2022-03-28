@@ -29,6 +29,9 @@ def filterProcMac(df):
     windowList = subprocess.check_output(["osascript -e 'tell application \"System Events\" "
                                           "to get the name of every process whose visible is true'"],
                                          shell=True).decode().replace("\n", "").split(", ")
+    for i in range(len(windowList)):
+        windowList[i] = windowList[i].lower()
+
     for index, row in df.iterrows():
         if row['name'] not in windowList:
             df.drop(index, inplace=True)
@@ -36,7 +39,7 @@ def filterProcMac(df):
 
 def filterProcLin(df):
     for win in wmctrl.Window.list():
-        consideredProc.append(psutil.Process(win.pid).name())
+        consideredProc.append(psutil.Process(win.pid).name().lower())
     for index, row in df.iterrows():
         if row["name"] not in consideredProc:
             df.drop(index, inplace=True)
@@ -45,7 +48,7 @@ def filterProcLin(df):
 # wmctrl.Window.get_active()
 def winEnumHandler(hwnd, ctx):
     if win32gui.IsWindowVisible(hwnd):
-        consideredProc.append(psutil.Process(win32process.GetWindowThreadProcessId(hwnd)[1]).name())
+        consideredProc.append(psutil.Process(win32process.GetWindowThreadProcessId(hwnd)[1]).name().lower())
 
 
 def filterProcWin(df):
@@ -234,15 +237,16 @@ class ProcessData(object):
             return self.bannedProcesses.copy()
 
         def extendBannedProcesses(self, banned):
+            print(self.bannedProcesses)
+            print(banned)
             if len(self.bannedProcesses) == 0:
                 self.bannedProcesses = banned
             else:
                 for index, name in banned.iterrows():
                     for ind, bn in self.bannedProcesses.iterrows():
-                        print(bn['name'])
                         if name['name'].lower() in bn['name'].lower():
                             self.bannedProcesses = self.bannedProcesses.drop(ind)
-                self.bannedProcesses = self.bannedProcesses.append(banned)
+                self.bannedProcesses = pd.concat([self.bannedProcesses, banned])
 
         def removeBannedProcess(self, name):
             for ind, row in self.bannedProcesses.iterrows():
@@ -280,7 +284,7 @@ class ProcessData(object):
 
     def __new__(cls, banned=None, *args, **kwargs):
         if banned is None:
-            banned = []
+            banned = pd.DataFrame([])
         if not ProcessData.instance:
             ProcessData.instance = ProcessData.__ProcessData(banned)
         return ProcessData.instance
@@ -294,16 +298,10 @@ class ProcessData(object):
 
 if __name__ == "__main__":
     # processTest()
-    b = {'name': ["steam", "chrome"], 'limit': [500, 5000]}
-    c = {'name': ["steam", "discord"], 'limit': [300, 5000]}
-    cunt = pd.DataFrame(c)
+    b = {'name': ["msegde", "Spotify", "chrome"], 'limit': [-1, -1, 500]}
     banned = pd.DataFrame(b)
     pD = ProcessData(banned)
     # print(pD.getData())
-    #print(pD.getBannedProcesses())
+    print(pD.getBannedProcesses())
     # pD.killProcess("spotify")
     print(pD.checkProcesses())
-    pD.extendBannedProcesses(cunt)
-    print(pD.getBannedProcesses())
-    print(pD.checkProcesses())
-

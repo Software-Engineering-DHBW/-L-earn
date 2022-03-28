@@ -1,13 +1,9 @@
-import os
 import pickle
-import Exceptions as ex
 
 
 class Defaults(object):
     class __Defaults:
-        file_path = os.path.abspath(os.path.dirname(__file__)) + "/defaults.pkl"
-
-        def __init__(self, filename=file_path):
+        def __init__(self, filename="defaults/defaults.pkl"):
             self.filename = filename
             self.__defaults = {}
             try:
@@ -39,9 +35,9 @@ class Defaults(object):
 
     instance = None
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, filename="defaults/defaults.pkl"):
         if not Defaults.instance:
-            Defaults.instance = Defaults.__Defaults()
+            Defaults.instance = Defaults.__Defaults(filename)
         return Defaults.instance
 
     def __getattr__(self, name):
