@@ -12,7 +12,7 @@ import pandas as pd
 # import all necessary libraries and packages
 import psutil
 
-if platform == "win32":
+if platform.system() == "Windows":
     import win32gui
     import win32process
 

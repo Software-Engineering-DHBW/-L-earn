@@ -1,11 +1,13 @@
 import time
 import platform
 import notify2
-from win10toast import ToastNotifier
-import win32api
 import os
 import subprocess
 import pync
+
+if platform.system() == "Windows":
+    from win32gui import GetWindowText, GetForegroundWindow
+    from win10toast import ToastNotifier
 
 def check_idle_linux(temp_idle_value_sec):
     idle_time = int(subprocess.getoutput('xprintidle')) / 1000 # Requires xprintidle (sudo apt install xprintidle)
