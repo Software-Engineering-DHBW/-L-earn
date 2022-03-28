@@ -2,26 +2,17 @@
 This file includes all functions, that are needed to get processes and their information for all operating systems and
 handle operations on processes such as kill() in the future.
 """
+import os
+import platform
+import subprocess
+import time
+from datetime import datetime, date
+from sys import platform
+
 import numpy as np
 import pandas as pd
 # import all necessary libraries and packages
 import psutil
-from datetime import datetime, date, timedelta
-import time
-import pandas as pd
-import os, sys
-import Exceptions
-import numpy as np
-import win32process
-import win32gui
-import platform
-
-from datetime import datetime, date, timedelta
-import pandas as pd
-import os, sys
-import Exceptions
-import numpy as np
-from sys import platform
 
 if platform == "win32":
     import win32gui
@@ -29,16 +20,29 @@ if platform == "win32":
 elif platform == "linux":
     import wmctrl
 
-
 import Exceptions
 
 consideredProc = []
 
+
+def filterProcMac(df):
+    windowList = subprocess.check_output(["osascript -e 'tell application \"System Events\" "
+                                          "to get the name of every process whose visible is true'"],
+                                         shell=True).decode().replace("\n", "").split(", ")
+    for index, row in df.iterrows():
+        if row['name'] not in windowList:
+            df.drop(index, inplace=True)
+
+
 def filterProcLin(df):
     for win in wmctrl.Window.list():
         consideredProc.append(psutil.Process(win.pid).name())
+    for index, row in df.iterrows():
+        if row["name"] not in consideredProc:
+            df.drop(index, inplace=True)
 
-#wmctrl.Window.get_active()
+
+# wmctrl.Window.get_active()
 def winEnumHandler(hwnd, ctx):
     if win32gui.IsWindowVisible(hwnd):
         consideredProc.append(psutil.Process(win32process.GetWindowThreadProcessId(hwnd)[1]).name())
@@ -106,6 +110,7 @@ def get_processes_info():
     # return process list
     return processes
 
+
 # Checks if a proces is a system process
 def checkSystemProcess(name):
     sysWin = ['alg.exe', 'csrss.exe', 'ctfmon.exe', 'explorer.exe', 'lsass.exe', 'services.exe', 'smss.exe',
@@ -158,10 +163,15 @@ def getAllProcesses():
     processes = get_processes_info()
     df = construct_dataframe(processes)
 
-    if platform == "win32":
-        filterProcWin(df)
-    elif platform == "linux":
+    if platform == "linux" or platform == "linux2":
+        # linux
         filterProcLin(df)
+    elif platform == "darwin":
+        # OS X
+        filterProcMac(df)
+    elif platform == "win32":
+        # Windows...
+        filterProcWin(df)
     return df
 
 
@@ -230,7 +240,6 @@ class ProcessData(object):
                             self.bannedProcesses.drop(ind)
                 self.bannedProcesses.append(banned)
 
-
         def removeBannedProcess(self, name):
             for ind, row in self.bannedProcesses.iterrows():
                 if name in row['name']:
@@ -263,8 +272,6 @@ class ProcessData(object):
                                 except psutil.AccessDenied:
                                     continue
 
-
-
     instance = None
 
     def __new__(cls, banned=None, *args, **kwargs):
@@ -281,13 +288,12 @@ class ProcessData(object):
         return setattr(self.instance, name, value)
 
 
-
 if __name__ == "__main__":
     # processTest()
     b = {'name': ["msegde", "Spotify", "chrome"], 'limit': [-1, -1, 500]}
     banned = pd.DataFrame(b)
     pD = ProcessData(banned)
-    #print(pD.getData())
+    # print(pD.getData())
     print(pD.getBannedProcesses())
     # pD.killProcess("spotify")
     print(pD.checkProcesses())
