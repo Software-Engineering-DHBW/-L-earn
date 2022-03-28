@@ -14,9 +14,9 @@ from Worker import Worker
 # class that represents the main GUI window
 from gui.ActivityMonitorGUI import ActivityMonitorGUI
 from gui.LecturePlanGUI import LecturePlanGUI
-from gui.LimitsGUI import LimitsGUI
 from gui.NotificationsGUI import NotificationsGUI
 from gui.WeekReview import WeekReview
+from gui.LimitsGUI import LimitsGUI
 
 
 class MainWindow(QMainWindow):

@@ -6,6 +6,15 @@ import numpy as np
 import pandas as pd
 # import all necessary libraries and packages
 import psutil
+from datetime import datetime, date, timedelta
+import time
+import pandas as pd
+import os, sys
+import Exceptions
+import numpy as np
+import win32process
+import win32gui
+import platform
 
 from datetime import datetime, date, timedelta
 import pandas as pd
@@ -77,7 +86,7 @@ def get_processes_info():
                 # system processes, using boot time instead
                 create_time = datetime.fromtimestamp(psutil.boot_time())
 
-            runtime = datetime.now() - create_time
+            runtime = (datetime.now() - create_time).total_seconds()
 
             # get the status of the process (running, idle, etc.)
             try:
@@ -85,16 +94,19 @@ def get_processes_info():
             except psutil.AccessDenied:
                 status = "unknown"
 
+            now = time.time()
+            if now < runtime:
+                runtime = runtime - now
+
             # append process with information to process list
             processes.append({
-                'pid': pid, 'name': name, 'create_time': create_time, 'runtime': runtime.total_seconds(),
-                'date': date.today()
+                'pid': pid, 'name': name.lower(), 'create_time': create_time, 'runtime': runtime, 'date': date.today()
             })
 
     # return process list
     return processes
 
-
+# Checks if a proces is a system process
 def checkSystemProcess(name):
     sysWin = ['alg.exe', 'csrss.exe', 'ctfmon.exe', 'explorer.exe', 'lsass.exe', 'services.exe', 'smss.exe',
               'spoolsv.exe', 'svchost.exe', 'ntoskrnl.exe', 'winlogon.exe', 'System']
@@ -155,7 +167,7 @@ def getAllProcesses():
 
 class ProcessData(object):
     class __ProcessData:
-        def __init__(self, bannedProcesses=[]):
+        def __init__(self, bannedProcesses):
             self.data = getAllProcesses()
             self.bannedProcesses = bannedProcesses
 
@@ -163,13 +175,33 @@ class ProcessData(object):
             self.data = getAllProcesses()
 
         def checkProcesses(self):
-            processes = self.data['name']
+            proc = self.data[['name', 'runtime']]
             running = []
-            proc = set(processes)
-            for b in self.banned:
-                for p in proc:
-                    if b in p:
-                        running.append(b)
+            names = self.bannedProcesses["name"]
+            for n in names:
+                for index, row in proc.iterrows():
+                    limits = self.bannedProcesses[self.bannedProcesses["name"] == n]
+                    limit = -1
+
+                    for index1, row1 in limits.iterrows():
+                        limit = row1['limit']
+
+                    if limit != -1:
+                        if limit <= row['runtime']:
+                            if n.lower() in running:
+                                continue
+                            else:
+                                running.append(n.lower())
+                        else:
+                            continue
+                    else:
+                        if n.lower() in row['name']:
+                            if n.lower() in running:
+                                continue
+                            else:
+                                running.append(n.lower())
+                        else:
+                            continue
 
             return running
 
@@ -186,32 +218,60 @@ class ProcessData(object):
             return self.data
 
         def getBannedProcesses(self):
-            return self.bannedProcesses
+            return self.bannedProcesses.copy()
 
-        def extendBannedProcesses(self, name):
-            if isinstance(name, (list, tuple, np.ndarray)):
-                self.bannedProcesses.extend(name)
+        def extendBannedProcesses(self, banned):
+            if len(self.bannedProcesses) == 0:
+                self.bannedProcesses = banned
             else:
-                self.bannedProcesses.append(name)
+                for index, name in banned.iterrows():
+                    for ind, bn in self.bannedProcesses.iterrows():
+                        if name['name'] in bn['name']:
+                            self.bannedProcesses.drop(ind)
+                self.bannedProcesses.append(banned)
+
 
         def removeBannedProcess(self, name):
-            if isinstance(name, (list, tuple, np.ndarray)):
-                for n in name:
-                    try:
-                        self.bannedProcesses.remove(n)
-                    except ValueError:
-                        raise Exceptions.NotFoundError
+            for ind, row in self.bannedProcesses.iterrows():
+                if name in row['name']:
+                    self.bannedProcesses.drop(ind)
+
+        def killProcess(self, name):
+            if len(name) == 0:
+                raise Exceptions.EmptyValueError
             else:
-                try:
-                    self.bannedProcesses.remove(name)
-                except ValueError:
-                    raise Exceptions.NotFoundError
+                if isinstance(name, (list, tuple, np.ndarray)):
+                    names = set(name)
+                    df = set(self.data['name'])
+                    for n in names:
+                        for d in df:
+                            if n.lower() in d:
+                                kill = self.data.loc[self.data["name"] == d]
+                                for i in kill.index:
+                                    proc = psutil.Process(i)
+                                    proc.kill()
+
+                else:
+                    df = set(self.data['name'])
+                    for n in df:
+                        if name.lower() in n:
+                            kill = self.data.loc[self.data["name"] == n]
+                            for i in kill.index:
+                                proc = psutil.Process(i)
+                                try:
+                                    proc.kill()
+                                except psutil.AccessDenied:
+                                    continue
+
+
 
     instance = None
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, banned=None, *args, **kwargs):
+        if banned is None:
+            banned = []
         if not ProcessData.instance:
-            ProcessData.instance = ProcessData.__ProcessData()
+            ProcessData.instance = ProcessData.__ProcessData(banned)
         return ProcessData.instance
 
     def __getattr__(self, name):
@@ -219,3 +279,15 @@ class ProcessData(object):
 
     def __setattr__(self, name, value):
         return setattr(self.instance, name, value)
+
+
+
+if __name__ == "__main__":
+    # processTest()
+    b = {'name': ["msegde", "Spotify", "chrome"], 'limit': [-1, -1, 500]}
+    banned = pd.DataFrame(b)
+    pD = ProcessData(banned)
+    #print(pD.getData())
+    print(pD.getBannedProcesses())
+    # pD.killProcess("spotify")
+    print(pD.checkProcesses())
