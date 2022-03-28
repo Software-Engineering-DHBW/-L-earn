@@ -4,7 +4,7 @@ import Exceptions as ex
 
 class Defaults(object):
     class __Defaults:
-        def __init__(self, filename="defaults.pkl"):
+        def __init__(self, filename="defaults/defaults.pkl"):
             self.filename = filename
             self.__defaults = {}
             try:

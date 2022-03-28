@@ -1,10 +1,12 @@
 """
 Automatically reads out a DHBW lecture plan and stores it in a LecturePlan object
 """
+from datetime import datetime
 import ssl
 from urllib.request import urlopen
 
 import certifi
+import pandas as pd
 
 
 def lecturePlanData(url):
@@ -62,6 +64,31 @@ class LecturePlan:
 
     def getLP(self):
         return self.lecturePlanArray
+
+    def getStartBeginLP(self):
+        dfLecture = pd.DataFrame(columns=["date", "begin", "end"])
+        index = 0
+        for lecture in self.lecturePlanArray:
+            if isinstance(lecture, list):
+                today = datetime.now()
+                date = lecture[1].strip() + "." + str(today.year)
+                time = lecture[2]
+                time = remove_prefix(time, "cal-time:")
+                timeArr = time.split("-")
+                begin = timeArr[0]
+                end = timeArr[1]
+                act = datetime.strptime(date + " " + end, "%d.%m.%Y %H:%M")
+                if act >= today:
+                    new_row = pd.DataFrame({'date': date, 'begin': begin, 'end': end}, index=[index])
+                    dfLecture = pd.concat([dfLecture, new_row])
+                    index += 1
+        return dfLecture
+
+
+def remove_prefix(text, prefix):
+    if text.startswith(prefix):
+        return text[len(prefix):]
+    return text
 
 
 if __name__ == "__main__":
