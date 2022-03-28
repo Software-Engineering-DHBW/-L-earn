@@ -282,7 +282,7 @@ class ProcessData(object):
 
     def __new__(cls, banned=None, *args, **kwargs):
         if banned is None:
-            banned = []
+            banned = pd.DataFrame([])
         if not ProcessData.instance:
             ProcessData.instance = ProcessData.__ProcessData(banned)
         return ProcessData.instance

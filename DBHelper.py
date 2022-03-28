@@ -40,7 +40,7 @@ class DBHelper(object):
             # Create table for banned Processes
             stmt = f"CREATE TABLE IF NOT EXISTS {table_bp} (" \
                    f"{column_pName} Text, " \
-                   f"{column_limittime} Text, " \
+                   f"{column_limittime} INTEGER, " \
                    f"{column_user} Text, CONSTRAINT unq UNIQUE (" \
                    f"{column_pName} , {column_user}))"
             self.conn.execute(stmt)

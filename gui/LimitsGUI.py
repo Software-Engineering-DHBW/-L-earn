@@ -19,8 +19,8 @@ class LimitsGUI(QDialog):
         self.timers = []
 
         # Create a QGridLayout instance
-        main_layout = QVBoxLayout(self)
-        main_layout.setAlignment(Qt.AlignTop)
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setAlignment(Qt.AlignTop)
 
         titleLabel = QLabel("Anwendungslimits")
         titleLabel.setAlignment(QtCore.Qt.AlignCenter)
@@ -35,7 +35,7 @@ class LimitsGUI(QDialog):
                                  "font-family: 'Times New Roman', Times, serif;"
                                  "color: black;"
                                  "border-radius: 5px}")
-        main_layout.addWidget(titleLabel)
+        self.main_layout.addWidget(titleLabel)
 
         limitsFrame = QFrame()
         limitsFrame.setAttribute(QtCore.Qt.WA_StyledBackground, True)
@@ -127,88 +127,103 @@ class LimitsGUI(QDialog):
 
         frameLayout.addWidget(buttonWidget)
 
+        self.main_layout.addWidget(limitsFrame)
+
+        self.createBottomWidget()
+
+    def createBottomWidget(self):
+
         bottomFrame = QFrame()
         bottomFrameLayout = QHBoxLayout(bottomFrame)
         bottomFrame.setAttribute(QtCore.Qt.WA_StyledBackground, True)
         bottomFrame.setObjectName("bottomFrame")
         bottomFrame.setStyleSheet("""
-                                    QFrame#bottomFrame {
-                                        background-color: white;
-                                        margin-left: 40px;
-                                        margin-right: 40px;
-                                        border-radius: 5px;
-                                    }
-                                    """)
+                                            QFrame#bottomFrame {
+                                                background-color: white;
+                                                border-radius: 5px;
+                                            }
+                                            """)
         self.createLimitList(bottomFrameLayout)
+        verticalSpacer = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        bottomFrameLayout.addItem(verticalSpacer)
 
-        scrollArea = QScrollArea()
-        scrollArea.setWidget(bottomFrame)
-        scrollArea.setWidgetResizable(True)
-        scrollArea.setAttribute(QtCore.Qt.WA_StyledBackground, True)
-        scrollArea.setStyleSheet("""
-                                        QScrollArea 
-                                        {
-                                            margin-left: 40px;
-                                            margin-right: 40px;
-                                            min-height: 485px;
-                                            background-color: white;
-                                        }
-                                        QScrollBar:vertical
-                                        {
-                                            background-color: white;
-                                            width: 9px;
-                                            border-radius: 5px;
-                                        }
+        self.scrollArea = QScrollArea()
+        self.scrollArea.setWidget(bottomFrame)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+        self.scrollArea.setStyleSheet("""
+                                                QScrollArea 
+                                                {
+                                                    margin-left: 40px;
+                                                    margin-right: 40px;
+                                                    min-height: 200px;
+                                                    background-color: white;
+                                                    border-radius: 5px;
+                                                    border: None;
+                                                }
+                                                QScrollBar:vertical
+                                                {
+                                                    background-color: white;
+                                                    width: 9px;
+                                                    border-radius: 5px;
+                                                }
 
-                                        QScrollBar::handle:vertical
-                                        {
-                                            background-color: #d6d6d6;
-                                            border-radius: 5px;
-                                        }
+                                                QScrollBar::handle:vertical
+                                                {
+                                                    background-color: #d6d6d6;
+                                                    border-radius: 5px;
+                                                }
 
-                                        QScrollBar::sub-line:vertical
-                                        {
-                                            margin: 3px 0px 3px 0px;
-                                            border-image: url(:/qss_icons/rc/up_arrow_disabled.png);
-                                            height: 10px;
-                                            width: 10px;
-                                            subcontrol-position: top;
-                                            subcontrol-origin: margin;
-                                        }
+                                                QScrollBar::sub-line:vertical
+                                                {
+                                                    margin: 3px 0px 3px 0px;
+                                                    border-image: url(:/qss_icons/rc/up_arrow_disabled.png);
+                                                    height: 10px;
+                                                    width: 10px;
+                                                    subcontrol-position: top;
+                                                    subcontrol-origin: margin;
+                                                }
 
-                                        QScrollBar::add-line:vertical
-                                        {
-                                            margin: 3px 0px 3px 0px;
-                                            border-image: url(:/qss_icons/rc/down_arrow_disabled.png);
-                                            height: 10px;
-                                            width: 10px;
-                                            subcontrol-position: bottom;
-                                            subcontrol-origin: margin;
-                                        }
+                                                QScrollBar::add-line:vertical
+                                                {
+                                                    margin: 3px 0px 3px 0px;
+                                                    border-image: url(:/qss_icons/rc/down_arrow_disabled.png);
+                                                    height: 10px;
+                                                    width: 10px;
+                                                    subcontrol-position: bottom;
+                                                    subcontrol-origin: margin;
+                                                }
 
-                                        QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical
-                                        {
-                                            background: none;
-                                        }
+                                                QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical
+                                                {
+                                                    background: none;
+                                                }
 
-                                        QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical
-                                        {
-                                            background: none;
-                                        }""")
+                                                QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical
+                                                {
+                                                    background: none;
+                                                }""")
 
-        main_layout.addWidget(limitsFrame)
-        main_layout.addWidget(scrollArea)
+        self.main_layout.addWidget(self.scrollArea)
 
         verticalSpacer = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        main_layout.addItem(verticalSpacer)
+        self.main_layout.addItem(verticalSpacer)
 
     def deleteLimit(self):
-        print("delete")
+
+        data = pm.ProcessData().getBannedProcesses()
+        data = data[data.name != self.sender().objectName()]
+        pm.ProcessData().setBannedProcesses(data)
+
+        DBHelper().deleteBP(self.sender().objectName(), getpass.getuser())
+
+        self.layout().removeWidget(self.scrollArea)
+        self.createBottomWidget()
         return
 
     def createLimitList(self, layout):
 
-        data = pm.ProcessData().bannedProcesses
+        data = pm.ProcessData().getBannedProcesses()
 
         if data.empty:
             msgLabel = QLabel("Bisher gibt es noch keine Limits")
@@ -225,26 +240,30 @@ class LimitsGUI(QDialog):
             limitRowLayout.setSpacing(0)
             limitRowLayout.setContentsMargins(0, 0, 0, 0)
             limitRow.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+            limitRow.setStyleSheet("QFrame{ max-height: 25px;}")
 
-            limitRowText = row.name + ":    Limit: " + str(row.limittime % 60) + " min"
+            limitRowText = row["name"] + ":    Limit: " + str(row.limit // 60) + " min"
             limitRowLabel = QLabel(limitRowText)
             limitRowLabel.setAlignment(QtCore.Qt.AlignLeft)
             limitRowLabel.setStyleSheet("""
                                         QLabel
                                         {
-                                           text-align: right;
+                                           text-align: left;
                                            color: black;
                                            font-size: 18px;
-                                           min-width: 100px;
                                            font-family: 'Times New Roman', Times, serif;
                                         }""")
 
             limitRowLayout.addWidget(limitRowLabel)
 
             limitRowButton = QPushButton("Entfernen")
-            limitRowButton.setAlignment(QtCore.Qt.AlignRight)
+            limitRowButton.setObjectName(row["name"])
             limitRowButton.clicked.connect(self.deleteLimit)
+            limitRowButton.setStyleSheet("QPushButton {max-width: 100px;} ")
 
+            horizontalSpacer = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum,
+                                                   QtWidgets.QSizePolicy.Expanding)
+            limitRowLayout.addItem(horizontalSpacer)
             limitRowLayout.addWidget(limitRowButton)
 
             layout.addWidget(limitRow)
@@ -266,6 +285,8 @@ class LimitsGUI(QDialog):
         DBHelper().writeBP(processName, limittime, username)
 
         self.combo.removeItem(self.combo.currentIndex())
+        self.layout().removeWidget(self.scrollArea)
+        self.createBottomWidget()
 
     def addProcesses(self):
         data = DataClasses.ReviewData().createReview()
