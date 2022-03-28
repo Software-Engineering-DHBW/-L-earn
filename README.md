@@ -17,6 +17,10 @@ Zum starten des Prototypen:
       - certifi
       - pyautogui
       - pywin32
+      - wmctrl
+      - win32process
+      - win32gui
+      - attrs
   3. Main.py ausführen
 
 ### Doku

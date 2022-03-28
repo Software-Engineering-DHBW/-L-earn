@@ -151,20 +151,20 @@ class Notifications(object):
                         shell=True)
         time.sleep(0.5)
         # Check if Settings Window is open
-        while "Settings" not in str(GetWindowText(GetForegroundWindow())) \
+        if "Settings" not in str(GetWindowText(GetForegroundWindow())) \
                 and "Einstellungen" not in str(GetWindowText(GetForegroundWindow())):
             # Open settings window again
             subprocess.call("C:\Windows\System32\WindowsPowerShell\\v1.0\powershell.exe Start ms-settings:quiethours",
                             shell=True)
-        # Turn off Focus Assist
-        pyautogui.press("tab", presses=2)
-        pyautogui.press(" ")
-        # Close settings
-        pyautogui.keyDown("alt")
-        pyautogui.press("f4")
-        pyautogui.keyUp("alt")
+            # Turn off Focus Assist
+            pyautogui.press("tab", presses=2)
+            pyautogui.press(" ")
+            # Close settings
+            pyautogui.keyDown("alt")
+            pyautogui.press("f4")
+            pyautogui.keyUp("alt")
 
-        self.logger.info("enabled Notifications")
+            self.logger.info("enabled Notifications")
 
     def __disableNtfWindows(self):
         # Open settings Focus Assist
@@ -172,18 +172,18 @@ class Notifications(object):
                         shell=True)
         time.sleep(0.5)
         # Check if Settings Window is open
-        while "Settings" not in str(GetWindowText(GetForegroundWindow())) \
+        if "Settings" not in str(GetWindowText(GetForegroundWindow())) \
                 and "Einstellungen" not in str(GetWindowText(GetForegroundWindow())):
             # Open settings window again
             subprocess.call("C:\Windows\System32\WindowsPowerShell\\v1.0\powershell.exe Start ms-settings:quiethours",
                             shell=True)
 
-        # Turn on Focus Assist priority only
-        pyautogui.press("tab", presses=3)
-        pyautogui.press(" ")
-        # Close settings
-        pyautogui.keyDown("alt")
-        pyautogui.press("f4")
-        pyautogui.keyUp("alt")
+            # Turn on Focus Assist priority only
+            pyautogui.press("tab", presses=3)
+            pyautogui.press(" ")
+            # Close settings
+            pyautogui.keyDown("alt")
+            pyautogui.press("f4")
+            pyautogui.keyUp("alt")
 
-        self.logger.info("disabled Notifications")
+            self.logger.info("disabled Notifications")

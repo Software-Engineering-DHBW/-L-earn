@@ -4,7 +4,7 @@ import threading
 from datetime import datetime
 from urllib.error import URLError
 
-
+from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QSizePolicy
 
@@ -40,6 +40,21 @@ class NotificationsGUI(QDialog):
         main_layout.setAlignment(Qt.AlignTop)
 
         # Add widgets to the layout
+        titleLabel = QLabel("Kommunikationsbeschränkung")
+        titleLabel.setAlignment(QtCore.Qt.AlignCenter)
+        titleLabel.setMaximumHeight(80)
+        titleLabel.setMinimumHeight(80)
+        titleLabel.setStyleSheet("QLabel {"
+                                 "background-color: white;"
+                                 "text-align: Center;"
+                                 "margin-left: 40px;"
+                                 "margin-right: 40px;"
+                                 "font-size: 30px;"
+                                 "font-family: 'Times New Roman', Times, serif;"
+                                 "color: black;"
+                                 "border-radius: 5px}")
+        main_layout.addWidget(titleLabel)
+
         notificationWidget = QWidget()
         notificationLayout = QHBoxLayout()
         ntfSwitch = self.getSwitch()
@@ -101,7 +116,6 @@ class NotificationsGUI(QDialog):
         if url != "":
             try:
                 lecturePlan = LecturePlan(url).getStartBeginLP()
-                print(lecturePlan)
                 self.timers = []
                 i = 0
                 for index, row in lecturePlan.iterrows():
@@ -114,7 +128,6 @@ class NotificationsGUI(QDialog):
                     self.timers.append(threading.Timer(difference.seconds, self.startLecture))
                     self.timers[i].start()
                     i += 1
-                    print(begin)
 
                     # Add Timer for end
                     end = row["date"] + " " + row["end"]
@@ -123,7 +136,6 @@ class NotificationsGUI(QDialog):
                     self.timers.append(threading.Timer(difference.seconds, self.endLecture))
                     self.timers[i].start()
                     i += 1
-                    print(end)
 
             except (URLError, ValueError) as e:
                 print(e)
