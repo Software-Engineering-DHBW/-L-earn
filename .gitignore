@@ -1,3 +1,4 @@
 /db.sqlite
 /defaults/defaults.pkl
 /logs/dblog.log
+/logs/ntflog.log

@@ -3,6 +3,12 @@ This file includes all functions, that are needed to get processes and their inf
 handle operations on processes such as kill() in the future.
 """
 
+import os
+import platform
+from datetime import datetime, date
+
+import numpy as np
+import pandas as pd
 # import all necessary libraries and packages
 import psutil
 from datetime import datetime, date, timedelta
@@ -14,7 +20,14 @@ import numpy as np
 import win32process
 import win32gui
 import platform
+
+if platform.system() == "Windows":
+    import win32gui
+    import win32process
+
 import wmctrl
+
+import Exceptions
 
 consideredProc = []
 
@@ -92,7 +105,8 @@ def get_processes_info():
 
 # Checks if a proces is a system process
 def checkSystemProcess(name):
-    sysWin = ['alg.exe', 'csrss.exe', 'ctfmon.exe', 'explorer.exe', 'lsass.exe', 'services.exe', 'smss.exe', 'spoolsv.exe', 'svchost.exe', 'ntoskrnl.exe', 'winlogon.exe', 'System']
+    sysWin = ['alg.exe', 'csrss.exe', 'ctfmon.exe', 'explorer.exe', 'lsass.exe', 'services.exe', 'smss.exe',
+              'spoolsv.exe', 'svchost.exe', 'ntoskrnl.exe', 'winlogon.exe', 'System']
 
     system = set(sysWin)
     # if os.name == 'nt':
