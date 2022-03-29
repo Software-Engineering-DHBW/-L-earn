@@ -82,6 +82,7 @@ class Worker(QObject):
                                 i += 1
 
                 time.sleep(5)
+                
         except Exception as e:
             print(e)
 
@@ -96,6 +97,7 @@ class Worker(QObject):
 
             time.sleep(300)
 
+
     def timerEnds(self, proc):
 
         try:
@@ -103,3 +105,4 @@ class Worker(QObject):
             self.setTimers.remove(proc)
         except Exception as e:
             print(e)
+
