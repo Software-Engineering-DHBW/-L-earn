@@ -48,6 +48,7 @@ def filterProcLin(df):
 
 # wmctrl.Window.get_active()
 def winEnumHandler(hwnd, ctx):
+    consideredProc = []
     if win32gui.IsWindowVisible(hwnd):
         consideredProc.append(psutil.Process(win32process.GetWindowThreadProcessId(hwnd)[1]).name().lower())
 
