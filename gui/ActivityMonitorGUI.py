@@ -1,3 +1,6 @@
+"""
+GUI for Activity Monitor tab
+"""
 import os
 
 from PyQt5 import QtCore, QtWidgets
@@ -7,8 +10,6 @@ from PyQt5.QtWidgets import QVBoxLayout, QWidget, QHBoxLayout, QLabel, QSizePoli
 
 import Learn
 from gui.OnOffButton import Switch
-
-basedir = Learn.basedir
 
 
 class ActivityMonitorGUI(QWidget):
@@ -21,7 +22,7 @@ class ActivityMonitorGUI(QWidget):
 
         if not os.path.isdir('logs'):
             os.makedirs('logs')
-        with open(os.path.join(basedir, "logs", "transfer.txt"), 'w') as f:
+        with open(os.path.join("logs", "transfer.txt"), 'w') as f:
             f.write('False')
             f.close()
 
@@ -79,13 +80,13 @@ class ActivityMonitorGUI(QWidget):
     def switchMonitoring(self):
         if not self.monitoringActive:
             self.monitoringActive = True
-            with open(os.path.join(basedir, "logs", "transfer.txt"), 'w') as f:
+            with open(os.path.join("logs", "transfer.txt"), 'w') as f:
                 f.write('True')
                 f.close()
             print('True')
         elif self.monitoringActive:
             self.monitoringActive = False
-            with open(os.path.join(basedir, "logs", "transfer.txt"), 'w') as f:
+            with open(os.path.join("logs", "transfer.txt"), 'w') as f:
                 f.write('False')
                 f.close()
 

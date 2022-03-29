@@ -1,9 +1,9 @@
 import pickle
-
+import os
 
 class Defaults(object):
     class __Defaults:
-        def __init__(self, filename="defaults/defaults.pkl"):
+        def __init__(self, filename=os.path.join("defaults", "defaults.pkl")):
             self.filename = filename
             self.__defaults = {}
             try:
@@ -35,7 +35,7 @@ class Defaults(object):
 
     instance = None
 
-    def __new__(cls, filename="defaults/defaults.pkl"):
+    def __new__(cls, filename=os.path.join("defaults", "defaults.pkl")):
         if not Defaults.instance:
             Defaults.instance = Defaults.__Defaults(filename)
         return Defaults.instance

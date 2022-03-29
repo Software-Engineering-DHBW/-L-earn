@@ -1,7 +1,15 @@
+"""
+Defines the worker classes that contain the thread methods
+"""
 import os
 import threading
 from PyQt5.QtCore import QObject
 import time
+from sys import platform
+
+if platform == "win32":
+    import plyer.platforms.win.notification
+    from plyer import notification
 
 import Learn
 from classes import DataClasses as dc, ProcessModule as pm
@@ -13,12 +21,10 @@ import classes.ActMonitor as am
 global idle_time_sec
 idle_time_sec = 600
 
-basedir = Learn.basedir
-
 
 # check File for either True or False to determine the status of ActivityMonitor
 def checkFile():
-    with open(os.path.join(basedir, "logs", "transfer.txt")) as f:
+    with open(os.path.join("logs", "transfer.txt")) as f:
         lines = f.readlines()
         f.close()
     if lines[0] == 'True':
@@ -79,7 +85,7 @@ class Worker(QObject):
                                                                 "deshalb in 5 Minuten beendet! "
                                 # send system notification for Windows, Linux, Mac
                                 if platform == "win32":
-                                    am.sendmessageWindows(title, message)
+                                    notification.notify(title,message)
 
                                 if platform == "linux":
                                     am.sendmessageLinux(title, message)
