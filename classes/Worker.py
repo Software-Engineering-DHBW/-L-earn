@@ -1,3 +1,6 @@
+"""
+Defines the worker classes that contain the thread methods
+"""
 import os
 import threading
 from PyQt5.QtCore import QObject
