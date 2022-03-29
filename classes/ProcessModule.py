@@ -1,6 +1,6 @@
 """
 This file includes all functions, that are needed to get processes and their information for all operating systems and
-handle operations on processes such as kill() in the future.
+handle operations on processes.
 """
 import os
 import platform
@@ -11,7 +11,6 @@ from sys import platform
 
 import numpy as np
 import pandas as pd
-# import all necessary libraries and packages
 import psutil
 
 if platform == "win32":
@@ -114,7 +113,7 @@ def get_processes_info():
     return processes
 
 
-# Checks if a proces is a system process
+# Checks if a process is a system process
 def checkSystemProcess(name):
     sysWin = ['alg.exe', 'csrss.exe', 'ctfmon.exe', 'explorer.exe', 'lsass.exe', 'services.exe', 'smss.exe',
               'spoolsv.exe', 'svchost.exe', 'ntoskrnl.exe', 'winlogon.exe', 'System']
@@ -129,36 +128,13 @@ def checkSystemProcess(name):
 
 # Constructs a dataframe out of the process list array
 def construct_dataframe(processes):
-    # convert to pandas dataframe
+
     df = pd.DataFrame(processes)
-    # set the process id as index of a process
     df.set_index('pid', inplace=True)
-    # sort rows by process id
     df.sort_values(by='pid', inplace=True)
     # convert to proper date format
     df['create_time'] = df['create_time'].apply(datetime.strftime, args=("%Y-%m-%d %H:%M:%S",))
     return df
-
-
-# First test function to try getting processes and killing them
-def processTest():
-    processes = get_processes_info()
-    df = construct_dataframe(processes)
-
-    print(df.to_string())
-
-    # filter for all Edge processes
-    # data = df.loc[df['name'] == "msedge.exe"]
-    # print(data.to_string())
-
-    # kill every Edge process
-    # for i in data.index:
-    #    p = psutil.Process(i)
-    #    p.kill()
-
-
-if __name__ == "__main__":
-    processTest()
 
 
 # Gives back the dataframe with all processes and information
@@ -177,7 +153,7 @@ def getAllProcesses():
         filterProcWin(df)
     return df
 
-
+# singleton class with all processes and information
 class ProcessData(object):
     class __ProcessData:
         def __init__(self, bannedProcesses):
@@ -209,13 +185,10 @@ class ProcessData(object):
                             else:
                                 continue
                         else:
-                            if n.lower() in row['name']:
-                                if n.lower() in running:
-                                    continue
-                                else:
-                                    running.append(n.lower())
-                            else:
+                            if n.lower() in running:
                                 continue
+                            else:
+                                running.append(n.lower())
                     else:
                         continue
 
@@ -260,8 +233,14 @@ class ProcessData(object):
                             if n.lower() in d:
                                 kill = self.data.loc[self.data["name"] == d]
                                 for i in kill.index:
-                                    proc = psutil.Process(i)
-                                    proc.kill()
+                                    try:
+                                        proc = psutil.Process(i)
+                                    except psutil.NoSuchProcess:
+                                        continue
+                                    try:
+                                        proc.kill()
+                                    except psutil.AccessDenied:
+                                        continue
 
                 else:
                     df = set(self.data['name'])
@@ -269,7 +248,10 @@ class ProcessData(object):
                         if name.lower() in n:
                             kill = self.data.loc[self.data["name"] == n]
                             for i in kill.index:
-                                proc = psutil.Process(i)
+                                try:
+                                    proc = psutil.Process(i)
+                                except psutil.NoSuchProcess:
+                                    continue
                                 try:
                                     proc.kill()
                                 except psutil.AccessDenied:
@@ -277,11 +259,11 @@ class ProcessData(object):
 
     instance = None
 
-    def __new__(cls, banned=None, *args, **kwargs):
-        if banned is None:
-            banned = pd.DataFrame([])
+    def __new__(cls, bannedProc=None, *args, **kwargs):
+        if bannedProc is None:
+            bannedProc = pd.DataFrame([])
         if not ProcessData.instance:
-            ProcessData.instance = ProcessData.__ProcessData(banned)
+            ProcessData.instance = ProcessData.__ProcessData(bannedProc)
         return ProcessData.instance
 
     def __getattr__(self, name):

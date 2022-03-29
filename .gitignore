@@ -2,6 +2,7 @@
 /defaults/defaults.pkl
 /logs/dblog.log
 /logs/ntflog.log
+/logs/transfer.txt
 /dist/
 /build/
 /packenv/

@@ -2,10 +2,11 @@ import time
 from sys import platform
 import os
 import subprocess
-
+global toast
 if platform == "win32":
     import win32api
     from win10toast import ToastNotifier
+    toast = ToastNotifier()
 
 if platform == "linux" or platform == 'linux2':
     import notify2
@@ -46,7 +47,6 @@ def sendmessageLinux(title, message):
 
 
 def sendmessageWindows(title, message):
-    toast = ToastNotifier()
     toast.show_toast(
         title,
         message,
