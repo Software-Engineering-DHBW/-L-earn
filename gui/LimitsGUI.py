@@ -1,5 +1,4 @@
 import getpass
-
 import pandas as pd
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt
@@ -18,10 +17,10 @@ class LimitsGUI(QDialog):
         self.scrollArea = None
         self.timers = []
 
-        # Create a QGridLayout instance
         self.mainLayout = QVBoxLayout(self)
         self.mainLayout.setAlignment(Qt.AlignTop)
 
+        # upper gui part
         titleLabel = QLabel("Anwendungslimits")
         titleLabel.setAlignment(QtCore.Qt.AlignCenter)
         titleLabel.setMaximumHeight(80)
@@ -29,12 +28,12 @@ class LimitsGUI(QDialog):
         titleLabel.setObjectName("title")
         self.mainLayout.addWidget(titleLabel)
 
+        # middle gui part
         limitsFrame = QFrame()
         limitsFrame.setAttribute(QtCore.Qt.WA_StyledBackground, True)
         limitsFrame.setObjectName("frame")
         frameLayout = QVBoxLayout(limitsFrame)
 
-        # Add widgets to the layout
         limitsWidget = QWidget()
         limitsWidget.setObjectName("widget")
         limitsLayout = QHBoxLayout()
@@ -101,13 +100,14 @@ class LimitsGUI(QDialog):
 
         frameLayout.addWidget(timeWidget)
 
+        # lower gui part
         buttonWidget = QWidget()
         buttonWidget.setObjectName("widget")
         buttonLayout = QHBoxLayout()
         buttonLayout.setAlignment(Qt.AlignCenter)
         button = QPushButton()
         button.setText("Limit hinzufügen")
-        button.clicked.connect(self.buttonClicked)
+        button.clicked.connect(self.addLimit)
 
         buttonLayout.addWidget(button)
         buttonWidget.setLayout(buttonLayout)
@@ -116,9 +116,16 @@ class LimitsGUI(QDialog):
 
         self.mainLayout.addWidget(limitsFrame)
 
+        self.scrollArea = QScrollArea()
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+
+        self.mainLayout.addWidget(self.scrollArea)
+
         self.createBottomWidget()
 
     def createBottomWidget(self):
+
         bottomFrame = QFrame()
         self.bottomFrameLayout = QVBoxLayout(bottomFrame)
         bottomFrame.setAttribute(QtCore.Qt.WA_StyledBackground, True)
@@ -127,30 +134,10 @@ class LimitsGUI(QDialog):
         verticalSpacer = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.bottomFrameLayout.addItem(verticalSpacer)
 
-        self.scrollArea = QScrollArea()
         self.scrollArea.setWidget(bottomFrame)
-        self.scrollArea.setWidgetResizable(True)
-        self.scrollArea.setAttribute(QtCore.Qt.WA_StyledBackground, True)
-
-        self.mainLayout.addWidget(self.scrollArea)
 
         verticalSpacer = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.mainLayout.addItem(verticalSpacer)
-
-    def deleteLimit(self):
-
-        data = pm.ProcessData().getBannedProcesses()
-        data = data[data.name != self.sender().objectName()]
-        pm.ProcessData().setBannedProcesses(data)
-
-        processName = self.sender().objectName()
-        DBHelper().deleteBP(processName, getpass.getuser())
-
-        self.layout().removeWidget(self.scrollArea)
-        self.createBottomWidget()
-
-        self.combo.addItem(processName)
-        return
 
     def createLimitList(self, layout):
 
@@ -191,25 +178,48 @@ class LimitsGUI(QDialog):
             layout.addWidget(limitRow)
 
     def sliderChangedValue(self):
+
         text = self.slider.value().__str__() + " Minuten"
         self.valueLabel.setText(text)
 
-    def buttonClicked(self):
+    def addLimit(self):
+
         processName = str(self.combo.currentText())
-        limittime = int(self.slider.value()) * 60
-        username = getpass.getuser()
+        if processName == "":
+            return
+        else:
+            limittime = int(self.slider.value()) * 60
+            username = getpass.getuser()
 
-        banned = {'name': [processName], 'limittime': [limittime]}
-        banned = pd.DataFrame(banned)
-        pm.ProcessData().extendBannedProcesses(banned)
+            banned = {'name': [processName], 'limittime': [limittime]}
+            banned = pd.DataFrame(banned)
+            pm.ProcessData().extendBannedProcesses(banned)
 
-        DBHelper().writeBP(processName, limittime, username)
+            DBHelper().writeBP(processName, limittime, username)
 
-        self.combo.removeItem(self.combo.currentIndex())
+            self.combo.removeItem(self.combo.currentIndex())
+            self.layout().removeWidget(self.scrollArea)
+            self.createBottomWidget()
+
+
+    def deleteLimit(self):
+        data = pm.ProcessData().getBannedProcesses()
+        data = data[data.name != self.sender().objectName()]
+        pm.ProcessData().setBannedProcesses(data)
+
+        processName = self.sender().objectName()
+        DBHelper().deleteBP(processName, getpass.getuser())
+
+        self.scrollArea.setWidget(None)
         self.layout().removeWidget(self.scrollArea)
+
         self.createBottomWidget()
 
+        self.combo.addItem(processName)
+        return
+
     def addProcesses(self):
+
         data = DataClasses.ReviewData().createReview()
 
         username = getpass.getuser()
