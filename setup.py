@@ -11,7 +11,8 @@ APP = ['Main.py']
 DATA_FILES = ['images',
               'defaults',
               'gui',
-              'classes']
+              'classes',
+              'style.css']
 OPTIONS = {
     'iconfile': 'images/Logo.png',
 }

@@ -1,3 +1,5 @@
+import os
+
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFrame
@@ -13,6 +15,9 @@ class ActivityMonitorGUI(QWidget):
 
         # Set Variables
         self.monitoringActive = False
+
+        if not os.path.isdir('logs'):
+            os.makedirs('logs')
         with open('logs/transfer.txt', 'w') as f:
             f.write('False')
             f.close()

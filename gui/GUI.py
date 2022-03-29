@@ -10,7 +10,6 @@ from PyQt5.QtCore import QThread, QSize
 
 from classes.Worker import Worker, ActWorker
 
-
 # class that represents the main GUI window
 from gui.ActivityMonitorGUI import ActivityMonitorGUI
 from gui.LecturePlanGUI import LecturePlanGUI
@@ -39,7 +38,7 @@ class MainWindow(QMainWindow):
 
         # set the size of window
         self.Width = 1000
-        self.height = int(0.618 * self.Width)
+        self.height = 650
         self.resize(self.Width, self.height)
 
         # add all widgets
@@ -78,7 +77,6 @@ class MainWindow(QMainWindow):
         self.createProcessThread3()
         self.createProcessThread4()
 
-
     # function to create a thread, which updates the process table
     def createProcessThread(self):
         self.thread = QThread()
@@ -107,7 +105,6 @@ class MainWindow(QMainWindow):
         self.worker4.moveToThread(self.thread4)
         self.thread4.started.connect(self.worker4.idleTime)
         self.thread4.start()
-
 
     def initUI(self):
         left_layout = QVBoxLayout()

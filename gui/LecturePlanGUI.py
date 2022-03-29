@@ -1,14 +1,13 @@
 from urllib.error import URLError
 
 from PyQt5.QtCore import QUrl, Qt
-from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout, QHBoxLayout, QSizePolicy
 from PyQt5.QtGui import QBrush, QColor, QPalette
-
+from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout, QHBoxLayout, QSizePolicy, QFrame
 from qroundprogressbar import QRoundProgressBar
 
-from defaults.Defaults import Defaults
 from classes.LecturePlan import LecturePlan
+from defaults.Defaults import Defaults
 from defaults.Values import DEF_LECTUREPLANURL
 from gui.NotificationsGUI import NotificationsGUI
 
@@ -28,8 +27,22 @@ class LecturePlanGUI(QWidget):
         firstLayout = QVBoxLayout(self)
         firstLayout.setAlignment(Qt.AlignTop)
 
+        titleLabel = QLabel("Vorlesungsplan")
+        titleLabel.setAlignment(Qt.AlignCenter)
+        titleLabel.setMaximumHeight(80)
+        titleLabel.setMinimumHeight(80)
+        titleLabel.setObjectName("titleLecture")
+        firstLayout.addWidget(titleLabel)
+
+        frame = QFrame()
+        frameLayout = QVBoxLayout(frame)
+        frameLayout.setAlignment(Qt.AlignTop)
+        frame.setAttribute(Qt.WA_StyledBackground, True)
+        frame.setObjectName("lectureFrame")
+
         nameLabel = QLabel()
         nameLabel.setText('Vorlesungsplanurl:')
+        nameLabel.setObjectName("label")
         self.line = QLineEdit()
 
         pybutton = QPushButton('Verbinden')
@@ -37,9 +50,12 @@ class LecturePlanGUI(QWidget):
         pybutton.clicked.connect(self.setLecturePlan)
 
         # Add Widgets
-        firstLayout.addWidget(nameLabel)
-        firstLayout.addWidget(self.line)
-        firstLayout.addWidget(pybutton)
+        frameLayout.addWidget(nameLabel)
+        frameLayout.addWidget(self.line)
+        frameLayout.addWidget(pybutton)
+
+        frame.setLayout(frameLayout)
+        firstLayout.addWidget(frame)
 
         self.firstWidget.setLayout(firstLayout)
         mainLayout.addWidget(self.firstWidget)

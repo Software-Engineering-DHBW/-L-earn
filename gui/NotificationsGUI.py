@@ -49,15 +49,7 @@ class NotificationsGUI(QDialog):
         frameLayout = QVBoxLayout(frame)
         frameLayout.setAlignment(Qt.AlignTop)
         frame.setAttribute(QtCore.Qt.WA_StyledBackground, True)
-        frame.setStyleSheet("""
-                            QFrame 
-                            { 
-                                margin-left: 40px;
-                                margin-right: 40px;
-                                background-color: white;
-                                border-radius: 5px;
-                            }
-                            """)
+        frame.setObjectName("frame")
 
         notificationWidget = QWidget()
         notificationWidget.setObjectName("switchWidget")

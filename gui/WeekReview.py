@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QProgressBar, QLabel, QHBoxLayout, QFrame, QScrollArea
 import datetime
 
@@ -43,6 +44,56 @@ class WeekReview(QDialog):
         scrollArea.setWidget(reviewFrame)
         scrollArea.setWidgetResizable(True)
         scrollArea.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+        scrollArea.setStyleSheet("""
+                                QScrollArea 
+                                {
+                                    margin-left: 40px;
+                                    margin-right: 40px;
+                                    min-height: 485px;
+                                    background-color: white;
+                                }
+                                QScrollBar:vertical
+                                {
+                                    background-color: white;
+                                    width: 9px;
+                                    border-radius: 5px;
+                                }
+                            
+                                QScrollBar::handle:vertical
+                                {
+                                    background-color: #d6d6d6;
+                                    border-radius: 5px;
+                                }
+                            
+                                QScrollBar::sub-line:vertical
+                                {
+                                    margin: 3px 0px 3px 0px;
+                                    border-image: url(:/qss_icons/rc/up_arrow_disabled.png);
+                                    height: 10px;
+                                    width: 10px;
+                                    subcontrol-position: top;
+                                    subcontrol-origin: margin;
+                                }
+                            
+                                QScrollBar::add-line:vertical
+                                {
+                                    margin: 3px 0px 3px 0px;
+                                    border-image: url(:/qss_icons/rc/down_arrow_disabled.png);
+                                    height: 10px;
+                                    width: 10px;
+                                    subcontrol-position: bottom;
+                                    subcontrol-origin: margin;
+                                }
+                            
+                                QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical
+                                {
+                                    background: none;
+                                }
+                            
+                                QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical
+                                {
+                                    background: none;
+                                }""")
         mainLayout.addWidget(scrollArea)
 
         verticalSpacer = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)

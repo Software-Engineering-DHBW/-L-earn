@@ -17,6 +17,16 @@ QLabel#title {
     color: black;
     border-radius: 5px;
 }
+QLabel#titleLecture {
+    background-color: white;
+    text-align: Center;
+    margin-left: 28px;
+    margin-right: 28px;
+    font-size: 30px;
+    font-family: 'Times New Roman', Times, serif;
+    color: black;
+    border-radius: 5px;
+}
 QLabel#switchLabel {
     background-color: white;
     font-size: 18px;
@@ -78,6 +88,12 @@ QFrame#frame {
     background-color: white;
     margin-left: 40px;
     margin-right: 40px;
+    border-radius: 5px;
+}
+QFrame#lectureFrame {
+    background-color: white;
+    margin-left: 28px;
+    margin-right: 28px;
     border-radius: 5px;
 }
 QFrame#bottomFrame {
