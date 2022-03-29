@@ -1,0 +1,15 @@
+PyQt5~=5.15.6
+pandas~=1.4.1
+qroundprogressbar~=1.0.0
+modulegraph~=0.19.2
+py2app~=0.27
+macholib~=1.16
+setuptools~=61.0.0
+altgraph~=0.17.2
+pync~=2.0.3
+certifi~=2021.10.8
+PyAutoGUI~=0.9.53
+numpy~=1.22.3
+psutil~=5.9.0
+wmctrl~=0.4
+PyQtWebEngine

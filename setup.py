@@ -8,18 +8,22 @@ Usage:
 from setuptools import setup
 
 APP = ['Learn.py']
-DATA_FILES = ['images',
-              'defaults',
-              'gui',
-              'classes',
-              'style.css']
+DATA_FILES = [
+    'images',
+    'defaults',
+    'style.css']
 OPTIONS = {
     'iconfile': 'images/Logo.png',
 }
+PACKAGES = [
+    'gui',
+    'classes'
+]
 
 setup(
     app=APP,
     data_files=DATA_FILES,
     options={'py2app': OPTIONS},
     setup_requires=['py2app'],
+    packages=PACKAGES
 )
