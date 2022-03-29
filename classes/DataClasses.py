@@ -1,3 +1,7 @@
+"""
+This file includes all classes that represent the stored data
+"""
+
 from datetime import date
 import datetime as dt
 import pandas as pd
@@ -28,6 +32,7 @@ class UserData(object):
         return setattr(self.instance, name, value)
 
 
+# stores the process information of the current day
 class CurrentDayData(object):
     class __CurrentDayData:
         data = db.readData(date.today())
@@ -82,6 +87,7 @@ class CurrentDayData(object):
         return setattr(self.instance, name, value)
 
 
+# represents the information used in the week review
 class ReviewData(object):
     class __ReviewData:
         data = pd.DataFrame()

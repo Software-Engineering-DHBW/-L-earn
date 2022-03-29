@@ -81,6 +81,7 @@ class DBHelper(object):
             stmt = f"SELECT * FROM {table_data} WHERE {column_date} = (?)"
             args = (date,)
             query = self.conn.execute(stmt, args)
+            print(query.description)
             cols = [column[0] for column in query.description]
             results = pd.DataFrame.from_records(data=query.fetchall(), columns=cols)
             results['date'] = results['date'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d').date())
