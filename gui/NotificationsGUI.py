@@ -118,6 +118,7 @@ class NotificationsGUI(QDialog):
     def initTimers(self, url):
         if url != "":
             try:
+                # add for every lecture begin and end a timer, which activates/deactivates notifications
                 lecturePlan = LecturePlan(url).getStartBeginLP()
                 self.timers = []
                 i = 0

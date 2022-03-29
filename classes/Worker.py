@@ -1,7 +1,9 @@
+import os
 import threading
 from PyQt5.QtCore import QObject
 import time
 
+import Learn
 from classes import DataClasses as dc, ProcessModule as pm
 from sys import platform
 from classes.ActMonitor import check_idleTime_Mac, check_idleTime_windows, check_idleTime_linux
@@ -11,10 +13,12 @@ import classes.ActMonitor as am
 global idle_time_sec
 idle_time_sec = 600
 
+basedir = Learn.basedir
 
-#check File for either True or False to determine the status of ActivityMonitor
+
+# check File for either True or False to determine the status of ActivityMonitor
 def checkFile():
-    with open('logs/transfer.txt') as f:
+    with open(os.path.join(basedir, "logs", "transfer.txt")) as f:
         lines = f.readlines()
         f.close()
     if lines[0] == 'True':
@@ -52,24 +56,28 @@ class Worker(QObject):
         self.timers = []
         self.setTimers = []
 
+    # update process data and check for banned processes
     def updateProcessData(self):
 
         try:
             pD = pm.ProcessData()
             while True:
                 pD.updateData()
+                # check for running banned processes
                 if len(pD.getBannedProcesses()) != 0:
                     running = pD.checkProcesses()
                     if len(running) != 0:
                         i = 0
                         for r in running:
                             if not r in self.setTimers:
+                                # set threading timer to kill banned process after 5 minutes
                                 self.timers.append(threading.Timer(300, self.timerEnds, [r, i]))
                                 self.setTimers.append(r)
                                 self.timers[i].start()
                                 title = "[L]earn - Limit Alert"
                                 message = "Das Programm " + r + "läuft und hat sein eingestelltes Limit erreicht! Es wird " \
                                                                 "deshalb in 5 Minuten beendet! "
+                                # send system notification for Windows, Linux, Mac
                                 if platform == "win32":
                                     am.sendmessageWindows(title, message)
 
@@ -82,7 +90,7 @@ class Worker(QObject):
                                 i += 1
 
                 time.sleep(5)
-                
+
         except Exception as e:
             print(e)
 
@@ -97,7 +105,7 @@ class Worker(QObject):
 
             time.sleep(300)
 
-
+    # kill process and delete threading timer
     def timerEnds(self, proc, i):
 
         try:
@@ -106,4 +114,3 @@ class Worker(QObject):
             self.setTimers.remove(proc)
         except Exception as e:
             print(e)
-

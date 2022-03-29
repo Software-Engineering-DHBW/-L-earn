@@ -4,6 +4,8 @@ import logging
 import pandas as pd
 from datetime import datetime
 
+import Learn
+
 # table names
 table_data = "data"
 table_bp = "bannedProcesses"
@@ -14,6 +16,8 @@ column_date = "date"
 column_runtime = "runtime"
 column_user = "user"
 column_limittime = "limittime"
+
+basedir = Learn.basedir
 
 
 class DBHelper(object):
@@ -60,7 +64,7 @@ class DBHelper(object):
 
             if not os.path.isdir('logs'):
                 os.makedirs('logs')
-            handler = logging.FileHandler('logs/dblog.log')
+            handler = logging.FileHandler(os.path.join(basedir, "logs", "dblog.log"))
             # create a logging format
             formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s')
             handler.setFormatter(formatter)
@@ -68,7 +72,7 @@ class DBHelper(object):
 
         # Methods for data table
         def readData(self, date):
-
+            # get all saved processes and times for specified date
             try:
                 self.conn = sqlite3.connect(self.dbname)
             except sqlite3.Error as e:
@@ -83,7 +87,7 @@ class DBHelper(object):
             return results
 
         def readAllData(self):
-
+            # get all saved processes and times
             try:
                 self.conn = sqlite3.connect(self.dbname)
             except sqlite3.Error as e:
@@ -97,7 +101,7 @@ class DBHelper(object):
             return results
 
         def updateData(self, date, time, processName):
-
+            # update time of existing entry
             try:
                 self.conn = sqlite3.connect(self.dbname)
             except sqlite3.Error as e:
@@ -107,7 +111,6 @@ class DBHelper(object):
             args = (processName, date,)
             result = self.conn.execute(stmt, args).fetchall()
             if len(result) != 0:
-                # time = result[0][0] + time
                 stmt = f"UPDATE {table_data} SET {column_runtime} = (?) WHERE {column_pName} = (?) AND {column_date} = (?)"
                 args = (time, processName, date,)
                 try:
@@ -122,7 +125,7 @@ class DBHelper(object):
                                     + ' and could not be updated')
 
         def writeData(self, date, time, processName):
-
+            # save process, date and time
             try:
                 self.conn = sqlite3.connect(self.dbname)
             except sqlite3.Error as e:
@@ -146,7 +149,7 @@ class DBHelper(object):
 
         # Methods for bannedProcesses table
         def readBP(self, userName):
-
+            # get all saved limits
             try:
                 self.conn = sqlite3.connect(self.dbname)
             except sqlite3.Error as e:
@@ -160,7 +163,7 @@ class DBHelper(object):
             return results
 
         def writeBP(self, processName, limittime, userName):
-
+            # save new limit
             try:
                 self.conn = sqlite3.connect(self.dbname)
             except sqlite3.Error as e:
@@ -171,11 +174,12 @@ class DBHelper(object):
             self.__write(stmt, args, processName, table_bp)
 
         def deleteBP(self, processName, userName):
+            # delete limit
             self.__delete(table_bp, column_pName, column_user, processName, userName)
 
         # Methods for both tables
         def __write(self, stmt, args, processName, table):
-
+            # write in database
             try:
                 self.conn = sqlite3.connect(self.dbname)
             except sqlite3.Error as e:
@@ -190,7 +194,7 @@ class DBHelper(object):
                                   + f' into table {table}: ' + ''.join(e.args))
 
         def __delete(self, table, col1, col2, val1, val2):
-
+            # delete from database
             try:
                 self.conn = sqlite3.connect(self.dbname)
             except sqlite3.Error as e:

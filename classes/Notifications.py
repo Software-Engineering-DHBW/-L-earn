@@ -5,8 +5,12 @@ import logging
 import pyautogui
 import time
 
+import Learn
+
 if platform == "win32":
     from win32gui import GetWindowText, GetForegroundWindow
+
+basedir = Learn.basedir
 
 
 class Notifications(object):
@@ -27,13 +31,14 @@ class Notifications(object):
 
         if not os.path.isdir('logs'):
             os.makedirs('logs')
-        handler = logging.FileHandler('logs/ntflog.log')
+        handler = logging.FileHandler(os.path.join(basedir, "logs", "ntflog.log"))
         # create a logging format
         formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s')
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
 
     def enableNtf(self):
+        # allow notifications for all platforms
         if platform == "linux" or platform == "linux2":
             # linux
             self.__enableNtfLinux()
@@ -47,6 +52,7 @@ class Notifications(object):
             self.logger.error("No valid system for enabling Notifications")
 
     def disableNtf(self):
+        # disable notifications for all platforms
         if platform == "linux" or platform == "linux2":
             # linux
             self.__disableNtfLinux()
