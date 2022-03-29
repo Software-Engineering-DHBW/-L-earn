@@ -2,13 +2,13 @@ import threading
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QObject
 import time
-from sys import platform
-from ActMonitor import check_idleTime_Mac, check_idleTime_windows, check_idleTime_linux
-import ProcessModule as pm
-import DataClasses as dc
-import ActMonitor as am
 
-#variable determines how long idle time is tolerated
+from classes import DataClasses as dc, ProcessModule as pm
+from sys import platform
+from classes.ActMonitor import check_idleTime_Mac, check_idleTime_windows, check_idleTime_linux
+import classes.ActMonitor as am
+
+# variable determines how long idle time is tolerated
 global idle_time_sec
 idle_time_sec = 600
 
@@ -18,25 +18,25 @@ def checkFile():
     with open('logs/transfer.txt') as f:
         lines = f.readlines()
         f.close()
-        print(lines[0])
     if lines[0] == 'True':
         return True
     else:
         return False
 
+
 class ActWorker(QObject):
     def __init__(self):
         super().__init__()
 
-
     def idleTime(self):
         while True:
-            if platform == 'linux' and checkFile() or platform == 'linux2' and checkFile():
-                check_idleTime_linux(idle_time_sec)
-            elif platform == 'darwin' and checkFile():
-                check_idleTime_Mac(idle_time_sec)
-            elif platform == 'win32'and checkFile():
-                check_idleTime_windows(idle_time_sec)
+            if checkFile():
+                if platform == 'linux' or platform == 'linux2':
+                    check_idleTime_linux(idle_time_sec)
+                elif platform == 'darwin':
+                    check_idleTime_Mac(idle_time_sec)
+                elif platform == 'win32':
+                    check_idleTime_windows(idle_time_sec)
             time.sleep(5)
 
 
@@ -48,6 +48,7 @@ class Worker(QObject):
         self.window = window
         self.timers = []
         self.setTimers = []
+
     # function to load the current processes and update the table
     def loadProcesses(self):
         previousDf = None
@@ -88,7 +89,8 @@ class Worker(QObject):
                             self.setTimers.append(r)
                             self.timers[i].start()
                             title = "[L]earn - Limit Alert"
-                            message = "Das Programm " + r + " läuft und hat sein eingestelltes Limit erreicht! Es wird deshalb in 5 Minuten beendet!"
+                            message = "Das Programm " + r + "läuft und hat sein eingestelltes Limit erreicht! Es wird " \
+                                                            "deshalb in 5 Minuten beendet! "
                             if platform == "win32":
                                 am.sendmessageWindows(title, message)
 

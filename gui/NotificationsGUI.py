@@ -1,5 +1,4 @@
 
-
 import threading
 from datetime import datetime
 from urllib.error import URLError
@@ -9,8 +8,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QSizePolicy, QFrame
 
 from defaults.Defaults import Defaults
-from LecturePlan import LecturePlan
-from Notifications import Notifications
+from classes.LecturePlan import LecturePlan
+from classes.Notifications import Notifications
 from defaults.Values import DEF_NOTIFICATIONSALLOWED, DEF_LECTUREPLANURL, DEF_LECTURENOTIFICATIONS
 from gui.OnOffButton import Switch
 
@@ -36,91 +35,57 @@ class NotificationsGUI(QDialog):
             self.lectureNotifications = False
 
         # Create a QGridLayout instance
-        main_layout = QVBoxLayout(self)
-        #main_layout.setAlignment(Qt.AlignTop)
-
+        mainLayout = QVBoxLayout(self)
 
         # Add widgets to the layout
         titleLabel = QLabel("Kommunikationsbeschränkung")
         titleLabel.setAlignment(QtCore.Qt.AlignCenter)
         titleLabel.setMaximumHeight(80)
         titleLabel.setMinimumHeight(80)
-        titleLabel.setStyleSheet("QLabel {"
-                                 "background-color: white;"
-                                 "text-align: Center;"
-                                 "margin-left: 40px;"
-                                 "margin-right: 40px;"
-                                 "font-size: 30px;"
-                                 "font-family: 'Times New Roman', Times, serif;"
-                                 "color: black;"
-                                 "border-radius: 5px}")
-        main_layout.addWidget(titleLabel)
+        titleLabel.setObjectName("title")
+        mainLayout.addWidget(titleLabel)
 
         frame = QFrame()
         frameLayout = QVBoxLayout(frame)
-        #frameLayout.setContentsMargins(0, 0, 0, 0)
         frameLayout.setAlignment(Qt.AlignTop)
         frame.setAttribute(QtCore.Qt.WA_StyledBackground, True)
-        frame.setStyleSheet("""
-                            QFrame 
-                            { 
-                                margin-left: 40px;
-                                margin-right: 40px;
-                                background-color: white;
-                                border-radius: 5px;
-                            }
-                            """)
+        frame.setObjectName("frame")
 
         notificationWidget = QWidget()
+        notificationWidget.setObjectName("switchWidget")
         notificationLayout = QHBoxLayout()
         ntfSwitch = self.getSwitch()
         ntfSwitch.clicked.connect(self.switchNotifications)
         notificationLayout.addWidget(ntfSwitch)
         notificationLabel = QLabel()
         notificationLabel.setText("Mitteilungen erlauben")
-        notificationLabel.setStyleSheet("""              
-                            QLabel
-                            {
-                                font-size: 18px;
-                                font-family: 'Times New Roman', Times, serif;
-                            }
-                            """)
+        notificationLabel.setObjectName("switchLabel")
         notificationLayout.addWidget(notificationLabel)
         notificationWidget.setLayout(notificationLayout)
-        #main_layout.addWidget(notificationWidget)
 
         lectureWidget = QWidget()
+        lectureWidget.setObjectName("switchWidget")
         lectureLayout = QHBoxLayout()
         lectureSwitch = self.getSwitch()
         lectureSwitch.clicked.connect(self.switchLectureNotifications)
         lectureLayout.addWidget(lectureSwitch)
         lectureLabel = QLabel()
         lectureLabel.setText("Mitteilungen während der Vorlesungszeit ausschalten")
-        lectureLabel.setStyleSheet("""              
-                            QLabel
-                            {
-                                font-size: 18px;
-                                font-family: 'Times New Roman', Times, serif;
-                            }
-                            """)
+        lectureLabel.setObjectName("switchLabel")
         lectureLayout.addWidget(lectureLabel)
         lectureWidget.setLayout(lectureLayout)
-        #main_layout.addWidget(lectureWidget)
 
         frameLayout.addWidget(notificationWidget)
         frameLayout.addWidget(lectureWidget)
-        main_layout.addWidget(frame)
+        mainLayout.addWidget(frame)
 
         verticalSpacer = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        main_layout.addItem(verticalSpacer)
-
-        #self.setLayout(main_layout)
+        mainLayout.addItem(verticalSpacer)
 
         # Set Switch Values
         if self.notificationsAllowed:
             self.notificationsAllowed = False
             ntfSwitch.click()
-            # self.__setNotifications(True)
 
         if self.lectureNotifications:
             lectureSwitch.click()
@@ -162,7 +127,7 @@ class NotificationsGUI(QDialog):
                     # Add Timer for begin
                     begin = row["date"] + " " + row["begin"]
                     beginDatetime = datetime.strptime(begin, "%d.%m.%Y %H:%M")
-                    difference = beginDatetime-now
+                    difference = beginDatetime - now
                     self.timers.append(threading.Timer(difference.seconds, self.startLecture))
                     self.timers[i].start()
                     i += 1
@@ -170,7 +135,7 @@ class NotificationsGUI(QDialog):
                     # Add Timer for end
                     end = row["date"] + " " + row["end"]
                     endDatetime = datetime.strptime(end, "%d.%m.%Y %H:%M")
-                    difference = endDatetime-now
+                    difference = endDatetime - now
                     self.timers.append(threading.Timer(difference.seconds, self.endLecture))
                     self.timers[i].start()
                     i += 1
@@ -184,7 +149,5 @@ class NotificationsGUI(QDialog):
             Notifications().disableNtf()
 
     def endLecture(self):
-        if self.notificationsAllowed:
+        if self.lectureNotifications and self.notificationsAllowed:
             Notifications().enableNtf()
-
-

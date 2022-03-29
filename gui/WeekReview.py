@@ -1,8 +1,9 @@
 from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QProgressBar, QLabel, QHBoxLayout, QFrame, QScrollArea
 import datetime
 
-import DataClasses
+from classes import DataClasses
 
 
 class WeekReview(QDialog):
@@ -17,22 +18,13 @@ class WeekReview(QDialog):
         mainLayout = QVBoxLayout(self)
 
         self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
-        self.setStyleSheet('border-radius: 5px;'
-                           'background-color: #eeeeee;')
 
         # title
         titleLabel = QLabel("Wochenrückblick")
         titleLabel.setAlignment(QtCore.Qt.AlignCenter)
         titleLabel.setMaximumHeight(80)
         titleLabel.setMinimumHeight(80)
-        titleLabel.setStyleSheet("QLabel {"
-                                 "background-color: white;"
-                                 "text-align: Center;"
-                                 "margin-left: 40px;"
-                                 "margin-right: 40px;"
-                                 "font-size: 30px;"
-                                 "font-family: 'Times New Roman', Times, serif;"
-                                 "color: black;}")
+        titleLabel.setObjectName("title")
         mainLayout.addWidget(titleLabel)
 
         # review

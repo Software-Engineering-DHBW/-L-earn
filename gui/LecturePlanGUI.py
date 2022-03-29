@@ -1,15 +1,13 @@
 from urllib.error import URLError
 
-from PyQt5 import QtCore
 from PyQt5.QtCore import QUrl, Qt
-from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout, QHBoxLayout, QSizePolicy
 from PyQt5.QtGui import QBrush, QColor, QPalette
-
+from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout, QHBoxLayout, QSizePolicy, QFrame
 from qroundprogressbar import QRoundProgressBar
 
+from classes.LecturePlan import LecturePlan
 from defaults.Defaults import Defaults
-from LecturePlan import LecturePlan
 from defaults.Values import DEF_LECTUREPLANURL
 from gui.NotificationsGUI import NotificationsGUI
 
@@ -21,7 +19,7 @@ class LecturePlanGUI(QWidget):
 
         self.loadedWebsite = False
 
-        main_layout = QVBoxLayout(self)
+        mainLayout = QVBoxLayout()
 
         # -----------------
         # First Side
@@ -29,8 +27,22 @@ class LecturePlanGUI(QWidget):
         firstLayout = QVBoxLayout(self)
         firstLayout.setAlignment(Qt.AlignTop)
 
+        titleLabel = QLabel("Vorlesungsplan")
+        titleLabel.setAlignment(Qt.AlignCenter)
+        titleLabel.setMaximumHeight(80)
+        titleLabel.setMinimumHeight(80)
+        titleLabel.setObjectName("titleLecture")
+        firstLayout.addWidget(titleLabel)
+
+        frame = QFrame()
+        frameLayout = QVBoxLayout(frame)
+        frameLayout.setAlignment(Qt.AlignTop)
+        frame.setAttribute(Qt.WA_StyledBackground, True)
+        frame.setObjectName("lectureFrame")
+
         nameLabel = QLabel()
         nameLabel.setText('Vorlesungsplanurl:')
+        nameLabel.setObjectName("label")
         self.line = QLineEdit()
 
         pybutton = QPushButton('Verbinden')
@@ -38,12 +50,15 @@ class LecturePlanGUI(QWidget):
         pybutton.clicked.connect(self.setLecturePlan)
 
         # Add Widgets
-        firstLayout.addWidget(nameLabel)
-        firstLayout.addWidget(self.line)
-        firstLayout.addWidget(pybutton)
+        frameLayout.addWidget(nameLabel)
+        frameLayout.addWidget(self.line)
+        frameLayout.addWidget(pybutton)
+
+        frame.setLayout(frameLayout)
+        firstLayout.addWidget(frame)
 
         self.firstWidget.setLayout(firstLayout)
-        main_layout.addWidget(self.firstWidget)
+        mainLayout.addWidget(self.firstWidget)
 
         # -----------------
         # Second Side
@@ -77,13 +92,13 @@ class LecturePlanGUI(QWidget):
         self.progressWidget.setLayout(progressLayout)
 
         # Add Widgets
-        main_layout.addWidget(self.webView)
-        main_layout.addWidget(self.pybutton2)
-        main_layout.addWidget(self.progressWidget)
+        mainLayout.addWidget(self.webView)
+        mainLayout.addWidget(self.pybutton2)
+        mainLayout.addWidget(self.progressWidget)
 
         # -----------------
         # Set Side
-        self.setLayout(main_layout)
+        self.setLayout(mainLayout)
 
         url = Defaults().get(DEF_LECTUREPLANURL)
         if url != "":
