@@ -61,12 +61,14 @@ class Notifications(object):
 
     def __enableNtfLinux(self):
         # check state
-        showNtf = subprocess.check_output(["gsettings get org.gnome.desktop.notifications show-banners"])
-        if not showNtf:
+        showNtf = subprocess.check_output(["gsettings get org.gnome.desktop.notifications show-banners"],
+                                          shell=True).decode().replace('\n', '')
+
+        if showNtf == "false":
             # enable Notifications
-            subprocess.Popen(["gsettings set org.gnome.desktop.notifications show-banners true"])
+            subprocess.Popen(["gsettings set org.gnome.desktop.notifications show-banners true"], shell=True)
             # notify user
-            subprocess.Popen(["notify-send 'Notifications are disabled' -i user-busy"])
+            subprocess.Popen(["notify-send 'Notifications are enabled' -i user-busy"], shell=True)
 
             self.logger.info("enabled Notifications")
         else:
@@ -74,12 +76,16 @@ class Notifications(object):
 
     def __disableNtfLinux(self):
         # check state
-        showNtf = subprocess.check_output(["gsettings get org.gnome.desktop.notifications show-banners"])
-        if showNtf:
-            # disable Notifications
-            subprocess.Popen(["gsettings set org.gnome.desktop.notifications show-banners false"])
+        showNtf = subprocess.check_output(["gsettings get org.gnome.desktop.notifications show-banners"],
+                                          shell=True).decode().replace('\n', '')
+
+        if showNtf == "true":
+
             # notify user
-            subprocess.Popen(["notify-send 'Notifications are enabled' -i user-available"])
+            subprocess.Popen(["notify-send 'Notifications are disabled' -i user-available"], shell=True)
+
+            # disable Notifications
+            subprocess.Popen(["gsettings set org.gnome.desktop.notifications show-banners false"], shell=True)
 
             self.logger.info("disabled Notifications")
         else:
