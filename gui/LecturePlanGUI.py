@@ -1,3 +1,6 @@
+"""
+GUI for the Lecture Plan tab
+"""
 from urllib.error import URLError
 
 from PyQt5.QtCore import QUrl, Qt
