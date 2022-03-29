@@ -141,6 +141,7 @@ class DBHelper(object):
             else:
                 self.updateData(date, time, processName)
 
+        def deleteData(self, processName, date):
             self.__delete(table_data, column_pName, column_date, processName, date)
 
         # Methods for bannedProcesses table
