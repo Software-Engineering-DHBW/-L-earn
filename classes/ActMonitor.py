@@ -1,3 +1,6 @@
+"""
+All methods for the Activity Monitor
+"""
 import time
 from sys import platform
 import os
