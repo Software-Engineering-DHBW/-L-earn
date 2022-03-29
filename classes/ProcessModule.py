@@ -38,6 +38,7 @@ def filterProcMac(df):
 
 
 def filterProcLin(df):
+    consideredProc = []
     for win in wmctrl.Window.list():
         consideredProc.append(psutil.Process(win.pid).name().lower())
     for index, row in df.iterrows():
@@ -47,6 +48,7 @@ def filterProcLin(df):
 
 # wmctrl.Window.get_active()
 def winEnumHandler(hwnd, ctx):
+    consideredProc = []
     if win32gui.IsWindowVisible(hwnd):
         consideredProc.append(psutil.Process(win32process.GetWindowThreadProcessId(hwnd)[1]).name().lower())
 
