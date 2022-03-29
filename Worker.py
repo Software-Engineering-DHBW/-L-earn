@@ -12,6 +12,8 @@ import ActMonitor as am
 global idle_time_sec
 idle_time_sec = 600
 
+
+#check File for either True or False to determine the status of ActivityMonitor
 def checkFile():
     with open('logs/transfer.txt') as f:
         lines = f.readlines()
@@ -30,13 +32,10 @@ class ActWorker(QObject):
     def idleTime(self):
         while True:
             if platform == 'linux' and checkFile() or platform == 'linux2' and checkFile():
-                print('linux')
                 check_idleTime_linux(idle_time_sec)
             elif platform == 'darwin' and checkFile():
-                print('Macn not yet')
                 check_idleTime_Mac(idle_time_sec)
             elif platform == 'win32'and checkFile():
-                print('windows')
                 check_idleTime_windows(idle_time_sec)
             time.sleep(5)
 
