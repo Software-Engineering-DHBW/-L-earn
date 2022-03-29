@@ -2,6 +2,7 @@
 Defines all self created exceptions
 """
 
+
 class Error(Exception):
     pass
 

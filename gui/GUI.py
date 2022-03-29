@@ -1,6 +1,7 @@
 """
 Includes the functionality to run the graphical user interface
 """
+import os
 import sys
 
 from PyQt5.QtGui import QIcon, QPixmap
@@ -8,6 +9,7 @@ from PyQt5.QtWidgets import QApplication, QPushButton, QHBoxLayout, QWidget, QVB
     QMainWindow
 from PyQt5.QtCore import QThread, QSize
 
+import Learn
 from classes.Worker import Worker, ActWorker
 
 # class that represents the main GUI window
@@ -16,6 +18,8 @@ from gui.LecturePlanGUI import LecturePlanGUI
 from gui.NotificationsGUI import NotificationsGUI
 from gui.WeekReview import WeekReview
 from gui.LimitsGUI import LimitsGUI
+
+basedir = Learn.basedir
 
 
 class MainWindow(QMainWindow):
@@ -34,7 +38,7 @@ class MainWindow(QMainWindow):
 
         # set the title of main window
         self.setWindowTitle('[L]earn')
-        self.setWindowIcon(QIcon('images/Logo.png'))
+        self.setWindowIcon(QIcon(os.path.join(basedir, "images", "Logo.png")))
 
         # set the size of window
         self.Width = 1000
@@ -42,11 +46,11 @@ class MainWindow(QMainWindow):
         self.resize(self.Width, self.height)
 
         # add all widgets
-        self.btn_1 = self.getButton(image='diagram.png', text='Wochenrückblick')
-        self.btn_2 = self.getButton(image='dhbw.png', text='Vorlesungsplan')
-        self.btn_3 = self.getButton(image='stopwatch.png', text='Limits')
-        self.btn_4 = self.getButton(image='notification.png', text='Mitteilungen')
-        self.btn_5 = self.getButton(image='activityMonitor.png', text='Activity Monitor')
+        self.btn_1 = self.getButton(image=os.path.join(basedir, "images", "diagram.png"), text='Wochenrückblick')
+        self.btn_2 = self.getButton(image=os.path.join(basedir, "images", "dhbw.png"), text='Vorlesungsplan')
+        self.btn_3 = self.getButton(image=os.path.join(basedir, "images", "stopwatch.png"), text='Limits')
+        self.btn_4 = self.getButton(image=os.path.join(basedir, "images", "notification.png"), text='Mitteilungen')
+        self.btn_5 = self.getButton(image=os.path.join(basedir, "images", "activityMonitor.png"), text='Activity Monitor')
 
         self.btn_1.clicked.connect(self.button1)
         self.btn_2.clicked.connect(self.button2)
@@ -146,7 +150,7 @@ class MainWindow(QMainWindow):
     # buttons
     def getButton(self, image, text):
         button = QPushButton(text, self)
-        button.setIcon(QIcon(QPixmap("images/" + image)))
+        button.setIcon(QIcon(QPixmap(image)))
         button.setObjectName("tabButton")
         font = button.font()
         font.setPointSize(13)

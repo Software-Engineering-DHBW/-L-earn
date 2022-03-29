@@ -14,6 +14,7 @@ class LimitsGUI(QDialog):
     def __init__(self):
         super().__init__()
 
+        self.bottomFrameLayout = None
         self.scrollArea = None
         self.timers = []
 
@@ -140,7 +141,7 @@ class LimitsGUI(QDialog):
         self.mainLayout.addItem(verticalSpacer)
 
     def createLimitList(self, layout):
-
+        # get saved banned Processes
         data = pm.ProcessData().getBannedProcesses()
 
         if data.empty:
@@ -150,6 +151,7 @@ class LimitsGUI(QDialog):
             layout.addWidget(msgLabel)
             return
 
+        # create rows for existing limits
         for i, row in data.iterrows():
             limitRow = QFrame()
             limitRow.setObjectName("rowFrame")
@@ -201,15 +203,17 @@ class LimitsGUI(QDialog):
             self.layout().removeWidget(self.scrollArea)
             self.createBottomWidget()
 
-
     def deleteLimit(self):
+        # delete process from active banned Processes
         data = pm.ProcessData().getBannedProcesses()
         data = data[data.name != self.sender().objectName()]
         pm.ProcessData().setBannedProcesses(data)
 
+        # delete limit in database
         processName = self.sender().objectName()
         DBHelper().deleteBP(processName, getpass.getuser())
 
+        # remove row
         self.scrollArea.setWidget(None)
         self.layout().removeWidget(self.scrollArea)
 
@@ -219,12 +223,14 @@ class LimitsGUI(QDialog):
         return
 
     def addProcesses(self):
-
+        # get already saved Processes
         data = DataClasses.ReviewData().createReview()
 
+        # get saved limits
         username = getpass.getuser()
         dbItems = DBHelper().readBP(username)
 
+        # add processes of existing limits to active banned Processes
         for index, row in dbItems.iterrows():
             banned = {'name': [row['name']], 'limittime': [row['limittime']]}
             banned = pd.DataFrame(banned)
@@ -232,6 +238,7 @@ class LimitsGUI(QDialog):
 
         savedItems = list(dbItems["name"])
 
+        # add the rest processes to the combobox
         for name, row in data.iterrows():
             currentItems = [self.combo.itemText(i) for i in range(self.combo.count())]
             if row['name'] not in currentItems and row['name'] not in savedItems:

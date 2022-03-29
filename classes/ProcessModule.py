@@ -129,7 +129,6 @@ def checkSystemProcess(name):
 
 # Constructs a dataframe out of the process list array
 def construct_dataframe(processes):
-
     df = pd.DataFrame(processes)
     df.set_index('pid', inplace=True)
     df.sort_values(by='pid', inplace=True)
@@ -172,11 +171,11 @@ class ProcessData(object):
                 for index, row in proc.iterrows():
                     limits = self.bannedProcesses[self.bannedProcesses["name"] == n]
                     limit = -1
-                    
+
                     # get limit
                     for index1, row1 in limits.iterrows():
                         limit = row1['limittime']
-                    
+
                     # cjeck if searched process is in data
                     if n.lower() in row['name']:
                         if limit != -1:
@@ -220,7 +219,7 @@ class ProcessData(object):
                         if name['name'].lower() in bn['name'].lower():
                             self.bannedProcesses = self.bannedProcesses.drop(ind)
                 self.bannedProcesses = pd.concat([self.bannedProcesses, banned])
-      
+
         # remove one specific banned process
         def removeBannedProcess(self, name):
             for ind, row in self.bannedProcesses.iterrows():
@@ -263,7 +262,7 @@ class ProcessData(object):
                                     proc.kill()
                                 except psutil.AccessDenied:
                                     continue
-    
+
     # implementation of singleton pattern
     instance = None
 

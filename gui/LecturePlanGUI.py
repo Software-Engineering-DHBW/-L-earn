@@ -121,6 +121,8 @@ class LecturePlanGUI(QWidget):
 
     def setLecturePlan(self):
         url = self.line.text()
+
+        # check if it is a valid url
         if "vorlesungsplan.dhbw-mannheim.de" in url:
             # remove date parameter
             dateIndex = url.find("date=")
@@ -128,11 +130,14 @@ class LecturePlanGUI(QWidget):
                 url = url[0:dateIndex-1]
 
             try:
+                # save url in defaults if the lecturePlan could be read
                 lecturePlan = LecturePlan(url).getLP()
 
                 if len(lecturePlan) > 0:
                     Defaults().set(DEF_LECTUREPLANURL, url)
+                    # set webView
                     self.webView.setUrl(QUrl(url))
+                    # init timers for the lectures
                     NotificationsGUI().initTimers(url)
 
             except (URLError, ValueError) as e:
@@ -144,15 +149,18 @@ class LecturePlanGUI(QWidget):
             self.layout().itemAt(i).widget().hide()
 
     def loadStartedHandler(self):
+        # show progress widget while website is loading
         if not self.loadedWebsite:
             self.hideAll()
             self.progressWidget.setHidden(False)
 
     def loadProgressHandler(self, prog):
+        # set progress while website is loading
         if not self.loadedWebsite:
             self.progress.setValue(prog)
 
     def loadFinishedHandler(self):
+        # show webView
         if not self.loadedWebsite:
             self.loadedWebsite = True
             self.setSecondSide()
