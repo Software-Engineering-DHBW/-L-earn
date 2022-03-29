@@ -56,24 +56,28 @@ class Worker(QObject):
         self.timers = []
         self.setTimers = []
 
+    # update process data and check for banned processes
     def updateProcessData(self):
 
         try:
             pD = pm.ProcessData()
             while True:
                 pD.updateData()
+                # check for running banned processes
                 if len(pD.getBannedProcesses()) != 0:
                     running = pD.checkProcesses()
                     if len(running) != 0:
                         i = 0
                         for r in running:
                             if not r in self.setTimers:
+                                # set threading timer to kill banned process after 5 minutes
                                 self.timers.append(threading.Timer(300, self.timerEnds, [r, i]))
                                 self.setTimers.append(r)
                                 self.timers[i].start()
                                 title = "[L]earn - Limit Alert"
                                 message = "Das Programm " + r + "läuft und hat sein eingestelltes Limit erreicht! Es wird " \
                                                                 "deshalb in 5 Minuten beendet! "
+                                # send system notification for Windows, Linux, Mac
                                 if platform == "win32":
                                     am.sendmessageWindows(title, message)
 
@@ -101,6 +105,7 @@ class Worker(QObject):
 
             time.sleep(300)
 
+    # kill process and delete threading timer
     def timerEnds(self, proc, i):
 
         try:
