@@ -1,3 +1,6 @@
+"""
+GUI for Activity Monitor tab
+"""
 import os
 
 from PyQt5 import QtCore, QtWidgets
