@@ -102,6 +102,7 @@ class Worker(QObject):
 
         try:
             pm.ProcessData().killProcess(proc)
+            del self.timers[i]
             self.setTimers.remove(proc)
         except Exception as e:
             print(e)
