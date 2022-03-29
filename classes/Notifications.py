@@ -1,3 +1,6 @@
+"""
+Defines the notification handling
+"""
 import os
 from sys import platform
 import subprocess
