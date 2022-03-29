@@ -4,11 +4,12 @@
 
 [L]earn ist eine innovative Anwendung um den eigenen Lernfortschritt zu beschleunigen und die Zeitplanung zu verbessern.
 
-## Prototyp
+## Entwicklersetup
 ### Ausführung
 Zum starten des Prototypen:
-  1. PyCharm (oder andere Python-IDE) installieren
-  2. Die folgenden Bibliotheken installieren
+  1. Repository forken/klonen
+  2. PyCharm (oder andere Python-IDE) installieren
+  3. Die folgenden Bibliotheken installieren
       - Pandas
       - psutil
       - PyQT5
@@ -17,29 +18,29 @@ Zum starten des Prototypen:
       - certifi
       - pyautogui
       - pywin32
-      - wmctrl
+      - wmctrl (bei Linux über: sudo apt install xprintidle)
       - win32process
       - win32gui
       - attrs
-      - pync
-      - xprintidle
-  3. Main.py ausführen
-
-### Doku
-Main.py: Zum Starten des Programms <br>
-GUI.py: Beinhaltet die Implementierung der Grafischen Oberfläche <br>
-UserInterface.ui: Vom Designer kreierte Daten für die GUI <br>
-ProcessModule.py: Beinhaltet die Implementierung aller Funktionen zu Prozessen und dem Prozess-Handling
-
-Weitere Doku ist in Form von Kommentaren im Code zu finden.
+      - pync 
+      - xprintidle (bei Linux über: sudo apt install xprintidle)
+ 
+## Doku
+Doku ist in Form von Kommentaren im Code zu finden.
 
 ## Coding Richtlinien
-- Nie auf dem main Branch arbeiten, immer einen separaten Branch nutzen
-- Branches sinnvolle Namen geben
-- Nach dem Push den eigenen Branch über einen Pull Request auf den main Branch mergen
-- Namensregularien:
-  1. Codesprache: Englisch
-  2. CamelCase: Variablen und Funktionen lowerCamelCase; Klassen und Files: UpperCamelCase
-  3. Files, Klassen, Funktionen und Variablen aussagekräftig benennen, Ausnahme: Zählvariablen (in Schleifen u.ä.)
-- Clean Code: <br>
-  Darauf achten, wiederkehrenden bzw. öfter genutzten Code in granulare Funktionen umzuwandeln
+- Nie auf dem main Branch arbeiten, immer einen separaten Branch nutzen 
+- Branches sinnvolle Namen geben 
+- Für jede Task/Arbeitspaket einen Branch erstellen 
+- Nach dem Push einen Pull Request erstellen und nach der Vorstellung im Meeting den eigenen Branch auf den main Branch mergen. Anschließend den eigenen Branch im Remote-Repository löschen 
+- Bei Arbeitsbeginn am Code zuerst aktuellen Stand pullen 
+- Namensregularien: 
+  - Codesprache: Englisch 
+  - CamelCase: Variablen und Funktionen lowerCamelCase; Klassen und Files: UpperCamelCase 
+  - Files, Klassen, Funktionen und Variablen aussagekräftig benennen, Ausnahme: Zählvariablen (in Schleifen u.ä.) 
+- Clean Code:  
+<br>  Darauf achten, wiederkehrenden bzw. öfter genutzten Code in granulare Funktionen auszulagern 
+- Sobald Codezeile länger als Sichtfeld wird à Zeilenumbruch 
+- Einrückungen gemäß der Python-Regularien machen und regelmäßig mit Codelayout-Funktion der IDE überprüfen 
+- Nach funktions- und sinnmäßig zusammenhängenden Codeblöcken, Funktionen, Klassen und Konstrukten (Schleifen, If-Else, etc.) eine Leerzeile einfügen 
+- Python-Files, Klassen und Funktionen mit kurzem, vorangestelltem Kommentar erklären, sonst Kommentare dort einfügen, wo als sinnvoll erachtet, aber selbsterklärend nicht vor jede einzelne Codezeile 
