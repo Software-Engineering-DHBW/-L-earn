@@ -17,8 +17,6 @@ column_runtime = "runtime"
 column_user = "user"
 column_limittime = "limittime"
 
-basedir = Learn.basedir
-
 
 class DBHelper(object):
     class __DBHelper:
@@ -64,7 +62,7 @@ class DBHelper(object):
 
             if not os.path.isdir('logs'):
                 os.makedirs('logs')
-            handler = logging.FileHandler(os.path.join(basedir, "logs", "dblog.log"))
+            handler = logging.FileHandler(os.path.join("logs", "dblog.log"))
             # create a logging format
             formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s')
             handler.setFormatter(formatter)

@@ -13,12 +13,10 @@ import classes.ActMonitor as am
 global idle_time_sec
 idle_time_sec = 600
 
-basedir = Learn.basedir
-
 
 # check File for either True or False to determine the status of ActivityMonitor
 def checkFile():
-    with open(os.path.join(basedir, "logs", "transfer.txt")) as f:
+    with open(os.path.join("logs", "transfer.txt")) as f:
         lines = f.readlines()
         f.close()
     if lines[0] == 'True':
