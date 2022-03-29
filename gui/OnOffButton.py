@@ -1,3 +1,6 @@
+"""
+Defines the On Off Button used for Notifications and Activity Monitor
+"""
 from PyQt5.QtCore import QObject, QSize, QPointF, QPropertyAnimation, QEasingCurve, pyqtProperty, pyqtSlot, Qt
 from PyQt5.QtGui import QPainter, QPalette, QLinearGradient, QGradient
 from PyQt5.QtWidgets import QAbstractButton
