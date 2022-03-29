@@ -19,7 +19,6 @@ class ActivityMonitorGUI(QWidget):
         with open('logs/transfer.txt', 'w') as f:
             f.write('False')
             f.close()
-        print('false')
 
         # Create a QGridLayout instance
         main_layout = QVBoxLayout()
@@ -102,11 +101,9 @@ class ActivityMonitorGUI(QWidget):
             with open('logs/transfer.txt', 'w') as f:
                 f.write('True')
                 f.close()
-            print('True')
         elif self.monitoringActive:
             self.monitoringActive = False
             with open('logs/transfer.txt', 'w') as f:
                 f.write('False')
                 f.close()
-            print('false')
 

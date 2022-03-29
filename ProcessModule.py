@@ -1,6 +1,6 @@
 """
 This file includes all functions, that are needed to get processes and their information for all operating systems and
-handle operations on processes such as kill() in the future.
+handle operations on processes.
 """
 import os
 import platform
@@ -11,7 +11,6 @@ from sys import platform
 
 import numpy as np
 import pandas as pd
-# import all necessary libraries and packages
 import psutil
 
 if platform == "win32":
@@ -114,7 +113,7 @@ def get_processes_info():
     return processes
 
 
-# Checks if a proces is a system process
+# Checks if a process is a system process
 def checkSystemProcess(name):
     sysWin = ['alg.exe', 'csrss.exe', 'ctfmon.exe', 'explorer.exe', 'lsass.exe', 'services.exe', 'smss.exe',
               'spoolsv.exe', 'svchost.exe', 'ntoskrnl.exe', 'winlogon.exe', 'System']
@@ -129,36 +128,13 @@ def checkSystemProcess(name):
 
 # Constructs a dataframe out of the process list array
 def construct_dataframe(processes):
-    # convert to pandas dataframe
+
     df = pd.DataFrame(processes)
-    # set the process id as index of a process
     df.set_index('pid', inplace=True)
-    # sort rows by process id
     df.sort_values(by='pid', inplace=True)
     # convert to proper date format
     df['create_time'] = df['create_time'].apply(datetime.strftime, args=("%Y-%m-%d %H:%M:%S",))
     return df
-
-
-# First test function to try getting processes and killing them
-def processTest():
-    processes = get_processes_info()
-    df = construct_dataframe(processes)
-
-    print(df.to_string())
-
-    # filter for all Edge processes
-    # data = df.loc[df['name'] == "msedge.exe"]
-    # print(data.to_string())
-
-    # kill every Edge process
-    # for i in data.index:
-    #    p = psutil.Process(i)
-    #    p.kill()
-
-
-if __name__ == "__main__":
-    processTest()
 
 
 # Gives back the dataframe with all processes and information
@@ -177,7 +153,7 @@ def getAllProcesses():
         filterProcWin(df)
     return df
 
-
+# singleton class with all processes and information
 class ProcessData(object):
     class __ProcessData:
         def __init__(self, bannedProcesses):
@@ -209,23 +185,17 @@ class ProcessData(object):
                             else:
                                 continue
                         else:
-                            if n.lower() in row['name']:
-                                if n.lower() in running:
-                                    continue
-                                else:
-                                    running.append(n.lower())
-                            else:
+                            if n.lower() in running:
                                 continue
+                            else:
+                                running.append(n.lower())
                     else:
                         continue
 
             return running
 
         def setBannedProcesses(self, bp):
-            if len(bp) != 0:
-                self.bannedProcesses = bp
-            else:
-                raise Exceptions.EmptyValueError
+            self.bannedProcesses = bp
 
         def clearBannedProcesses(self):
             self.bannedProcesses.clear()

@@ -35,7 +35,7 @@ class ActWorker(QObject):
             elif platform == 'darwin' and checkFile():
                 print('Macn not yet')
                 check_idleTime_Mac(idle_time_sec)
-            elif platform == 'win32'and checkFile():
+            elif platform == 'win32' and checkFile():
                 print('windows')
                 check_idleTime_windows(idle_time_sec)
             time.sleep(5)
@@ -85,7 +85,7 @@ class Worker(QObject):
                     i = 0
                     for r in running:
                         if not r in self.setTimers:
-                            self.timers.append(threading.Timer(300, self.timerEnds, [r]))
+                            self.timers.append(threading.Timer(30, self.timerEnds, [r]))
                             self.setTimers.append(r)
                             self.timers[i].start()
                             title = "[L]earn - Limit Alert"
