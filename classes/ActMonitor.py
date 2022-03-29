@@ -5,9 +5,8 @@ import subprocess
 global toast
 if platform == "win32":
     import win32api
-    from win10toast import ToastNotifier
-    toast = ToastNotifier()
-
+    import plyer.platforms.win.notification
+    from plyer import notification
 if platform == "linux" or platform == 'linux2':
     import notify2
 
@@ -47,13 +46,7 @@ def sendmessageLinux(title, message):
 
 
 def sendmessageWindows(title, message):
-    toast.show_toast(
-        title,
-        message,
-        duration=20,
-        # icon_path="icon.ico",
-        threaded=True,
-    )
+    notification.notify(title, message)
 
 
 def sendmessageMac(title, message):

@@ -2,6 +2,11 @@ import os
 import threading
 from PyQt5.QtCore import QObject
 import time
+from sys import platform
+
+if platform == "win32":
+    import plyer.platforms.win.notification
+    from plyer import notification
 
 import Learn
 from classes import DataClasses as dc, ProcessModule as pm
@@ -77,7 +82,7 @@ class Worker(QObject):
                                                                 "deshalb in 5 Minuten beendet! "
                                 # send system notification for Windows, Linux, Mac
                                 if platform == "win32":
-                                    am.sendmessageWindows(title, message)
+                                    notification.notify(title,message)
 
                                 if platform == "linux":
                                     am.sendmessageLinux(title, message)
