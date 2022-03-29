@@ -10,8 +10,6 @@ import Learn
 if platform == "win32":
     from win32gui import GetWindowText, GetForegroundWindow
 
-basedir = Learn.basedir
-
 
 class Notifications(object):
 
@@ -31,7 +29,7 @@ class Notifications(object):
 
         if not os.path.isdir('logs'):
             os.makedirs('logs')
-        handler = logging.FileHandler(os.path.join(basedir, "logs", "ntflog.log"))
+        handler = logging.FileHandler(os.path.join("logs", "ntflog.log"))
         # create a logging format
         formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s')
         handler.setFormatter(formatter)
