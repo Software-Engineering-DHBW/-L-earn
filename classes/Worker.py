@@ -13,6 +13,7 @@ global idle_time_sec
 idle_time_sec = 600
 
 
+#check File for either True or False to determine the status of ActivityMonitor
 def checkFile():
     with open('logs/transfer.txt') as f:
         lines = f.readlines()
@@ -31,13 +32,10 @@ class ActWorker(QObject):
         while True:
             if checkFile():
                 if platform == 'linux' or platform == 'linux2':
-                    print('linux')
                     check_idleTime_linux(idle_time_sec)
                 elif platform == 'darwin':
-                    print('Macn not yet')
                     check_idleTime_Mac(idle_time_sec)
                 elif platform == 'win32':
-                    print('windows')
                     check_idleTime_windows(idle_time_sec)
             time.sleep(5)
 
@@ -86,9 +84,8 @@ class Worker(QObject):
                 if len(running) != 0:
                     i = 0
                     for r in running:
-                        timer = threading.Timer(300, self.timerEnds, [r])
-                        if not r in self.setTimers and timer not in self.timers:
-                            self.timers.append(timer)
+                        if not r in self.setTimers:
+                            self.timers.append(threading.Timer(300, self.timerEnds, [r]))
                             self.setTimers.append(r)
                             self.timers[i].start()
                             title = "[L]earn - Limit Alert"
