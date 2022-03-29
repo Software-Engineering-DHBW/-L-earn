@@ -1,6 +1,7 @@
 import pickle
 import os
 
+
 class Defaults(object):
     class __Defaults:
         def __init__(self, filename=os.path.join("defaults", "defaults.pkl")):
@@ -25,8 +26,7 @@ class Defaults(object):
                 self.getDefaults()
             try:
                 return self.__defaults[key]
-            except KeyError as e:
-                # return ex.NotFoundError()
+            except KeyError:
                 return ""
 
         def set(self, key, val):

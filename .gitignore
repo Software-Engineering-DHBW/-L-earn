@@ -7,3 +7,4 @@
 /venv/
 /.eggs/
 /requirements.txt
+/fix_app_qt_folder_names_for_codesign.py
