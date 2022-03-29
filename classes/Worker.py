@@ -85,7 +85,7 @@ class Worker(QObject):
                     i = 0
                     for r in running:
                         if not r in self.setTimers:
-                            self.timers.append(threading.Timer(300, self.timerEnds, [r]))
+                            self.timers.append(threading.Timer(300, self.timerEnds, [r, i]))
                             self.setTimers.append(r)
                             self.timers[i].start()
                             title = "[L]earn - Limit Alert"
@@ -115,6 +115,7 @@ class Worker(QObject):
 
             time.sleep(300)
 
-    def timerEnds(self, proc):
+    def timerEnds(self, proc, i):
         pm.ProcessData().killProcess(proc)
+        del self.timers[i]
         self.setTimers.remove(proc)

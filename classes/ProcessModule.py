@@ -233,8 +233,14 @@ class ProcessData(object):
                             if n.lower() in d:
                                 kill = self.data.loc[self.data["name"] == d]
                                 for i in kill.index:
-                                    proc = psutil.Process(i)
-                                    proc.kill()
+                                    try:
+                                        proc = psutil.Process(i)
+                                    except psutil.NoSuchProcess:
+                                        continue
+                                    try:
+                                        proc.kill()
+                                    except psutil.AccessDenied:
+                                        continue
 
                 else:
                     df = set(self.data['name'])
@@ -242,7 +248,10 @@ class ProcessData(object):
                         if name.lower() in n:
                             kill = self.data.loc[self.data["name"] == n]
                             for i in kill.index:
-                                proc = psutil.Process(i)
+                                try:
+                                    proc = psutil.Process(i)
+                                except psutil.NoSuchProcess:
+                                    continue
                                 try:
                                     proc.kill()
                                 except psutil.AccessDenied:
@@ -250,11 +259,11 @@ class ProcessData(object):
 
     instance = None
 
-    def __new__(cls, banned=None, *args, **kwargs):
-        if banned is None:
-            banned = pd.DataFrame([])
+    def __new__(cls, bannedProc=None, *args, **kwargs):
+        if bannedProc is None:
+            bannedProc = pd.DataFrame([])
         if not ProcessData.instance:
-            ProcessData.instance = ProcessData.__ProcessData(banned)
+            ProcessData.instance = ProcessData.__ProcessData(bannedProc)
         return ProcessData.instance
 
     def __getattr__(self, name):
