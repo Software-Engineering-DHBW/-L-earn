@@ -1,3 +1,6 @@
+"""
+GUI for the Limits tab
+"""
 import getpass
 import pandas as pd
 from PyQt5 import QtCore, QtWidgets
