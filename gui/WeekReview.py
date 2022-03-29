@@ -1,3 +1,6 @@
+"""
+GUI for the WeekReview tab
+"""
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QProgressBar, QLabel, QHBoxLayout, QFrame, QScrollArea
 import datetime

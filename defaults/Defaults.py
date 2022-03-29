@@ -1,3 +1,6 @@
+"""
+Defines default values
+"""
 import pickle
 import os
 
