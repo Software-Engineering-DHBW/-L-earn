@@ -1,3 +1,6 @@
+"""
+Defines some data classes and their methods
+"""
 from datetime import date
 import datetime as dt
 import pandas as pd
