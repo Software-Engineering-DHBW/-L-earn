@@ -1,3 +1,6 @@
+"""
+Defines the database and all database functions
+"""
 import os
 import sqlite3
 import logging
