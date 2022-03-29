@@ -148,8 +148,8 @@ class WeekReview(QDialog):
             # create progress bar
             bar = QProgressBar()
             bar.setMinimum(0)
-            bar.setMaximum(maxVal)
-            bar.setValue(row.runtime)
+            bar.setMaximum(int(maxVal))
+            bar.setValue(int(row.runtime))
             bar.setFormat(barText)
             bar.setAlignment(QtCore.Qt.AlignTop)
             bar.setStyleSheet("QProgressBar {"

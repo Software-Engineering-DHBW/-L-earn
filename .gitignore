@@ -1,9 +1,9 @@
 /db.sqlite
 /defaults/defaults.pkl
-/logs/dblog.log
-/logs/ntflog.log
-/logs/transfer.txt
+/logs/
 /dist/
 /build/
 /packenv/
-/[L]earn.spec
+/venv/
+/.eggs/
+/requirements.txt

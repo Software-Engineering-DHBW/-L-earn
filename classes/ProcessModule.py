@@ -128,7 +128,6 @@ def checkSystemProcess(name):
 
 # Constructs a dataframe out of the process list array
 def construct_dataframe(processes):
-
     df = pd.DataFrame(processes)
     df.set_index('pid', inplace=True)
     df.sort_values(by='pid', inplace=True)
@@ -152,6 +151,7 @@ def getAllProcesses():
         # Windows...
         filterProcWin(df)
     return df
+
 
 # singleton class with all processes and information
 class ProcessData(object):

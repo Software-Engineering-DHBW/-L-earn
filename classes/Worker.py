@@ -1,7 +1,9 @@
+import os
 import threading
 from PyQt5.QtCore import QObject
 import time
 
+import Learn
 from classes import DataClasses as dc, ProcessModule as pm
 from sys import platform
 from classes.ActMonitor import check_idleTime_Mac, check_idleTime_windows, check_idleTime_linux
@@ -11,10 +13,12 @@ import classes.ActMonitor as am
 global idle_time_sec
 idle_time_sec = 600
 
+basedir = Learn.basedir
 
-#check File for either True or False to determine the status of ActivityMonitor
+
+# check File for either True or False to determine the status of ActivityMonitor
 def checkFile():
-    with open('logs/transfer.txt') as f:
+    with open(os.path.join(basedir, "logs", "transfer.txt")) as f:
         lines = f.readlines()
         f.close()
     if lines[0] == 'True':
@@ -82,7 +86,7 @@ class Worker(QObject):
                                 i += 1
 
                 time.sleep(5)
-                
+
         except Exception as e:
             print(e)
 
@@ -97,7 +101,6 @@ class Worker(QObject):
 
             time.sleep(300)
 
-
     def timerEnds(self, proc, i):
 
         try:
@@ -106,4 +109,3 @@ class Worker(QObject):
             self.setTimers.remove(proc)
         except Exception as e:
             print(e)
-
