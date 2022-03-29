@@ -7,7 +7,7 @@ Usage:
 
 from setuptools import setup
 
-APP = ['Main.py']
+APP = ['[L]earn.py']
 DATA_FILES = ['images',
               'defaults',
               'gui',

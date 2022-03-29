@@ -4,3 +4,5 @@
 /logs/ntflog.log
 /dist/
 /build/
+/packenv/
+/[L]earn.spec
