@@ -19,7 +19,7 @@ if platform == "win32":
 elif platform == "linux":
     import wmctrl
 
-import Exceptions
+from classes import Exceptions
 
 consideredProc = []
 
@@ -173,7 +173,7 @@ class ProcessData(object):
                     limit = -1
 
                     for index1, row1 in limits.iterrows():
-                        limit = row1['limit']
+                        limit = row1['limittime']
 
                     if n.lower() in row['name']:
                         if limit != -1:
@@ -207,8 +207,6 @@ class ProcessData(object):
             return self.bannedProcesses.copy()
 
         def extendBannedProcesses(self, banned):
-            print(self.bannedProcesses)
-            print(banned)
             if len(self.bannedProcesses) == 0:
                 self.bannedProcesses = banned
             else:

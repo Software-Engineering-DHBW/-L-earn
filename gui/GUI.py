@@ -3,13 +3,12 @@ Includes the functionality to run the graphical user interface
 """
 import sys
 
-from PyQt5.QtGui import QIcon, QPixmap, QFontDatabase
-from PyQt5.QtWidgets import QApplication, QPushButton, QHBoxLayout, QWidget, QVBoxLayout, QLabel, QTabWidget, \
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtWidgets import QApplication, QPushButton, QHBoxLayout, QWidget, QVBoxLayout, QTabWidget, \
     QMainWindow
-from PyQt5.QtCore import QThread, QSize, Qt
+from PyQt5.QtCore import QThread, QSize
 
-from Worker import Worker, ActWorker
-
+from classes.Worker import Worker, ActWorker
 
 # class that represents the main GUI window
 from gui.ActivityMonitorGUI import ActivityMonitorGUI
@@ -22,7 +21,6 @@ from gui.LimitsGUI import LimitsGUI
 class MainWindow(QMainWindow):
 
     def __init__(self):
-
         super().__init__()
 
         self.worker = None
@@ -40,7 +38,7 @@ class MainWindow(QMainWindow):
 
         # set the size of window
         self.Width = 1000
-        self.height = int(0.618 * self.Width)
+        self.height = 650
         self.resize(self.Width, self.height)
 
         # add all widgets
@@ -74,11 +72,10 @@ class MainWindow(QMainWindow):
         self.initUI()
 
         # create Threads
-        #self.createProcessThread()
+        # self.createProcessThread()
         self.createProcessThread2()
         self.createProcessThread3()
         self.createProcessThread4()
-
 
     # function to create a thread, which updates the process table
     def createProcessThread(self):
@@ -109,7 +106,6 @@ class MainWindow(QMainWindow):
         self.thread4.started.connect(self.worker4.idleTime)
         self.thread4.start()
 
-
     def initUI(self):
         left_layout = QVBoxLayout()
         left_layout.addWidget(self.btn_1)
@@ -133,9 +129,9 @@ class MainWindow(QMainWindow):
 
         self.right_widget.setCurrentIndex(0)
         self.right_widget.setDocumentMode(True)
-        self.right_widget.setStyleSheet('''QTabBar::tab{width: 0; \
-            height: 0; margin: 0; padding: 0; border: none; border-radius: 5px;}
-            QTabBar::pane { border: none;}''')
+        # self.right_widget.setStyleSheet('''QTabBar::tab{width: 0; \
+        #     height: 0; margin: 0; padding: 0; border: none; border-radius: 5px;}
+        #     QTabBar::pane { border: none;}''')
 
         main_layout = QHBoxLayout()
         main_layout.addWidget(left_widget)
@@ -151,12 +147,7 @@ class MainWindow(QMainWindow):
     def getButton(self, image, text):
         button = QPushButton(text, self)
         button.setIcon(QIcon(QPixmap("images/" + image)))
-        button.setStyleSheet("QPushButton { text-align: left;"
-                             "padding-left: 10px;"
-                             "border-radius: 5px;"
-                             "background-color: white;"
-                             "min-height: 30px;"
-                             "min-width: 150px;}")
+        button.setObjectName("tabButton")
         font = button.font()
         font.setPointSize(13)
         button.setFont(font)
@@ -180,8 +171,9 @@ class MainWindow(QMainWindow):
 
 
 def startWindow():
-
     app = QApplication(sys.argv)
     window = MainWindow()
+    with open("style.css", "r") as fh:
+        window.setStyleSheet(fh.read())
     window.show()
     sys.exit(app.exec_())

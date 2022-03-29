@@ -21,6 +21,7 @@ Zum starten des Prototypen:
       - win32process
       - win32gui
       - attrs
+      - pync
   3. Main.py ausführen
 
 ### Doku

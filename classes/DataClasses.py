@@ -1,12 +1,12 @@
-from datetime import datetime, date
+from datetime import date
 import datetime as dt
 import pandas as pd
 
-import DBHelper
-import ProcessModule
+from classes.DBHelper import DBHelper
+import classes.ProcessModule as pm
 
-db = DBHelper.DBHelper()
-pData = ProcessModule.ProcessData()
+db = DBHelper()
+pData = pm.ProcessData()
 
 
 class UserData(object):
@@ -48,11 +48,9 @@ class CurrentDayData(object):
                     self.data = df
 
                 else:
-                    print(2)
                     self.writeData()
                     self.data = currData
             else:
-                print(3)
                 self.data = currData
                 self.writeData()
                 self.data = db.readData(date.today())

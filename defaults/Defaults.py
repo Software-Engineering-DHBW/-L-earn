@@ -45,12 +45,3 @@ class Defaults(object):
 
     def __setattr__(self, name, value):
         return setattr(self.instance, name, value)
-
-
-if __name__ == "__main__":
-    defaults = Defaults()
-    defaults.set("a", 1)
-    defaults.set("b", 2)
-    print(defaults.getDefaults())
-    print(defaults.get("a"))
-    print(defaults.get("c"))
