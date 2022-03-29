@@ -1,4 +1,6 @@
-
+"""
+GUI for the Notifications tab
+"""
 import threading
 from datetime import datetime
 from urllib.error import URLError
