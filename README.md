@@ -22,6 +22,7 @@ Zum starten des Prototypen:
       - win32gui
       - attrs
       - pync
+      - xprintidle
   3. Main.py ausführen
 
 ### Doku
