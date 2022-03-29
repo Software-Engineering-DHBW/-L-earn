@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 import psutil
 
+# import different packages for different OS
 if platform == "win32":
     import win32gui
     import win32process
@@ -23,7 +24,7 @@ from classes import Exceptions
 
 consideredProc = []
 
-
+# Filter unnecessary processes for Linux, Mac, Windows
 def filterProcMac(df):
     windowList = subprocess.check_output(["osascript -e 'tell application \"System Events\" "
                                           "to get the name of every process whose visible is true'"],
@@ -153,7 +154,7 @@ def getAllProcesses():
         filterProcWin(df)
     return df
 
-# singleton class with all processes and information
+# singleton class with all processes, information and functions
 class ProcessData(object):
     class __ProcessData:
         def __init__(self, bannedProcesses):
@@ -171,10 +172,12 @@ class ProcessData(object):
                 for index, row in proc.iterrows():
                     limits = self.bannedProcesses[self.bannedProcesses["name"] == n]
                     limit = -1
-
+                    
+                    # get limit
                     for index1, row1 in limits.iterrows():
                         limit = row1['limittime']
-
+                    
+                    # cjeck if searched process is in data
                     if n.lower() in row['name']:
                         if limit != -1:
                             if limit <= row['runtime']:
@@ -206,16 +209,19 @@ class ProcessData(object):
         def getBannedProcesses(self):
             return self.bannedProcesses.copy()
 
+        # add new processes to bannedProcesses
         def extendBannedProcesses(self, banned):
             if len(self.bannedProcesses) == 0:
                 self.bannedProcesses = banned
             else:
                 for index, name in banned.iterrows():
                     for ind, bn in self.bannedProcesses.iterrows():
+                        # check if process is already in banned processes and if so drop existing entry
                         if name['name'].lower() in bn['name'].lower():
                             self.bannedProcesses = self.bannedProcesses.drop(ind)
                 self.bannedProcesses = pd.concat([self.bannedProcesses, banned])
-
+      
+        # remove one specific banned process
         def removeBannedProcess(self, name):
             for ind, row in self.bannedProcesses.iterrows():
                 if name in row['name']:
@@ -225,6 +231,7 @@ class ProcessData(object):
             if len(name) == 0:
                 raise Exceptions.EmptyValueError
             else:
+                # check if name is an array
                 if isinstance(name, (list, tuple, np.ndarray)):
                     names = set(name)
                     df = set(self.data['name'])
@@ -256,7 +263,8 @@ class ProcessData(object):
                                     proc.kill()
                                 except psutil.AccessDenied:
                                     continue
-
+    
+    # implementation of singleton pattern
     instance = None
 
     def __new__(cls, bannedProc=None, *args, **kwargs):
@@ -272,13 +280,3 @@ class ProcessData(object):
     def __setattr__(self, name, value):
         return setattr(self.instance, name, value)
 
-
-if __name__ == "__main__":
-    # processTest()
-    b = {'name': ["msegde", "Spotify", "chrome"], 'limit': [-1, -1, 500]}
-    banned = pd.DataFrame(b)
-    pD = ProcessData(banned)
-    # print(pD.getData())
-    print(pD.getBannedProcesses())
-    # pD.killProcess("spotify")
-    print(pD.checkProcesses())
